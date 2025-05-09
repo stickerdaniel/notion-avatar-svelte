@@ -1,0 +1,113 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+## Svelte Project Coding Instructions
+
+Use Svelte 5's new syntax with TypeScript for reactivity, props, events, and content passing. Prioritize this over Svelte 4 syntax. Use `bun` as the package manager ("bun add", "bun add -d (for dev dependencies), "bunx").
+
+**Key Svelte 5 Syntax Changes & Rune Usage:**
+
+*   **`$state()`:**
+    *   **When:** Use for declaring **mutable, independent pieces of reactive state**. This is the fundamental building block for values that change over time and should trigger UI updates or recalculations. Think of component-local variables, user inputs, fetched data containers, etc.
+    *   **How:** `let count = $state(0);`
+    *   **Note:** For complex objects/arrays where you only ever replace the entire value (not mutate internals), use `$state.raw()` for potential performance benefits by avoiding deep reactivity proxies.
+*   **`$derived()`:**
+    *   **When:** Use for values that are **computed based on other reactive sources** (`$state`, `$props`, other `$derived`). The computation should be **pure** (no side effects). Use whenever a value's existence or content *depends* entirely on other reactive values. Examples: filtered lists, formatted strings, boolean flags derived from other state.
+    *   **How:** `let doubled = $derived(count * 2);` or for multi-step computations: `let complexValue = $derived.by(() => { /* ... */ return result; });`
+    *   **Note:** Always explicitly type derived arrays in TypeScript: `let items: Item[] = $derived(...)`.
+*   **`$effect()`:**
+    *   **When:** Use for running **side effects** in response to changes in reactive dependencies. This runs *after* the DOM has been updated. Ideal for interacting with the DOM directly (e.g., canvas drawing), logging, integrating with third-party non-Svelte libraries, or triggering async operations based on state changes.
+    *   **Avoid:** **Do not use `$effect` to synchronize state** (e.g., setting one `$state` based on another) – use `$derived` for that. Avoid mutating state *inside* an effect where possible to prevent complex flows and potential infinite loops. If needed, use `untrack()`.
+    *   **How:** `$effect(() => { console.log(count); });`
+    *   **`$effect.pre()`:** Use in rare cases when you need an effect to run *before* the DOM updates (e.g., reading DOM measurements before a change).
+*   **`$props()`:**
+    *   **When:** Use inside the `<script>` block to declare the properties (props) a component accepts from its parent.
+    *   **How:** `let { name = 'World', requiredProp }: { name?: string, requiredProp: number } = $props();`
+*   **`$bindable()`:**
+    *   **When:** Use inside `$props()` to declare a prop that supports two-way binding with `bind:`.
+    *   **How:** `let { value = $bindable() } = $props<{ value: string }>();`
+*   **Events:** Use standard HTML event attributes (`onclick={handler}`, `onsubmit={handler}`) instead of `on:`.
+*   **Content/Slots:** Use `{#snippet name()}...{/snippet}` to define content snippets and `{@render name()}` to render them. Pass snippets as props: `let { header } = $props<{ header: Snippet }>();`. The default content passed between component tags is available via the implicit `children` snippet prop.
+*   **TypeScript:** Always use `<script lang="ts">`. Explicitly type variables, props, function arguments/returns, and derived arrays.
+Runes are a core Svelte 5 feature and dont require any imports.
+**State Management: Class-Based Stores (Pattern Summary)**
+
+This pattern uses JavaScript classes combined with Svelte Runes (`$state`) to create powerful, encapsulated, and reusable state containers, often replacing or complementing traditional Svelte stores (`writable`, `readable`).
+
+*   **What:** Define a standard JS/TS class (usually in a `.svelte.ts` file, e.g., `src/lib/MyStore.svelte.ts`). Inside the class, use `$state()` to make instance properties reactive. Methods within the class operate on these reactive properties.
+*   **Why:** Encapsulation, organization, reusability, testability, TypeScript friendly.
+*   **When to Use:** Complex or related state with actions, OO modeling, shared state (with Context), when component-local `$state` becomes complex.
+*   **Implementation:**
+
+    1.  **Define the Class (`MyStore.svelte.ts`):**
+        ```typescript
+        // src/lib/MyStore.svelte.ts
+        import { $state } from 'svelte';
+
+        // important good practice - always define interface
+        export interface IMyStoreState { count: number; increment: () => void; }
+        export class MyStoreClass implements IMyStoreState {
+          count = $state(0);
+          increment = () => { this.count++; };
+        }
+        ```
+
+    2.  **Use in Component (Non-Shared State):**
+        ```svelte
+        // src/routes/some-page/+page.svelte
+        <script lang="ts">
+          import { MyStoreClass } from '$lib/MyStore.svelte';
+          const store = new MyStoreClass(); // New, independent instance
+        </script>
+        <!-- ... use store.count, store.increment() ... -->
+        ```
+
+    3.  **Share State via Runed Context (Recommended & SSR Safe):**
+        *   **a) Install Runed:** `bun add runed`
+        *   **b) Define Context (`context.ts` or `MyStore.svelte.ts`):**
+            ```typescript
+            // src/lib/import { Context } from 'runed';
+            import { MyStoreClass } from './MyStore.svelte';
+
+            export const myStoreContext = new Context<MyStoreClass>('myStore');
+            ```
+        *   **c) Set Context in Ancestor (`+layout.svelte`):**
+            ```svelte
+            // src/routes/+layout.svelte
+            <script lang="ts">
+              import { myStoreContext } from '$lib/context';
+              import { MyStoreClass } from '$lib/MyStore.svelte';
+              import type { Snippet } from 'svelte';
+              let { children }: { children: Snippet } = $props();
+
+              myStoreContext.set(new MyStoreClass()); // Create and set the shared instance
+            </script>
+            {@render children()}
+            ```
+        *   **d) Get Context in Descendants:**
+            ```svelte
+            // src/lib/components/SomeChild.svelte
+            <script lang="ts">
+              import { myStoreContext } from '$lib/context';
+              const store = myStoreContext.get(); // Get the shared instance
+            </script>
+            <!-- ... use store.count, store.increment() ... -->
+            ```
+
+**Tooling Suggestions:**
+
+*   **Runed (`bun add runed`):** A collection of utilities specifically for Svelte 5 Runes. Highly recommended for simplifying common patterns. Key utilities include:
+    *   **`<Context>`:** Provides a type-safe and ergonomic wrapper around Svelte's context API. **Use this for sharing class-based stores.**
+    *   **`resource`:** Combines reactive state with async data fetching, handling loading/error states and cancellation.
+    *   **`watch`:** Similar to `$effect`, but with explicitly defined reactive dependencies. Useful for more control over when effects run. Variants like `watch.pre` exist.
+    *   **`PersistedState`:** Easily synchronize reactive state with `localStorage` or `sessionStorage` across tabs and sessions.
+    *   **`useEventListener`:** Attaches event listeners (e.g., to `window` or `document`) with automatic cleanup when the component unmounts.
+    *   **`onClickOutside`:** Detects clicks outside a specified element, useful for closing dropdowns/modals.
+    *   **`FiniteStateMachine`:** Defines strongly-typed state machines for managing complex component states and transitions.
+    *   **(Other utilities):** Runed offers many more utilities for element interaction (`ElementRect`, `useIntersectionObserver`), sensor data (`useGeolocation`), animation (`AnimationFrames`), state history (`StateHistory`), debouncing (`Debounced`, `useDebounce`), and more.
+    *   **Recommendation:** Familiarize yourself with the Runed utilities and use them where they fit the problem domain. Request the [Runed documentation](https://runed.dev/docs) when considering a specific utility for detailed usage instructions.
+*   **Shadcn-Svelte:** High-quality, accessible UI components. Follow setup at [next.shadcn-svelte.com](https://next.shadcn-svelte.com). (`bunx --bun shadcn-svelte-add@latest init`)
+*   **Superforms/Formsnap:** Robust form handling with validation. Implementation in next.shadcn-svelte form uses Superforms, Formasnap and Zod. Follow form setup at [next.shadcn-svelte.com/docs/components/form](https://next.shadcn-svelte.com/docs/components/form).
+*   **Threlte, Svelte Flow:** Consider for specialized UI needs: 3D graphics, node-based diagrams, respectively.

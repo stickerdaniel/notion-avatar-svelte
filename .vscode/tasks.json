@@ -1,0 +1,56 @@
+// .vscode/tasks.json
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "bun dev",
+			"type": "shell",
+			"command": "bun",
+			"args": ["run", "dev"],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"detail": "Run the development server"
+		},
+		{
+			"label": "bun format",
+			"type": "shell",
+			"command": "bun",
+			"args": ["run", "format"],
+			"group": "none",
+			"problemMatcher": [],
+			"detail": "Format the codebase"
+		},
+		{
+			"label": "bun lint",
+			"type": "shell",
+			"command": "bun",
+			"args": ["run", "lint"],
+			"group": "test",
+			"problemMatcher": ["$eslint-compact"],
+			"detail": "Lint the codebase"
+		},
+		{
+			"label": "bun check",
+			"type": "shell",
+			"command": "bun",
+			"args": ["run", "check"],
+			"group": "test",
+			"problemMatcher": ["$tsc"],
+			"detail": "Run Svelte check for type errors"
+		},
+		{
+			"label": "bun check:all",
+			"type": "shell",
+			"command": "bun run format && bun run lint && bun run check",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"problemMatcher": ["$eslint-compact", "$tsc"],
+			"detail": "Format, lint, and type check the codebase"
+		}
+	]
+}
