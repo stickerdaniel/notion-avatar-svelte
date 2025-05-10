@@ -117,7 +117,7 @@
 					bind:value={selectedValues[category.id]}
 					class="flex flex-wrap justify-start gap-1 p-2"
 				>
-					{#each { length: category.maxItems } as _, index (index)}
+					{#each Array(category.maxItems) as _, index (index)}
 						{@const imageSrc = getPartImagePath(category.id, index)}
 						<ToggleGroup.Item
 							value={category.id + index.toString()}

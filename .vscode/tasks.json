@@ -42,7 +42,7 @@
 			"detail": "Run Svelte check for type errors"
 		},
 		{
-			"label": "bun check:all",
+			"label": "bun pre-commit",
 			"type": "shell",
 			"command": "bun run format && bun run lint && bun run check",
 			"group": {

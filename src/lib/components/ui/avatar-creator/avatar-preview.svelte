@@ -47,7 +47,7 @@
 			const groupElements = await Promise.all(
 				layers.map(async (path, index) => {
 					// Get the part type from the path
-					const partMatch = path.match(/\/([^\/]+)\/[^\/]+\.svg$/);
+					const partMatch = path.match(/\/([^/]+)\/[^/]+\.svg$/);
 					const partType = partMatch ? partMatch[1] : `part-${index}`;
 
 					// Fetch the SVG content
