@@ -1,0 +1,68 @@
+<script lang="ts">
+	import * as Card from '$lib/components/ui/card/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import AvatarPreview from './avatar-preview.svelte';
+	import CategorySelector from './category-selector.svelte';
+	import ColorSelector from './color-selector.svelte';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import AnimatedDiceButton from './animated-dice-button.svelte';
+	import { onMount } from 'svelte';
+	import { Avatar } from './AvatarStore.svelte';
+	import { DEFAULT_CATEGORIES, type Category } from './types';
+
+	// Instantiate the Avatar store
+	const avatarStore = new Avatar();
+
+	// Local state for UI, like activeTab, if not part of the store's direct responsibility
+	// It seems DEFAULT_CATEGORIES is still useful for passing to CategorySelector if it expects the raw list.
+	const categories: Category[] = DEFAULT_CATEGORIES;
+	let activeTab = $state(categories[0]?.id ?? '');
+
+	// Generate a random avatar on initial load using the store's method
+	onMount(() => {
+		avatarStore.generateRandomAvatar();
+	});
+</script>
+
+<Card.Root class="w-full max-w-2xl">
+	<Card.Header>
+		<Card.Title>Hello! Stranger? Let's fix that.</Card.Title>
+		<Card.Description>Put a face to your username.</Card.Description>
+	</Card.Header>
+	<Card.Content>
+		<div class="flex w-full flex-col-reverse justify-center gap-4 lg:flex-row">
+			<CategorySelector
+				bind:activeTab
+				bind:selectedItems={avatarStore.selectedItems}
+				{categories}
+			/>
+			<div class="flex grow flex-col items-center gap-4">
+				<div class="flex grow items-center">
+					<AvatarPreview
+						layers={avatarStore.avatarLayers}
+						previewBgClass={avatarStore.avatarPreviewBgClass}
+					/>
+				</div>
+				<div
+					class="flex w-full flex-col items-end justify-between gap-4 sm:flex-row-reverse md:flex-row-reverse lg:flex-col lg:items-end"
+				>
+					<AnimatedDiceButton
+						onDicethrow={avatarStore.generateRandomAvatar}
+						ariaLabel="Generate random avatar"
+						variant="secondary"
+						size="icon"
+					/>
+					<ColorSelector bind:selectedColor={avatarStore.selectedAvatarColorName}></ColorSelector>
+				</div>
+				<div class="grid w-full flex-col items-start gap-1.5">
+					<Label for="username">Your Username</Label>
+					<Input type="text" class="w-full" id="username" bind:value={avatarStore.username} />
+				</div>
+			</div>
+		</div>
+	</Card.Content>
+	<Card.Footer class="flex justify-end space-x-2">
+		<Button onclick={avatarStore.saveAvatar}>Save</Button>
+	</Card.Footer>
+</Card.Root>
