@@ -1,46 +1,51 @@
+import prettier from 'eslint-config-prettier';
 import js from '@eslint/js';
-import eslintConfigPrettier from 'eslint-config-prettier';
-import eslintPluginSvelte from 'eslint-plugin-svelte';
+import { includeIgnoreFile } from '@eslint/compat';
+import svelte from 'eslint-plugin-svelte';
 import globals from 'globals';
-import svelteParser from 'svelte-eslint-parser';
-import tsEslint from 'typescript-eslint';
+import { fileURLToPath } from 'node:url';
+import ts from 'typescript-eslint';
+import svelteConfig from './svelte.config.js';
 
-export default tsEslint.config(
+const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
+
+export default ts.config(
+	includeIgnoreFile(gitignorePath),
 	js.configs.recommended,
-	...tsEslint.configs.recommended,
-	...eslintPluginSvelte.configs['flat/recommended'],
-	eslintConfigPrettier,
-	...eslintPluginSvelte.configs['flat/prettier'],
+	...ts.configs.recommended,
+	svelte.configs['flat/recommended'],
+	prettier,
+	svelte.configs['flat/prettier'],
 	{
 		languageOptions: {
-			ecmaVersion: 2022,
-			sourceType: 'module',
-			globals: { ...globals.node, ...globals.browser },
-			parser: svelteParser,
+			globals: { ...globals.browser, ...globals.node }
+		},
+		rules: { 'no-undef': 'off' }
+	},
+	{
+		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
+		plugins: {
+			'@typescript-eslint': ts.plugin
+		},
+		languageOptions: {
 			parserOptions: {
-				parser: tsEslint.parser,
-				extraFileExtensions: ['.svelte']
+				projectService: true,
+				extraFileExtensions: ['.svelte'],
+				parser: ts.parser,
+				svelteConfig
 			}
 		},
 		rules: {
-			'@typescript-eslint/no-unused-vars': [
-				'error',
-				{
-					argsIgnorePattern: '^_',
-					varsIgnorePattern: '^_',
-					caughtErrorsIgnorePattern: '^_'
-				}
-			]
+			'@typescript-eslint/no-unused-vars': 'error'
 		}
 	},
 	{
-		ignores: [
-			'**/.svelte-kit',
-			'**/.vercel',
-			'**/.yarn',
-			'**/build',
-			'**/node_modules',
-			'**/package'
-		]
+		files: ['**/*.svelte'],
+		plugins: {
+			'@typescript-eslint': ts.plugin
+		},
+		rules: {
+			'@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }]
+		}
 	}
 );

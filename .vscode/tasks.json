@@ -3,7 +3,7 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "bun dev",
+			"label": "bun dev (run dev server)",
 			"type": "shell",
 			"command": "bun",
 			"args": ["run", "dev"],
@@ -12,7 +12,10 @@
 				"isDefault": true
 			},
 			"problemMatcher": [],
-			"detail": "Run the development server"
+			"detail": "Run the development server",
+			"presentation": {
+				"clear": true
+			}
 		},
 		{
 			"label": "bun format",
@@ -21,7 +24,10 @@
 			"args": ["run", "format"],
 			"group": "none",
 			"problemMatcher": [],
-			"detail": "Format the codebase"
+			"detail": "Format the codebase",
+			"presentation": {
+				"clear": true
+			}
 		},
 		{
 			"label": "bun lint",
@@ -30,7 +36,10 @@
 			"args": ["run", "lint"],
 			"group": "test",
 			"problemMatcher": ["$eslint-compact"],
-			"detail": "Lint the codebase"
+			"detail": "Lint the codebase",
+			"presentation": {
+				"clear": true
+			}
 		},
 		{
 			"label": "bun check",
@@ -39,18 +48,24 @@
 			"args": ["run", "check"],
 			"group": "test",
 			"problemMatcher": ["$tsc"],
-			"detail": "Run Svelte check for type errors"
+			"detail": "Run Svelte check for type errors",
+			"presentation": {
+				"clear": true
+			}
 		},
 		{
-			"label": "bun pre-commit",
+			"label": "bun lint-staged (pre-commit)",
 			"type": "shell",
-			"command": "bun run format && bun run lint && bun run check",
+			"command": "bunx lint-staged",
 			"group": {
 				"kind": "test",
 				"isDefault": true
 			},
 			"problemMatcher": ["$eslint-compact", "$tsc"],
-			"detail": "Format, lint, and type check the codebase"
+			"detail": "Format, lint, and type check staged files via lint-staged",
+			"presentation": {
+				"clear": true
+			}
 		}
 	]
 }
