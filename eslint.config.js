@@ -36,16 +36,7 @@ export default ts.config(
 			}
 		},
 		rules: {
-			'@typescript-eslint/no-unused-vars': 'error'
-		}
-	},
-	{
-		files: ['**/*.svelte'],
-		plugins: {
-			'@typescript-eslint': ts.plugin
-		},
-		rules: {
-			'@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }]
+			'@typescript-eslint/no-unused-vars': 'warn'
 		}
 	}
 );

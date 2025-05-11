@@ -1,17 +1,17 @@
 <script lang="ts" module>
 	import { getContext, setContext } from 'svelte';
 	import type { ToggleVariants } from '$lib/components/ui/toggle/index.js';
-	export function setToggleGroupCtx(props: ToggleVariants) {
-		setContext('toggleGroup', props);
+	export function setRadioToggleGroupCtx(props: ToggleVariants) {
+		setContext('radioToggleGroup', props);
 	}
 
-	export function getToggleGroupCtx() {
-		return getContext<ToggleVariants>('toggleGroup');
+	export function getRadioToggleGroupCtx() {
+		return getContext<ToggleVariants>('radioToggleGroup');
 	}
 </script>
 
 <script lang="ts">
-	import { ToggleGroup as ToggleGroupPrimitive } from 'bits-ui';
+	import { RadioGroup as RadioGroupPrimitive } from 'bits-ui';
 	import { cn } from '$lib/utils.js';
 
 	let {
@@ -21,9 +21,9 @@
 		size = 'default',
 		variant = 'default',
 		...restProps
-	}: ToggleGroupPrimitive.RootProps & ToggleVariants = $props();
+	}: RadioGroupPrimitive.RootProps & ToggleVariants = $props();
 
-	setToggleGroupCtx({
+	setRadioToggleGroupCtx({
 		variant,
 		size
 	});
@@ -33,7 +33,7 @@
 Discriminated Unions + Destructing (required for bindable) do not
 get along, so we shut typescript up by casting `value` to `never`.
 -->
-<ToggleGroupPrimitive.Root
+<RadioGroupPrimitive.Root
 	bind:value={value as never}
 	bind:ref
 	class={cn('flex items-center justify-center gap-1', className)}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
+	import * as RadioToggleGroup from '$lib/components/ui/radio-toggle-group/index.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ChevronsDown, ChevronsUp } from '@lucide/svelte';
@@ -16,8 +16,11 @@
 		categories: Category[];
 	} = $props();
 
-	// Initialize selectedValues for each category using $state
-	let selectedValues = $state<Record<string, string>>({});
+	// Initialize selectedValues for each category, defaulting to the first item (index "0").
+	const initialSelectedValues = Object.fromEntries(
+		categories.map((category) => [category.id, category.id + '0'])
+	);
+	let selectedValues = $state(initialSelectedValues);
 
 	// Watch for changes in selectedValues and update selectedItems
 	$effect(() => {
@@ -39,12 +42,24 @@
 		selectedItems = newSelectedItems;
 	});
 
-	// Initialize selectedValues from selectedItems prop
+	// Initialize/Update selectedValues from selectedItems prop if it changes
 	$effect(() => {
 		if (selectedItems) {
 			for (const [categoryId, indexValue] of Object.entries(selectedItems)) {
 				if (indexValue !== undefined && indexValue !== null) {
-					selectedValues[categoryId] = categoryId + indexValue.toString();
+					const newValue = categoryId + indexValue.toString();
+					// Only update if different to prevent potential loops if not careful,
+					// though $state handles distinctness.
+					if (selectedValues[categoryId] !== newValue) {
+						selectedValues[categoryId] = newValue;
+					}
+				} else {
+					// If an item in selectedItems becomes null/undefined, ensure a default for radio group.
+					// Radio groups must have a value. Defaulting to "0".
+					const defaultValue = categoryId + '0';
+					if (selectedValues[categoryId] !== defaultValue) {
+						selectedValues[categoryId] = defaultValue;
+					}
 				}
 			}
 		}
@@ -111,15 +126,14 @@
 	{#each categories as category (category.id)}
 		<Tabs.Content value={category.id} class="mt-0 h-fit lg:w-[12.2rem]">
 			<ScrollArea class="h-[26.5rem] w-full rounded-md border">
-				<ToggleGroup.Root
-					type="single"
+				<RadioToggleGroup.Root
 					variant="outline"
 					bind:value={selectedValues[category.id]}
 					class="flex flex-wrap justify-start gap-1 p-2"
 				>
 					{#each Array(category.maxItems) as _, index (index)}
 						{@const imageSrc = getPartImagePath(category.id, index)}
-						<ToggleGroup.Item
+						<RadioToggleGroup.Item
 							value={category.id + index.toString()}
 							aria-label={`Select ${category.name} ${index + 1}`}
 							class="h-14 w-14 p-0 transition-transform duration-75 ease-in-out active:scale-95"
@@ -134,9 +148,9 @@
 									loading="lazy"
 								/>
 							</div>
-						</ToggleGroup.Item>
+						</RadioToggleGroup.Item>
 					{/each}
-				</ToggleGroup.Root>
+				</RadioToggleGroup.Root>
 			</ScrollArea>
 		</Tabs.Content>
 	{/each}
