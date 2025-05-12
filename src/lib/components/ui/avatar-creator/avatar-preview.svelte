@@ -20,6 +20,6 @@
 	{#if svgDataUrl}
 		<Avatar.Image src={svgDataUrl} {alt} />
 	{:else}
-		<Avatar.Fallback>...</Avatar.Fallback>
+		<Avatar.Fallback></Avatar.Fallback>
 	{/if}
 </Avatar.Root>
