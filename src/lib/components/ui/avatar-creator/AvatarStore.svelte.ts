@@ -10,6 +10,7 @@ import {
 	type ColorName
 } from './types';
 import { generateAvatarSvgDataUrl } from './avatar-svg-utils';
+import { StateHistory } from 'runed';
 
 // localStorage key
 const AVATAR_CONFIG_STORAGE_KEY = 'notionAvatarConfig';
@@ -93,10 +94,16 @@ export interface IAvatar {
 	readonly lastSaveTimestamp: number | null;
 	readonly lastSaveData: AvatarConfiguration | null;
 
+	// History state
+	readonly canUndo: boolean;
+	readonly canRedo: boolean;
+
 	// Actions
 	generateRandomAvatar: (clearSaveData?: boolean) => void;
 	saveAvatar: () => void;
 	loadSavedConfig: (isInitialLoad?: boolean) => void;
+	undo: () => void;
+	redo: () => void;
 }
 
 export class AvatarStoreClass implements IAvatar {
@@ -114,6 +121,16 @@ export class AvatarStoreClass implements IAvatar {
 
 	// --- Categories (static) ---
 	readonly categories: Category[] = DEFAULT_CATEGORIES;
+
+	// --- History Tracking ---
+	private _history = $state<StateHistory<{
+		items: SelectedItems;
+		colorName: ColorName;
+		username: string;
+	}> | null>(null);
+
+	canUndo = $derived(this._history?.canUndo ?? false);
+	canRedo = $derived(this._history?.canRedo ?? false);
 
 	// --- Derived State Values ---
 	private _liveAvatarLayers = $derived(this._generateLayersFromItems(this.selectedItems));
@@ -137,6 +154,41 @@ export class AvatarStoreClass implements IAvatar {
 	constructor() {
 		// Initialize from saved configuration
 		this.loadSavedConfig(true);
+
+		// Setup the history tracker after the state is initialized
+		this._history = new StateHistory(
+			// Getter for the current state
+			() => ({
+				items: { ...this.selectedItems },
+				colorName: this.selectedAvatarColorName,
+				username: this.previewUsername
+			}),
+			// Setter for restoring a state
+			(state) => {
+				this.selectedItems = { ...state.items };
+				this.selectedAvatarColorName = state.colorName;
+				this.previewUsername = state.username;
+			}
+		);
+
+		// Track changes to key state properties
+		$effect(() => {
+			// This will track changes to selectedItems and take a snapshot when it changes
+			const _ = this.selectedItems;
+			this._captureHistorySnapshot();
+		});
+
+		$effect(() => {
+			// This will track changes to selectedAvatarColorName and take a snapshot when it changes
+			const _ = this.selectedAvatarColorName;
+			this._captureHistorySnapshot();
+		});
+
+		$effect(() => {
+			// This will track changes to previewUsername and take a snapshot
+			const _ = this.previewUsername;
+			this._captureHistorySnapshot();
+		});
 
 		// Setup effects to update SVG URLs when their respective layers change
 		$effect(() => {
@@ -165,6 +217,35 @@ export class AvatarStoreClass implements IAvatar {
 			})();
 		});
 	}
+
+	/**
+	 * Helper method to capture history snapshots with debouncing
+	 */
+	private _captureHistorySnapshot = (() => {
+		let pendingTimeout: ReturnType<typeof setTimeout> | null = null;
+		let isFirstRun = true;
+
+		return () => {
+			// Clear any existing timeout to debounce rapid changes
+			if (pendingTimeout) {
+				clearTimeout(pendingTimeout);
+			}
+
+			// Skip the initial snapshot when effects first run during initialization
+			if (isFirstRun) {
+				isFirstRun = false;
+				return;
+			}
+
+			// Debounce multiple changes that might happen in quick succession
+			pendingTimeout = setTimeout(() => {
+				pendingTimeout = null;
+				// StateHistory automatically tracks changes when the getter function is called
+				// We just need to log that a snapshot point was created
+				console.log('History state updated');
+			}, 300);
+		};
+	})();
 
 	/**
 	 * Generate layer paths from a set of selected items
@@ -260,6 +341,8 @@ export class AvatarStoreClass implements IAvatar {
 			this.lastSaveTimestamp = null;
 			this.lastSaveData = null;
 		}
+
+		// StateHistory will automatically track this through the effect
 	};
 
 	/**
@@ -291,6 +374,24 @@ export class AvatarStoreClass implements IAvatar {
 			}
 		} else {
 			console.warn('localStorage not available. Avatar configuration not saved.');
+		}
+	};
+
+	/**
+	 * Undo the last change to the avatar
+	 */
+	undo = () => {
+		if (this.canUndo && this._history) {
+			this._history.undo();
+		}
+	};
+
+	/**
+	 * Redo a previously undone change
+	 */
+	redo = () => {
+		if (this.canRedo && this._history) {
+			this._history.redo();
 		}
 	};
 }

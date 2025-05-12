@@ -10,6 +10,7 @@
 	import { onMount } from 'svelte';
 	import { avatarContext } from '$lib/contexts/avatarContext';
 	import { DEFAULT_CATEGORIES, type Category } from './types';
+	import { Undo2, Redo2 } from '@lucide/svelte';
 
 	// Get the Avatar store instance from context
 	const avatarStore = avatarContext.get();
@@ -58,12 +59,40 @@
 				<div
 					class="flex w-full flex-col items-end justify-between gap-4 sm:flex-row-reverse md:flex-row-reverse lg:flex-col lg:items-end"
 				>
-					<AnimatedDiceButton
-						onDicethrow={avatarStore.generateRandomAvatar}
-						ariaLabel="Generate random avatar"
-						variant="secondary"
-						size="icon"
-					/>
+					<div class="flex w-full justify-between gap-2">
+						<div class="flex gap-2">
+							<Button
+								variant="secondary"
+								size="icon"
+								disabled={!avatarStore.canUndo}
+								aria-label="Undo"
+								onclick={avatarStore.undo}
+								class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
+							>
+								<div class="flex h-full w-full items-center justify-center">
+									<Undo2 class="h-4 w-4" />
+								</div>
+							</Button>
+							<Button
+								variant="secondary"
+								size="icon"
+								disabled={!avatarStore.canRedo}
+								aria-label="Redo"
+								onclick={avatarStore.redo}
+								class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
+							>
+								<div class="flex h-full w-full items-center justify-center">
+									<Redo2 class="h-4 w-4" />
+								</div>
+							</Button>
+						</div>
+						<AnimatedDiceButton
+							onDicethrow={avatarStore.generateRandomAvatar}
+							ariaLabel="Generate random avatar"
+							variant="secondary"
+							size="icon"
+						/>
+					</div>
 					<ColorSelector bind:selectedColor={avatarStore.selectedAvatarColorName}></ColorSelector>
 				</div>
 				<div class="grid w-full flex-col items-start gap-1.5">
