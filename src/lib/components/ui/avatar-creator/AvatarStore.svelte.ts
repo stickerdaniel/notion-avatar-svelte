@@ -161,7 +161,6 @@ export class AvatarStoreClass implements IAvatar {
 			() => this.configJSON,
 			// Setter for restoring a state - set the JSON string
 			(jsonString) => {
-				console.log('StateHistory setter called with:', jsonString);
 				this.configJSON = jsonString;
 			}
 		);
@@ -244,18 +243,9 @@ export class AvatarStoreClass implements IAvatar {
 		const currentConfig = this._parseConfigJSON();
 		updater(currentConfig);
 
-		// Get the previous config JSON for comparison
-		const oldConfigJSON = this.configJSON;
-
 		// Update the config JSON
 		const newConfigJSON = JSON.stringify(currentConfig);
 		this.configJSON = newConfigJSON;
-
-		// Log the change for debugging
-		if (oldConfigJSON !== newConfigJSON) {
-			console.log('Config updated from:', oldConfigJSON);
-			console.log('Config updated to:', newConfigJSON);
-		}
 	};
 
 	/**
@@ -386,8 +376,6 @@ export class AvatarStoreClass implements IAvatar {
 				// Update save event state
 				this.lastSaveData = configToSave;
 				this.lastSaveTimestamp = Date.now();
-
-				console.log('Avatar configuration saved:', configToSave);
 			} catch (error) {
 				console.error('Failed to save avatar configuration:', error);
 			}
@@ -401,13 +389,11 @@ export class AvatarStoreClass implements IAvatar {
 	 */
 	undo = () => {
 		if (this.canUndo) {
-			console.log('Before undo, configJSON:', this.configJSON);
 			// Set the flag to prevent circular updates
 			this.isUndoRedoOperation = true;
 
 			// Perform the undo
 			this._history.undo();
-			console.log('After undo, configJSON:', this.configJSON);
 
 			// Reset the flag after a short delay to allow derived values to update
 			setTimeout(() => {
@@ -421,13 +407,11 @@ export class AvatarStoreClass implements IAvatar {
 	 */
 	redo = () => {
 		if (this.canRedo) {
-			console.log('Before redo, configJSON:', this.configJSON);
 			// Set the flag to prevent circular updates
 			this.isUndoRedoOperation = true;
 
 			// Perform the redo
 			this._history.redo();
-			console.log('After redo, configJSON:', this.configJSON);
 
 			// Reset the flag after a short delay to allow derived values to update
 			setTimeout(() => {
