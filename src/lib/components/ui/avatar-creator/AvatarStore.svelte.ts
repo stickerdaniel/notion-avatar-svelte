@@ -311,6 +311,9 @@ export class AvatarStoreClass implements IAvatar {
 	 * Generate random avatar configuration (affects live editing state only)
 	 */
 	generateRandomAvatar = (clearSaveData = true) => {
+		// Set the flag to prevent circular updates - we'll reuse the same flag
+		this.isUndoRedoOperation = true;
+
 		const newSelectedItems: SelectedItems = {};
 		const INCLUDE_GLASSES_PROBABILITY = 0.4;
 
@@ -353,6 +356,11 @@ export class AvatarStoreClass implements IAvatar {
 			this.lastSaveTimestamp = null;
 			this.lastSaveData = null;
 		}
+
+		// Reset the flag after a short delay to allow derived values to update
+		setTimeout(() => {
+			this.isUndoRedoOperation = false;
+		}, 0);
 	};
 
 	/**
