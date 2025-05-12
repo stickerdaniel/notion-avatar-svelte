@@ -1,7 +1,6 @@
 <script lang="ts">
 	import AvatarCreator from '$lib/components/ui/avatar-creator/avatar-creator.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import * as RadioToggleGroup from '$lib/components/ui/radio-toggle-group/index.js';
 	import { GithubIcon, SquareArrowOutUpRight } from '@lucide/svelte';
 
 	// Import the Avatar components and the context
@@ -9,9 +8,6 @@
 	import { avatarContext } from '$lib/contexts/avatarContext.js';
 
 	const avatarStore = avatarContext.get();
-
-	let selectedValue = $state('option1');
-	let multiSelectedValues = $state(['option1']);
 </script>
 
 <svelte:head>

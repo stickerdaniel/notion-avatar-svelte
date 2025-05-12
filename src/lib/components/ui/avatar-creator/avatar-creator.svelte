@@ -7,7 +7,6 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import AnimatedDiceButton from './animated-dice-button.svelte';
-	import { onMount } from 'svelte';
 	import { avatarContext } from '$lib/contexts/avatarContext';
 	import { DEFAULT_CATEGORIES, type Category } from './types';
 	import { Undo2, Redo2 } from '@lucide/svelte';
