@@ -1,7 +1,8 @@
 <script lang="ts">
 	import * as RadioToggleGroup from '$lib/components/ui/radio-toggle-group/index.js';
 	import { Check } from '@lucide/svelte';
-	import { COLORS, AVATAR_COLOR_STYLES, type ColorName } from './AvatarStore.svelte';
+	import { COLORS, type ColorName } from './types';
+	import { AVATAR_COLOR_STYLES } from './AvatarStore.svelte';
 	import { cn } from '$lib/utils';
 
 	let {
@@ -20,9 +21,9 @@
 				'transform rounded-full ring-2 ring-background transition-transform duration-75 ease-in-out',
 				'active:scale-95',
 				selectedColor === color ? '' : 'hover:scale-105 ',
-				AVATAR_COLOR_STYLES[color].base,
-				AVATAR_COLOR_STYLES[color].hover,
-				AVATAR_COLOR_STYLES[color].selected
+				AVATAR_COLOR_STYLES[color as ColorName].base,
+				AVATAR_COLOR_STYLES[color as ColorName].hover,
+				AVATAR_COLOR_STYLES[color as ColorName].selected
 			)}
 		>
 			{#if selectedColor === color}<Check color="" />{/if}

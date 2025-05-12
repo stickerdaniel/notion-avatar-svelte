@@ -8,20 +8,35 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import AnimatedDiceButton from './animated-dice-button.svelte';
 	import { onMount } from 'svelte';
-	import { Avatar } from './AvatarStore.svelte';
+	import { avatarContext } from '$lib/contexts/avatarContext';
 	import { DEFAULT_CATEGORIES, type Category } from './types';
 
-	// Instantiate the Avatar store
-	const avatarStore = new Avatar();
+	// Get the Avatar store instance from context
+	const avatarStore = avatarContext.get();
+	// Ensure avatarStore is not undefined, though context.get() should throw if not set.
+	if (!avatarStore) {
+		// This case should ideally not happen if context is set in layout
+		throw new Error('AvatarStore not found in context. Make sure it is set in a parent layout.');
+	}
 
-	// Local state for UI, like activeTab, if not part of the store's direct responsibility
-	// It seems DEFAULT_CATEGORIES is still useful for passing to CategorySelector if it expects the raw list.
 	const categories: Category[] = DEFAULT_CATEGORIES;
 	let activeTab = $state(categories[0]?.id ?? '');
 
-	// Generate a random avatar on initial load using the store's method
 	onMount(() => {
 		avatarStore.generateRandomAvatar();
+	});
+
+	// Optional: Example of reacting to the save event from the store
+	$effect(() => {
+		if (avatarStore.lastSaveTimestamp) {
+			console.log(
+				'Avatar saved at:',
+				new Date(avatarStore.lastSaveTimestamp).toLocaleTimeString(),
+				'Data:',
+				avatarStore.lastSaveData
+			);
+			// Here you could trigger a toast notification, etc.
+		}
 	});
 </script>
 
@@ -40,8 +55,8 @@
 			<div class="flex grow flex-col items-center gap-4">
 				<div class="flex grow items-center">
 					<AvatarPreview
-						layers={avatarStore.avatarLayers}
-						previewBgClass={avatarStore.avatarPreviewBgClass}
+						svgDataUrl={avatarStore.previewAvatarSvgDataUrl}
+						previewBgClass={avatarStore.previewAvatarBgClass}
 					/>
 				</div>
 				<div
@@ -57,7 +72,12 @@
 				</div>
 				<div class="grid w-full flex-col items-start gap-1.5">
 					<Label for="username">Your Username</Label>
-					<Input type="text" class="w-full" id="username" bind:value={avatarStore.username} />
+					<Input
+						type="text"
+						class="w-full"
+						id="username"
+						bind:value={avatarStore.previewUsername}
+					/>
 				</div>
 			</div>
 		</div>

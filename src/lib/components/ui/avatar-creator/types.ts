@@ -2,6 +2,19 @@
  * Avatar creator type definitions
  */
 
+// Color Definitions
+export const COLORS = [
+	'rose',
+	'pink',
+	'purple',
+	'blue',
+	'teal',
+	'green',
+	'yellow',
+	'orange'
+] as const;
+export type ColorName = (typeof COLORS)[number];
+
 /**
  * Represents a category of customizable avatar parts
  */
@@ -77,3 +90,12 @@ export const LAYER_ORDER: string[] = [
 	'accessories', // e.g., earrings
 	'glasses'
 ];
+
+export interface AvatarConfiguration {
+	version: number; // For potential future migrations
+	username: string;
+	items: SelectedItems; // Reuses the existing SelectedItems type
+	colorName: ColorName; // Now uses ColorName defined in this file
+	// Removed 'flipped' and 'userId' as per user request
+	// lastModified: string; // ISO date string, can be added if needed by save logic
+}

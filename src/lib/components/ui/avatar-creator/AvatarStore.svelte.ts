@@ -4,23 +4,16 @@ import {
 	getPreviewImagePath,
 	createDefaultSelectedItems,
 	type Category,
-	type SelectedItems
+	type SelectedItems,
+	type AvatarConfiguration,
+	COLORS,
+	type ColorName
 } from './types';
+import { generateAvatarSvgDataUrl } from './avatar-svg-utils';
 
-// Centralized Color Definitions
-export const COLORS = [
-	'rose',
-	'pink',
-	'purple',
-	'blue',
-	'teal',
-	'green',
-	'yellow',
-	'orange'
-] as const;
-export type ColorName = (typeof COLORS)[number];
+// localStorage key
+const AVATAR_CONFIG_STORAGE_KEY = 'notionAvatarConfig';
 
-// Renamed from COLOR_SELECTOR_CLASSES to AVATAR_COLOR_STYLES
 export const AVATAR_COLOR_STYLES: Record<
 	ColorName,
 	{ base: string; hover: string; selected: string }
@@ -77,86 +70,227 @@ export const AVATAR_COLOR_STYLES: Record<
 
 // Interface for the Avatar store
 export interface IAvatar {
+	// Live editing state
+	previewUsername: string;
 	selectedItems: SelectedItems;
-	username: string;
 	selectedAvatarColorName: ColorName;
-	readonly categories: Category[]; // categories are not meant to be changed from outside
-	readonly avatarLayers: string[]; // Derived, so readonly from an external perspective
-	readonly avatarPreviewBgClass: string; // Derived, so readonly
 
-	generateRandomAvatar: () => void;
+	// Derived from live state (for preview inside creator)
+	readonly previewAvatarSvgDataUrl: string;
+	readonly previewAvatarBgClass: string;
+
+	// Saved state
+	readonly savedAvatarConfiguration: AvatarConfiguration | null;
+	readonly username: string;
+	readonly savedSelectedItems: SelectedItems | null;
+	readonly savedSelectedAvatarColorName: ColorName | null;
+
+	// Derived from saved state (for display elsewhere)
+	readonly avatarSvgDataUrl: string;
+	readonly avatarBgClass: string;
+
+	// Eventing
+	readonly lastSaveTimestamp: number | null;
+	readonly lastSaveData: AvatarConfiguration | null;
+
+	// Actions
+	generateRandomAvatar: (clearSaveData?: boolean) => void;
 	saveAvatar: () => void;
+	loadSavedConfig: (isInitialLoad?: boolean) => void;
 }
 
-export class Avatar implements IAvatar {
+export class AvatarStoreClass implements IAvatar {
+	// --- Live Editing State ---
+	previewUsername = $state('');
 	selectedItems = $state<SelectedItems>(createDefaultSelectedItems());
-	username = $state('');
 	selectedAvatarColorName = $state<ColorName>(COLORS[0]);
-	categories: Category[] = DEFAULT_CATEGORIES;
+
+	// --- Saved State ---
+	savedAvatarConfiguration = $state<AvatarConfiguration | null>(null);
+
+	// --- Eventing State ---
+	lastSaveTimestamp = $state<number | null>(null);
+	lastSaveData = $state<AvatarConfiguration | null>(null);
+
+	// --- Categories (static) ---
+	readonly categories: Category[] = DEFAULT_CATEGORIES;
+
+	// --- Derived State Values ---
+	private _liveAvatarLayers = $derived(this._generateLayersFromItems(this.selectedItems));
+	previewAvatarSvgDataUrl = $state('');
+	previewAvatarBgClass = $derived(
+		AVATAR_COLOR_STYLES[this.selectedAvatarColorName]?.base || AVATAR_COLOR_STYLES[COLORS[0]].base
+	);
+
+	private _savedAvatarLayers = $derived(
+		this._generateLayersFromItems(this.savedAvatarConfiguration?.items ?? null)
+	);
+	avatarSvgDataUrl = $state('');
+	avatarBgClass = $derived(
+		AVATAR_COLOR_STYLES[this.savedAvatarConfiguration?.colorName ?? COLORS[0]]?.base ||
+			AVATAR_COLOR_STYLES[COLORS[0]].base
+	);
+	username = $derived(this.savedAvatarConfiguration?.username || '');
+	savedSelectedItems = $derived(this.savedAvatarConfiguration?.items ?? null);
+	savedSelectedAvatarColorName = $derived(this.savedAvatarConfiguration?.colorName ?? null);
 
 	constructor() {
-		//this.generateRandomAvatar();
+		// Initialize from saved configuration
+		this.loadSavedConfig(true);
+
+		// Setup effects to update SVG URLs when their respective layers change
+		$effect(() => {
+			const layers = this._liveAvatarLayers;
+			if (layers.length === 0) {
+				this.previewAvatarSvgDataUrl = '';
+				return;
+			}
+
+			// Use IIFE for the async operation
+			(async () => {
+				this.previewAvatarSvgDataUrl = await generateAvatarSvgDataUrl(layers);
+			})();
+		});
+
+		$effect(() => {
+			const layers = this._savedAvatarLayers;
+			if (layers.length === 0) {
+				this.avatarSvgDataUrl = '';
+				return;
+			}
+
+			// Use IIFE for the async operation
+			(async () => {
+				this.avatarSvgDataUrl = await generateAvatarSvgDataUrl(layers);
+			})();
+		});
 	}
 
-	avatarLayers = $derived(this._generateAvatarLayers());
-	avatarPreviewBgClass = $derived.by(() => {
-		// Ensure selectedAvatarColorName is a valid key, otherwise fallback to the first color
-		const colorKey = COLORS.includes(this.selectedAvatarColorName)
-			? this.selectedAvatarColorName
-			: COLORS[0];
-		const newClass = AVATAR_COLOR_STYLES[colorKey].base;
-		return newClass;
-	});
+	/**
+	 * Generate layer paths from a set of selected items
+	 */
+	private _generateLayersFromItems(items: SelectedItems | null): string[] {
+		if (!items) return [];
 
-	private _generateAvatarLayers(): string[] {
 		return LAYER_ORDER.map((categoryId) => {
-			const selectedIndex = this.selectedItems[categoryId];
+			const selectedIndex = items[categoryId];
 			if (selectedIndex !== null && selectedIndex >= 0) {
-				// This uses getPreviewImagePath, consistent with original generateAvatarLayers for avatar-creator
 				return getPreviewImagePath(categoryId, selectedIndex);
 			}
 			return null;
 		}).filter((path): path is string => path !== null);
 	}
 
-	generateRandomAvatar = () => {
+	/**
+	 * Load saved avatar configuration from localStorage
+	 */
+	loadSavedConfig = (isInitialLoad = false) => {
+		if (typeof window !== 'undefined') {
+			try {
+				const storedConfigJson = localStorage.getItem(AVATAR_CONFIG_STORAGE_KEY);
+				if (storedConfigJson) {
+					const loadedConfig = JSON.parse(storedConfigJson) as AvatarConfiguration;
+
+					// Validate colorName
+					if (!COLORS.includes(loadedConfig.colorName as ColorName)) {
+						loadedConfig.colorName = COLORS[0];
+					}
+
+					// Update saved configuration
+					this.savedAvatarConfiguration = loadedConfig;
+
+					// Initialize live editing state from saved config
+					this.previewUsername = loadedConfig.username;
+					this.selectedItems = { ...loadedConfig.items };
+					this.selectedAvatarColorName = loadedConfig.colorName;
+				} else if (isInitialLoad) {
+					// Generate random if no saved config exists and it's the initial load
+					this.generateRandomAvatar(false);
+				}
+			} catch (error) {
+				console.error('Failed to load avatar configuration:', error);
+				if (isInitialLoad) this.generateRandomAvatar(false);
+			}
+		} else if (isInitialLoad) {
+			// Handle SSR case
+			this.generateRandomAvatar(false);
+		}
+	};
+
+	/**
+	 * Generate random avatar configuration (affects live editing state only)
+	 */
+	generateRandomAvatar = (clearSaveData = true) => {
 		const newSelectedItems: SelectedItems = {};
 		const INCLUDE_GLASSES_PROBABILITY = 0.4;
 
 		for (const category of this.categories) {
 			let selectedItemIndex: number;
+
 			switch (category.id) {
 				case 'beard':
 				case 'accessories':
 				case 'details':
-					selectedItemIndex = 0; // Default to 'none' (index 0)
+					selectedItemIndex = 0; // Default to none
 					break;
+
 				case 'glasses':
 					if (Math.random() < INCLUDE_GLASSES_PROBABILITY && category.maxItems > 1) {
-						selectedItemIndex = Math.floor(Math.random() * (category.maxItems - 1)) + 1; // Other than 'none'
+						selectedItemIndex = Math.floor(Math.random() * (category.maxItems - 1)) + 1;
 					} else {
-						selectedItemIndex = 0; // 'none'
+						selectedItemIndex = 0;
 					}
 					break;
+
 				default:
 					selectedItemIndex =
 						category.maxItems > 0 ? Math.floor(Math.random() * category.maxItems) : 0;
 					break;
 			}
+
 			newSelectedItems[category.id] = selectedItemIndex;
 		}
-		this.selectedItems = newSelectedItems;
 
-		const randomColorIndex = Math.floor(Math.random() * COLORS.length);
-		this.selectedAvatarColorName = COLORS[randomColorIndex];
+		// Update live state
+		this.selectedItems = newSelectedItems;
+		this.selectedAvatarColorName = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+		// Optionally clear save event data
+		if (clearSaveData) {
+			this.lastSaveTimestamp = null;
+			this.lastSaveData = null;
+		}
 	};
 
+	/**
+	 * Save the current live editing state to localStorage and update saved state
+	 */
 	saveAvatar = () => {
-		console.log('Saving avatar configuration:', {
-			username: this.username,
-			selectedItems: this.selectedItems,
-			color: this.selectedAvatarColorName
-		});
-		// Future: Add logic to save the configuration (e.g., API call, localStorage)
+		const currentLiveConfiguration: AvatarConfiguration = {
+			version: 1,
+			username: this.previewUsername,
+			items: { ...this.selectedItems },
+			colorName: this.selectedAvatarColorName
+		};
+
+		if (typeof window !== 'undefined') {
+			try {
+				// Save to localStorage
+				localStorage.setItem(AVATAR_CONFIG_STORAGE_KEY, JSON.stringify(currentLiveConfiguration));
+
+				// Update in-memory saved state
+				this.savedAvatarConfiguration = currentLiveConfiguration;
+
+				// Update save event state
+				this.lastSaveData = currentLiveConfiguration;
+				this.lastSaveTimestamp = Date.now();
+
+				console.log('Avatar configuration saved:', currentLiveConfiguration);
+			} catch (error) {
+				console.error('Failed to save avatar configuration:', error);
+			}
+		} else {
+			console.warn('localStorage not available. Avatar configuration not saved.');
+		}
 	};
 }
