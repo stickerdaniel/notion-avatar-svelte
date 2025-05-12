@@ -16,10 +16,18 @@
 		categories: Category[];
 	} = $props();
 
-	// Initialize selectedValues for each category, defaulting to the first item (index "0").
-	const initialSelectedValues = Object.fromEntries(
-		categories.map((category) => [category.id, category.id + '0'])
-	);
+	// Initialize selectedValues for each category, but only if they don't exist in selectedItems
+	// This prevents overwriting loaded values from localStorage
+	const initialSelectedValues: Record<string, string> = {};
+	categories.forEach((category) => {
+		const initialIndex =
+			selectedItems &&
+			selectedItems[category.id] !== undefined &&
+			selectedItems[category.id] !== null
+				? Number(selectedItems[category.id])
+				: 0;
+		initialSelectedValues[category.id] = category.id + initialIndex.toString();
+	});
 	let selectedValues = $state(initialSelectedValues);
 
 	// Watch for changes in selectedValues and update selectedItems

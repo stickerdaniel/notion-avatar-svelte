@@ -22,10 +22,6 @@
 	const categories: Category[] = DEFAULT_CATEGORIES;
 	let activeTab = $state(categories[0]?.id ?? '');
 
-	onMount(() => {
-		avatarStore.generateRandomAvatar();
-	});
-
 	// Optional: Example of reacting to the save event from the store
 	$effect(() => {
 		if (avatarStore.lastSaveTimestamp) {
