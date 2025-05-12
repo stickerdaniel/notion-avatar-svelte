@@ -8,7 +8,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import AnimatedDiceButton from './animated-dice-button.svelte';
 	import { avatarContext } from '$lib/contexts/avatarContext';
-	import { DEFAULT_CATEGORIES, type Category } from './types';
+	import { DEFAULT_CATEGORIES, type Category, type SelectedItems, type ColorName } from './types';
 	import { Undo2, Redo2 } from '@lucide/svelte';
 
 	// Get the Avatar store instance from context
@@ -21,6 +21,46 @@
 
 	const categories: Category[] = DEFAULT_CATEGORIES;
 	let activeTab = $state(categories[0]?.id ?? '');
+
+	// Local copies of state that we'll sync with the store
+	let selectedItems = $state<SelectedItems>({ ...avatarStore.currentConfig.items });
+	let selectedColor = $state<ColorName>(avatarStore.currentConfig.colorName);
+	let username = $state<string>(avatarStore.currentConfig.username);
+
+	// Watch for changes in our local state and update the store
+	$effect(() => {
+		// Skip updates if an undo/redo operation is in progress
+		if (avatarStore.isUndoRedoOperation) return;
+
+		avatarStore.updateConfig((config) => {
+			config.items = selectedItems;
+		});
+	});
+
+	$effect(() => {
+		// Skip updates if an undo/redo operation is in progress
+		if (avatarStore.isUndoRedoOperation) return;
+
+		avatarStore.updateConfig((config) => {
+			config.colorName = selectedColor;
+		});
+	});
+
+	$effect(() => {
+		// Skip updates if an undo/redo operation is in progress
+		if (avatarStore.isUndoRedoOperation) return;
+
+		avatarStore.updateConfig((config) => {
+			config.username = username;
+		});
+	});
+
+	// Watch for changes in the store and update our local state
+	$effect(() => {
+		selectedItems = { ...avatarStore.currentConfig.items };
+		selectedColor = avatarStore.currentConfig.colorName;
+		username = avatarStore.currentConfig.username;
+	});
 
 	// Optional: Example of reacting to the save event from the store
 	$effect(() => {
@@ -43,11 +83,7 @@
 	</Card.Header>
 	<Card.Content>
 		<div class="flex w-full flex-col-reverse justify-center gap-4 lg:flex-row">
-			<CategorySelector
-				bind:activeTab
-				bind:selectedItems={avatarStore.selectedItems}
-				{categories}
-			/>
+			<CategorySelector bind:activeTab bind:selectedItems {categories} />
 			<div class="flex grow flex-col items-center gap-4">
 				<div class="flex grow items-center">
 					<AvatarPreview
@@ -92,16 +128,11 @@
 							size="icon"
 						/>
 					</div>
-					<ColorSelector bind:selectedColor={avatarStore.selectedAvatarColorName}></ColorSelector>
+					<ColorSelector bind:selectedColor></ColorSelector>
 				</div>
 				<div class="grid w-full flex-col items-start gap-1.5">
 					<Label for="username">Your Username</Label>
-					<Input
-						type="text"
-						class="w-full"
-						id="username"
-						bind:value={avatarStore.previewUsername}
-					/>
+					<Input type="text" class="w-full" id="username" bind:value={username} />
 				</div>
 			</div>
 		</div>

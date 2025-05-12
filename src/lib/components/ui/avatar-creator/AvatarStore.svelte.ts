@@ -71,10 +71,8 @@ export const AVATAR_COLOR_STYLES: Record<
 
 // Interface for the Avatar store
 export interface IAvatar {
-	// Live editing state
-	previewUsername: string;
-	selectedItems: SelectedItems;
-	selectedAvatarColorName: ColorName;
+	// Live editing state - parsed from configJSON
+	readonly currentConfig: AvatarConfiguration;
 
 	// Derived from live state (for preview inside creator)
 	readonly previewAvatarSvgDataUrl: string;
@@ -82,9 +80,6 @@ export interface IAvatar {
 
 	// Saved state
 	readonly savedAvatarConfiguration: AvatarConfiguration | null;
-	readonly username: string;
-	readonly savedSelectedItems: SelectedItems | null;
-	readonly savedSelectedAvatarColorName: ColorName | null;
 
 	// Derived from saved state (for display elsewhere)
 	readonly avatarSvgDataUrl: string;
@@ -98,7 +93,8 @@ export interface IAvatar {
 	readonly canUndo: boolean;
 	readonly canRedo: boolean;
 
-	// Actions
+	// Actions for modifying state
+	updateConfig: (updater: (config: AvatarConfiguration) => void) => void;
 	generateRandomAvatar: (clearSaveData?: boolean) => void;
 	saveAvatar: () => void;
 	loadSavedConfig: (isInitialLoad?: boolean) => void;
@@ -107,10 +103,14 @@ export interface IAvatar {
 }
 
 export class AvatarStoreClass implements IAvatar {
-	// --- Live Editing State ---
-	previewUsername = $state('');
-	selectedItems = $state<SelectedItems>(createDefaultSelectedItems());
-	selectedAvatarColorName = $state<ColorName>(COLORS[0]);
+	// --- The single source of truth: config as JSON string ---
+	configJSON = $state<string>('');
+
+	// Flag to indicate if changes are coming from undo/redo
+	isUndoRedoOperation = $state(false);
+
+	// Parsed version of the JSON string (derived)
+	currentConfig = $derived<AvatarConfiguration>(this._parseConfigJSON());
 
 	// --- Saved State ---
 	savedAvatarConfiguration = $state<AvatarConfiguration | null>(null);
@@ -123,20 +123,20 @@ export class AvatarStoreClass implements IAvatar {
 	readonly categories: Category[] = DEFAULT_CATEGORIES;
 
 	// --- History Tracking ---
-	private _history = $state<StateHistory<{
-		items: SelectedItems;
-		colorName: ColorName;
-		username: string;
-	}> | null>(null);
+	private _history: StateHistory<string> = null!;
 
-	canUndo = $derived(this._history?.canUndo ?? false);
-	canRedo = $derived(this._history?.canRedo ?? false);
+	// Initialize properties with computed getters that depend on _history
+	private _getCanUndo = () => this._history?.canUndo ?? false;
+	private _getCanRedo = () => this._history?.canRedo ?? false;
+
+	canUndo = $derived(this._getCanUndo());
+	canRedo = $derived(this._getCanRedo());
 
 	// --- Derived State Values ---
-	private _liveAvatarLayers = $derived(this._generateLayersFromItems(this.selectedItems));
+	private _liveAvatarLayers = $derived(this._generateLayersFromItems(this.currentConfig.items));
 	previewAvatarSvgDataUrl = $state('');
 	previewAvatarBgClass = $derived(
-		AVATAR_COLOR_STYLES[this.selectedAvatarColorName]?.base || AVATAR_COLOR_STYLES[COLORS[0]].base
+		AVATAR_COLOR_STYLES[this.currentConfig.colorName]?.base || AVATAR_COLOR_STYLES[COLORS[0]].base
 	);
 
 	private _savedAvatarLayers = $derived(
@@ -147,48 +147,24 @@ export class AvatarStoreClass implements IAvatar {
 		AVATAR_COLOR_STYLES[this.savedAvatarConfiguration?.colorName ?? COLORS[0]]?.base ||
 			AVATAR_COLOR_STYLES[COLORS[0]].base
 	);
-	username = $derived(this.savedAvatarConfiguration?.username || '');
-	savedSelectedItems = $derived(this.savedAvatarConfiguration?.items ?? null);
-	savedSelectedAvatarColorName = $derived(this.savedAvatarConfiguration?.colorName ?? null);
 
 	constructor() {
+		// Initialize with default configuration
+		this._initializeDefaultConfig();
+
 		// Initialize from saved configuration
 		this.loadSavedConfig(true);
 
-		// Setup the history tracker after the state is initialized
+		// Setup the history tracker - must be after config initialization
 		this._history = new StateHistory(
-			// Getter for the current state
-			() => ({
-				items: { ...this.selectedItems },
-				colorName: this.selectedAvatarColorName,
-				username: this.previewUsername
-			}),
-			// Setter for restoring a state
-			(state) => {
-				this.selectedItems = { ...state.items };
-				this.selectedAvatarColorName = state.colorName;
-				this.previewUsername = state.username;
+			// Getter for the current state - just return the JSON string
+			() => this.configJSON,
+			// Setter for restoring a state - set the JSON string
+			(jsonString) => {
+				console.log('StateHistory setter called with:', jsonString);
+				this.configJSON = jsonString;
 			}
 		);
-
-		// Track changes to key state properties
-		$effect(() => {
-			// This will track changes to selectedItems and take a snapshot when it changes
-			const _ = this.selectedItems;
-			this._captureHistorySnapshot();
-		});
-
-		$effect(() => {
-			// This will track changes to selectedAvatarColorName and take a snapshot when it changes
-			const _ = this.selectedAvatarColorName;
-			this._captureHistorySnapshot();
-		});
-
-		$effect(() => {
-			// This will track changes to previewUsername and take a snapshot
-			const _ = this.previewUsername;
-			this._captureHistorySnapshot();
-		});
 
 		// Setup effects to update SVG URLs when their respective layers change
 		$effect(() => {
@@ -219,33 +195,68 @@ export class AvatarStoreClass implements IAvatar {
 	}
 
 	/**
-	 * Helper method to capture history snapshots with debouncing
+	 * Initialize with default configuration
 	 */
-	private _captureHistorySnapshot = (() => {
-		let pendingTimeout: ReturnType<typeof setTimeout> | null = null;
-		let isFirstRun = true;
-
-		return () => {
-			// Clear any existing timeout to debounce rapid changes
-			if (pendingTimeout) {
-				clearTimeout(pendingTimeout);
-			}
-
-			// Skip the initial snapshot when effects first run during initialization
-			if (isFirstRun) {
-				isFirstRun = false;
-				return;
-			}
-
-			// Debounce multiple changes that might happen in quick succession
-			pendingTimeout = setTimeout(() => {
-				pendingTimeout = null;
-				// StateHistory automatically tracks changes when the getter function is called
-				// We just need to log that a snapshot point was created
-				console.log('History state updated');
-			}, 300);
+	private _initializeDefaultConfig(): void {
+		const defaultConfig: AvatarConfiguration = {
+			version: 1,
+			username: '',
+			items: createDefaultSelectedItems(),
+			colorName: COLORS[0],
+			lastModified: new Date().toISOString()
 		};
-	})();
+
+		this.configJSON = JSON.stringify(defaultConfig);
+	}
+
+	/**
+	 * Parse the JSON string to an AvatarConfiguration object
+	 */
+	private _parseConfigJSON(): AvatarConfiguration {
+		try {
+			if (!this.configJSON) {
+				return this._createDefaultConfig();
+			}
+			return JSON.parse(this.configJSON) as AvatarConfiguration;
+		} catch (error) {
+			console.error('Error parsing config JSON:', error);
+			return this._createDefaultConfig();
+		}
+	}
+
+	/**
+	 * Create a default config object
+	 */
+	private _createDefaultConfig(): AvatarConfiguration {
+		return {
+			version: 1,
+			username: '',
+			items: createDefaultSelectedItems(),
+			colorName: COLORS[0],
+			lastModified: new Date().toISOString()
+		};
+	}
+
+	/**
+	 * Update the configuration with a callback function
+	 */
+	updateConfig = (updater: (config: AvatarConfiguration) => void): void => {
+		const currentConfig = this._parseConfigJSON();
+		updater(currentConfig);
+
+		// Get the previous config JSON for comparison
+		const oldConfigJSON = this.configJSON;
+
+		// Update the config JSON
+		const newConfigJSON = JSON.stringify(currentConfig);
+		this.configJSON = newConfigJSON;
+
+		// Log the change for debugging
+		if (oldConfigJSON !== newConfigJSON) {
+			console.log('Config updated from:', oldConfigJSON);
+			console.log('Config updated to:', newConfigJSON);
+		}
+	};
 
 	/**
 	 * Generate layer paths from a set of selected items
@@ -281,9 +292,7 @@ export class AvatarStoreClass implements IAvatar {
 					this.savedAvatarConfiguration = loadedConfig;
 
 					// Initialize live editing state from saved config
-					this.previewUsername = loadedConfig.username;
-					this.selectedItems = { ...loadedConfig.items };
-					this.selectedAvatarColorName = loadedConfig.colorName;
+					this.configJSON = JSON.stringify(loadedConfig);
 				} else if (isInitialLoad) {
 					// Generate random if no saved config exists and it's the initial load
 					this.generateRandomAvatar(false);
@@ -332,43 +341,45 @@ export class AvatarStoreClass implements IAvatar {
 			newSelectedItems[category.id] = selectedItemIndex;
 		}
 
-		// Update live state
-		this.selectedItems = newSelectedItems;
-		this.selectedAvatarColorName = COLORS[Math.floor(Math.random() * COLORS.length)];
+		// Update live state through the updateConfig method
+		this.updateConfig((config) => {
+			config.items = newSelectedItems;
+			config.colorName = COLORS[Math.floor(Math.random() * COLORS.length)];
+			config.lastModified = new Date().toISOString();
+		});
 
 		// Optionally clear save event data
 		if (clearSaveData) {
 			this.lastSaveTimestamp = null;
 			this.lastSaveData = null;
 		}
-
-		// StateHistory will automatically track this through the effect
 	};
 
 	/**
 	 * Save the current live editing state to localStorage and update saved state
 	 */
 	saveAvatar = () => {
-		const currentLiveConfiguration: AvatarConfiguration = {
-			version: 1,
-			username: this.previewUsername,
-			items: { ...this.selectedItems },
-			colorName: this.selectedAvatarColorName
+		const currentConfig = this._parseConfigJSON();
+		const configToSave = {
+			...currentConfig,
+			lastModified: new Date().toISOString()
 		};
 
 		if (typeof window !== 'undefined') {
 			try {
+				const configJSON = JSON.stringify(configToSave);
+
 				// Save to localStorage
-				localStorage.setItem(AVATAR_CONFIG_STORAGE_KEY, JSON.stringify(currentLiveConfiguration));
+				localStorage.setItem(AVATAR_CONFIG_STORAGE_KEY, configJSON);
 
 				// Update in-memory saved state
-				this.savedAvatarConfiguration = currentLiveConfiguration;
+				this.savedAvatarConfiguration = configToSave;
 
 				// Update save event state
-				this.lastSaveData = currentLiveConfiguration;
+				this.lastSaveData = configToSave;
 				this.lastSaveTimestamp = Date.now();
 
-				console.log('Avatar configuration saved:', currentLiveConfiguration);
+				console.log('Avatar configuration saved:', configToSave);
 			} catch (error) {
 				console.error('Failed to save avatar configuration:', error);
 			}
@@ -381,8 +392,19 @@ export class AvatarStoreClass implements IAvatar {
 	 * Undo the last change to the avatar
 	 */
 	undo = () => {
-		if (this.canUndo && this._history) {
+		if (this.canUndo) {
+			console.log('Before undo, configJSON:', this.configJSON);
+			// Set the flag to prevent circular updates
+			this.isUndoRedoOperation = true;
+
+			// Perform the undo
 			this._history.undo();
+			console.log('After undo, configJSON:', this.configJSON);
+
+			// Reset the flag after a short delay to allow derived values to update
+			setTimeout(() => {
+				this.isUndoRedoOperation = false;
+			}, 0);
 		}
 	};
 
@@ -390,8 +412,19 @@ export class AvatarStoreClass implements IAvatar {
 	 * Redo a previously undone change
 	 */
 	redo = () => {
-		if (this.canRedo && this._history) {
+		if (this.canRedo) {
+			console.log('Before redo, configJSON:', this.configJSON);
+			// Set the flag to prevent circular updates
+			this.isUndoRedoOperation = true;
+
+			// Perform the redo
 			this._history.redo();
+			console.log('After redo, configJSON:', this.configJSON);
+
+			// Reset the flag after a short delay to allow derived values to update
+			setTimeout(() => {
+				this.isUndoRedoOperation = false;
+			}, 0);
 		}
 	};
 }

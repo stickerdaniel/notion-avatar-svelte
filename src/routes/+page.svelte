@@ -47,6 +47,34 @@
 			<AvatarCreator />
 
 			{#if avatarStore}
+				<!-- JSON Debug Display -->
+				<div class="mb-4 mt-6 overflow-hidden rounded-lg border bg-secondary/10 p-4">
+					<div class="flex items-center justify-between">
+						<h3 class="text-sm font-semibold">Current Configuration JSON</h3>
+						<span class="text-xs text-muted-foreground">For debugging</span>
+					</div>
+					<div class="mt-2 max-h-36 overflow-auto">
+						<pre class="text-xs">{JSON.stringify(JSON.parse(avatarStore.configJSON), null, 2)}</pre>
+					</div>
+					<!-- Add Undo/Redo buttons -->
+					<div class="mt-2 flex justify-end gap-2">
+						<button
+							class="rounded border px-2 py-1 text-xs disabled:opacity-50"
+							disabled={!avatarStore.canUndo}
+							onclick={avatarStore.undo}
+						>
+							Undo
+						</button>
+						<button
+							class="rounded border px-2 py-1 text-xs disabled:opacity-50"
+							disabled={!avatarStore.canRedo}
+							onclick={avatarStore.redo}
+						>
+							Redo
+						</button>
+					</div>
+				</div>
+
 				<div class="mt-10 flex flex-col gap-8">
 					<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 						<!-- Example 1: Live Preview (Current Editing State) -->
@@ -59,27 +87,27 @@
 								{#if avatarStore.previewAvatarSvgDataUrl}
 									<Avatar.Image
 										src={avatarStore.previewAvatarSvgDataUrl}
-										alt={avatarStore.previewUsername || 'User Avatar'}
+										alt={avatarStore.currentConfig.username || 'User Avatar'}
 									/>
 								{:else}
 									<Avatar.Fallback class="text-2xl">
-										{avatarStore.previewUsername
-											? avatarStore.previewUsername.substring(0, 2).toUpperCase()
+										{avatarStore.currentConfig.username
+											? avatarStore.currentConfig.username.substring(0, 2).toUpperCase()
 											: 'AV'}
 									</Avatar.Fallback>
 								{/if}
 							</Avatar.Root>
-							{#if avatarStore.previewUsername}
-								<p class="mt-2 text-lg font-medium">{avatarStore.previewUsername}</p>
+							{#if avatarStore.currentConfig.username}
+								<p class="mt-2 text-lg font-medium">{avatarStore.currentConfig.username}</p>
 							{/if}
 							<p class="text-xs text-muted-foreground">
-								Background: {avatarStore.selectedAvatarColorName}
+								Background: {avatarStore.currentConfig.colorName}
 							</p>
 							<div class="mt-2 w-full rounded-md bg-secondary/50 p-1.5 text-xs">
 								<p class="font-semibold">How to access:</p>
 								<p class="mt-1 font-mono text-[10px]">avatarStore.previewAvatarSvgDataUrl</p>
 								<p class="font-mono text-[10px]">avatarStore.previewAvatarBgClass</p>
-								<p class="font-mono text-[10px]">avatarStore.previewUsername</p>
+								<p class="font-mono text-[10px]">avatarStore.currentConfig.username</p>
 							</div>
 						</div>
 
@@ -93,27 +121,29 @@
 								{#if avatarStore.avatarSvgDataUrl}
 									<Avatar.Image
 										src={avatarStore.avatarSvgDataUrl}
-										alt={avatarStore.username || 'User Avatar'}
+										alt={avatarStore.savedAvatarConfiguration?.username || 'User Avatar'}
 									/>
 								{:else}
 									<Avatar.Fallback class="text-2xl">
-										{avatarStore.username
-											? avatarStore.username.substring(0, 2).toUpperCase()
+										{avatarStore.savedAvatarConfiguration?.username
+											? avatarStore.savedAvatarConfiguration.username.substring(0, 2).toUpperCase()
 											: 'AV'}
 									</Avatar.Fallback>
 								{/if}
 							</Avatar.Root>
-							{#if avatarStore.username}
-								<p class="mt-2 text-lg font-medium">{avatarStore.username}</p>
+							{#if avatarStore.savedAvatarConfiguration?.username}
+								<p class="mt-2 text-lg font-medium">
+									{avatarStore.savedAvatarConfiguration.username}
+								</p>
 							{/if}
 							<p class="text-xs text-muted-foreground">
-								Background: {avatarStore.savedSelectedAvatarColorName ?? 'N/A'}
+								Background: {avatarStore.savedAvatarConfiguration?.colorName ?? 'N/A'}
 							</p>
 							<div class="mt-2 w-full rounded-md bg-secondary/50 p-1.5 text-xs">
 								<p class="font-semibold">How to access:</p>
 								<p class="mt-1 font-mono text-[10px]">avatarStore.avatarSvgDataUrl</p>
 								<p class="font-mono text-[10px]">avatarStore.avatarBgClass</p>
-								<p class="font-mono text-[10px]">avatarStore.username</p>
+								<p class="font-mono text-[10px]">avatarStore.savedAvatarConfiguration?.username</p>
 							</div>
 						</div>
 					</div>
