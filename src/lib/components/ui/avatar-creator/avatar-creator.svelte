@@ -8,7 +8,7 @@
 	import AnimatedDiceButton from './animated-dice-button.svelte';
 	import { avatarContext } from '$lib/contexts/avatarContext';
 	import { DEFAULT_CATEGORIES, type Category, type ColorName, type SelectedItems } from './types';
-	import { Undo2, Redo2 } from '@lucide/svelte';
+	import { Undo, Redo } from '@lucide/svelte';
 	import * as Avatar from '$lib/components/ui/avatar';
 
 	// Get the Avatar store instance from context
@@ -78,7 +78,7 @@
 							onclick={avatarStore.undo}
 							class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
 						>
-							<Undo2 />
+							<Undo />
 						</Button>
 						<Button
 							variant="secondary"
@@ -88,7 +88,7 @@
 							onclick={avatarStore.redo}
 							class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
 						>
-							<Redo2 />
+							<Redo />
 						</Button>
 						<AnimatedDiceButton
 							onDicethrow={avatarStore.generateRandomAvatar}

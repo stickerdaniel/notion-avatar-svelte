@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import { GithubIcon, Redo, SquareArrowOutUpRight, Undo } from '@lucide/svelte';
+	import { Download, GithubIcon, Redo, SquareArrowOutUpRight, Undo, Upload } from '@lucide/svelte';
 
 	// Import the new Avatar components and the context
 	import * as Avatar from '$lib/components/ui/avatar';
@@ -9,8 +9,64 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import AvatarCreator from '$lib/components/ui/avatar-creator/avatar-creator.svelte';
 	import { Separator } from '$lib/components/ui/separator';
+	import AnimatedDiceButton from '$lib/components/ui/avatar-creator/animated-dice-button.svelte';
 
 	const avatarStore = avatarContext.get();
+
+	// Download avatar config as JSON file
+	const downloadConfig = () => {
+		const config = avatarStore.configJSON;
+		const blob = new Blob([config], { type: 'application/json' });
+		const url = URL.createObjectURL(blob);
+
+		// Get username from config and sanitize it for filename
+		const configObj = JSON.parse(config);
+		const username = configObj.username?.trim() || 'user';
+		const sanitizedUsername = username.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `${sanitizedUsername}-notion-avatar-config.json`;
+		document.body.appendChild(a);
+		a.click();
+
+		// Clean up
+		setTimeout(() => {
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		}, 0);
+	};
+
+	// Upload avatar config from JSON file
+	const uploadConfig = () => {
+		const input = document.createElement('input');
+		input.type = 'file';
+		input.accept = 'application/json';
+
+		input.onchange = (e) => {
+			const target = e.target as HTMLInputElement;
+			if (!target.files?.length) return;
+
+			const file = target.files[0];
+			const reader = new FileReader();
+
+			reader.onload = (event) => {
+				try {
+					const content = event.target?.result as string;
+					// Validate JSON before updating
+					JSON.parse(content); // This will throw if invalid JSON
+					avatarStore.configJSON = content;
+				} catch (error) {
+					console.error('Invalid JSON file', error);
+					alert('Invalid JSON configuration file');
+				}
+			};
+
+			reader.readAsText(file);
+		};
+
+		input.click();
+	};
 </script>
 
 <svelte:head>
@@ -186,6 +242,12 @@
 								)}</pre>
 						</Card.Content>
 						<Card.Footer class="flex justify-end gap-2">
+							<Button size="icon" variant="secondary" onclick={downloadConfig}>
+								<Download />
+							</Button>
+							<Button size="icon" variant="secondary" onclick={uploadConfig}>
+								<Upload />
+							</Button>
 							<Button
 								size="icon"
 								variant="secondary"
@@ -202,6 +264,12 @@
 							>
 								<Redo />
 							</Button>
+							<AnimatedDiceButton
+								onDicethrow={avatarStore.generateRandomAvatar}
+								ariaLabel="Generate random avatar"
+								variant="secondary"
+								size="icon"
+							/>
 						</Card.Footer>
 					</Card.Root>
 				</div>
