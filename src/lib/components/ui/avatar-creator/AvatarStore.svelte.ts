@@ -9,7 +9,7 @@ import {
 	COLORS,
 	type ColorName
 } from './types';
-import { generatesvgDataUrl } from './avatar-svg-utils';
+import { generateSvgDataUrl } from './avatar-svg-utils';
 import { StateHistory } from 'runed';
 
 // localStorage key
@@ -130,13 +130,13 @@ export class AvatarStoreClass implements IAvatar {
 	canRedo = $derived(this._getCanRedo());
 
 	// --- Derived State Values ---
-	private _liveAvatarLayers = $derived(this._generateLayersFromItems(this.previewConfig.items));
+	private _previewAvatarLayers = $derived(this._generateLayersFromItems(this.previewConfig.items));
 	previewSvgDataUrl = $state('');
 	previewBgClass = $derived(
 		AVATAR_COLOR_STYLES[this.previewConfig.colorName]?.base || AVATAR_COLOR_STYLES[COLORS[0]].base
 	);
 
-	private _savedAvatarLayers = $derived(this._generateLayersFromItems(this.config?.items ?? null));
+	private _avatarLayers = $derived(this._generateLayersFromItems(this.config?.items ?? null));
 	svgDataUrl = $state('');
 	bgClass = $derived(
 		AVATAR_COLOR_STYLES[this.config?.colorName ?? COLORS[0]]?.base ||
@@ -159,25 +159,26 @@ export class AvatarStoreClass implements IAvatar {
 		this.loadconfig(true);
 
 		// Setup effects to update SVG URLs when their respective layers change
+		// we can't use $effect here because generateSvgDataUrl is async
 		$effect(() => {
-			const layers = this._liveAvatarLayers;
+			const layers = this._previewAvatarLayers;
 			if (layers.length === 0) {
 				this.previewSvgDataUrl = '';
 				return;
 			}
 			(async () => {
-				this.previewSvgDataUrl = await generatesvgDataUrl(layers);
+				this.previewSvgDataUrl = await generateSvgDataUrl(layers);
 			})();
 		});
 
 		$effect(() => {
-			const layers = this._savedAvatarLayers;
+			const layers = this._avatarLayers;
 			if (layers.length === 0) {
 				this.svgDataUrl = '';
 				return;
 			}
 			(async () => {
-				this.svgDataUrl = await generatesvgDataUrl(layers);
+				this.svgDataUrl = await generateSvgDataUrl(layers);
 			})();
 		});
 	}
