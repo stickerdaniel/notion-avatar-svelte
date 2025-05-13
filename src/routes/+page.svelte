@@ -14,7 +14,7 @@
 </script>
 
 <svelte:head>
-	<title>Notion Avatar Creator</title>
+	<title>Notion Avatar Editor</title>
 	<meta name="description" content="Create Notion-style avatars with ease." />
 </svelte:head>
 
@@ -22,7 +22,7 @@
 	<div class="mx-auto w-full max-w-2xl px-4 py-10">
 		<div class="flex flex-col gap-10">
 			<div class="flex flex-col gap-1">
-				<h1 class="text-4xl font-bold">Notion Avatar Creator</h1>
+				<h1 class="text-4xl font-bold">Notion Avatar Editor</h1>
 				<p class="text-lg text-muted-foreground">Custom avatars for your next Svelte project.</p>
 				<div class="flex gap-2">
 					<!-- GitHub repo link -->
@@ -174,7 +174,8 @@
 						<Card.Header>
 							<Card.Title>avatarStore.configJSON</Card.Title>
 							<Card.Description
-								>Svelte State variable that contains the current avatar configuration.</Card.Description
+								>Primary JSON string for the avatar's settings. This serialized data is the main
+								shared datapoint that drives the editor, previews, and persisted state.</Card.Description
 							>
 						</Card.Header>
 						<Card.Content>
