@@ -47,34 +47,6 @@
 			<AvatarCreator />
 
 			{#if avatarStore}
-				<!-- JSON Debug Display -->
-				<div class="mb-4 mt-6 overflow-hidden rounded-lg border bg-secondary/10 p-4">
-					<div class="flex items-center justify-between">
-						<h3 class="text-sm font-semibold">Current Configuration JSON</h3>
-						<span class="text-xs text-muted-foreground">For debugging</span>
-					</div>
-					<div class="mt-2 max-h-36 overflow-auto">
-						<pre class="text-xs">{JSON.stringify(JSON.parse(avatarStore.configJSON), null, 2)}</pre>
-					</div>
-					<!-- Add Undo/Redo buttons -->
-					<div class="mt-2 flex justify-end gap-2">
-						<button
-							class="rounded border px-2 py-1 text-xs disabled:opacity-50"
-							disabled={!avatarStore.canUndo}
-							onclick={avatarStore.undo}
-						>
-							Undo
-						</button>
-						<button
-							class="rounded border px-2 py-1 text-xs disabled:opacity-50"
-							disabled={!avatarStore.canRedo}
-							onclick={avatarStore.redo}
-						>
-							Redo
-						</button>
-					</div>
-				</div>
-
 				<div class="mt-10 flex flex-col gap-8">
 					<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 						<!-- Example 1: Live Preview (Current Editing State) -->
@@ -138,22 +110,30 @@
 						</div>
 					</div>
 
-					<div class="rounded-lg border bg-secondary/20 p-4">
-						<h3 class="mb-2 text-lg font-semibold">Usage Notes</h3>
-						<ul class="ml-5 list-disc space-y-1 text-sm">
-							<li>
-								The <span class="font-semibold">Live Preview</span> shows the current editing state from
-								the AvatarCreator component.
-							</li>
-							<li>
-								The <span class="font-semibold">Saved Avatar</span> only updates when the "Save" button
-								is pressed and persists across page reloads.
-							</li>
-							<li>
-								To display the avatar elsewhere in your app, choose the appropriate state based on
-								your needs.
-							</li>
-						</ul>
+					<!-- JSON Debug Display -->
+					<div class="mb-4 mt-6 overflow-hidden rounded-lg border bg-secondary/10 p-4">
+						<div class="flex items-center justify-between">
+							<h3 class="text-sm font-semibold">avatarStore.configJSON</h3>
+						</div>
+						<pre class="text-xs">{JSON.stringify(JSON.parse(avatarStore.configJSON), null, 2)}</pre>
+
+						<!-- Add Undo/Redo buttons -->
+						<div class="mt-2 flex justify-end gap-2">
+							<button
+								class="rounded border px-2 py-1 text-xs disabled:opacity-50"
+								disabled={!avatarStore.canUndo}
+								onclick={avatarStore.undo}
+							>
+								Undo
+							</button>
+							<button
+								class="rounded border px-2 py-1 text-xs disabled:opacity-50"
+								disabled={!avatarStore.canRedo}
+								onclick={avatarStore.redo}
+							>
+								Redo
+							</button>
+						</div>
 					</div>
 				</div>
 			{/if}
