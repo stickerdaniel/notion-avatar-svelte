@@ -8,7 +8,7 @@
 	// We use $$restProps to pass any other HTML attributes to the Button component.
 	let {
 		class: className = '',
-		variant = 'secondary' as ButtonProps['variant'],
+		variant = 'default' as ButtonProps['variant'],
 		size = 'icon' as ButtonProps['size'],
 		ariaLabel = 'Generate random',
 		onDicethrow
