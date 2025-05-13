@@ -402,14 +402,14 @@ export class AvatarStoreClass implements IAvatar {
 	};
 
 	/**
-	 * Import an avatar configuration from an external source
+	 * Import an avatar configuration from an external source into the live editing state.
 	 * @throws AvatarConfigValidationError if the config is invalid or JSON is malformed
 	 */
 	importConfig = (configJsonString: string): void => {
 		let parsedConfig: unknown;
 		try {
 			parsedConfig = JSON.parse(configJsonString);
-		} catch (error) {
+		} catch {
 			// If JSON parsing fails, throw a specific error
 			throw new AvatarConfigValidationError('Invalid JSON format');
 		}
@@ -417,17 +417,8 @@ export class AvatarStoreClass implements IAvatar {
 		// Will throw AvatarConfigValidationError if validation fails
 		const validConfig = this.validateAndParseConfig(parsedConfig);
 
-		// Update both the preview and saved states
-		this.configJSON = JSON.stringify(validConfig); // Store the re-serialized valid config
-		this.config = validConfig;
-
-		// Update timestamp
-		this.lastSaveData = validConfig;
-		this.lastSaveTimestamp = Date.now();
-
-		// Also save to localStorage
-		if (typeof window !== 'undefined') {
-			localStorage.setItem(AVATAR_CONFIG_STORAGE_KEY, JSON.stringify(validConfig));
-		}
+		// Update ONLY the live editing state (configJSON drives previewConfig)
+		// History will automatically track this change to configJSON.
+		this.configJSON = JSON.stringify(validConfig);
 	};
 }
