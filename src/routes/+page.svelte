@@ -8,6 +8,7 @@
 	import { avatarContext } from '$lib/contexts/avatarContext.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import AvatarCreator from '$lib/components/ui/avatar-creator/avatar-creator.svelte';
+	import { Separator } from '$lib/components/ui/separator';
 
 	const avatarStore = avatarContext.get();
 </script>
@@ -42,6 +43,28 @@
 						class="flex w-fit place-items-center gap-2 rounded-md"
 					>
 						<span class="font-semibold">Inspired by</span>
+						<SquareArrowOutUpRight class="size-3.5" />
+					</Badge>
+					<!-- Divider -->
+					<Separator orientation="vertical" />
+					<!-- Link to runed -->
+					<Badge
+						href="https://runed.dev"
+						variant="secondary"
+						target="_blank"
+						class="flex w-fit place-items-center gap-2 rounded-md"
+					>
+						<span class="font-semibold">Runed</span>
+						<SquareArrowOutUpRight class="size-3.5" />
+					</Badge>
+					<!-- link to next.shadcn-svelte 	-->
+					<Badge
+						href="https://next.shadcn-svelte.com"
+						variant="secondary"
+						target="_blank"
+						class="flex w-fit place-items-center gap-2 rounded-md"
+					>
+						<span class="font-semibold">Shadcn Svelte</span>
 						<SquareArrowOutUpRight class="size-3.5" />
 					</Badge>
 				</div>

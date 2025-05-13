@@ -66,6 +66,18 @@
 			"presentation": {
 				"clear": true
 			}
+		},
+		{
+			"label": "vercel --prod",
+			"type": "shell",
+			"command": "vercel",
+			"args": ["--prod"],
+			"group": "none",
+			"problemMatcher": [],
+			"detail": "Deploy the production version of the site",
+			"presentation": {
+				"clear": true
+			}
 		}
 	]
 }
