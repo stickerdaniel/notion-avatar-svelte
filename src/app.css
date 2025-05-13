@@ -69,7 +69,22 @@
 
 	* {
 		@apply border-border;
+
+		::-moz-selection {
+			/* Code for Firefox */
+			background: hsl(53, 98%, 77%) !important;
+		}
+
+		::selection {
+			background: hsl(50, 98%, 64%) !important;
+		}
+
+		/* no selection on images */
+		img {
+			user-select: none;
+		}
 	}
+
 	body {
 		@apply bg-background text-foreground;
 	}
