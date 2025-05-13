@@ -266,22 +266,22 @@ export class AvatarStoreClass implements IAvatar {
 					this.configJSON = JSON.stringify(loadedConfig); // StateHistory will log this initial load
 				} else if (isInitialLoad) {
 					// Generate random if no saved config exists and it's the initial load
-					this.generateRandomAvatar(false);
+					this.generateRandomAvatar();
 				}
 			} catch (error) {
 				console.error('Failed to load avatar configuration:', error);
-				if (isInitialLoad) this.generateRandomAvatar(false);
+				if (isInitialLoad) this.generateRandomAvatar();
 			}
 		} else if (isInitialLoad) {
 			// Handle SSR case
-			this.generateRandomAvatar(false);
+			this.generateRandomAvatar();
 		}
 	};
 
 	/**
 	 * Generate random avatar configuration (affects live editing state only)
 	 */
-	generateRandomAvatar = (clearSaveData = true) => {
+	generateRandomAvatar = () => {
 		// updateConfig will handle history push.
 		const newSelectedItems: SelectedItems = {};
 		const INCLUDE_GLASSES_PROBABILITY = 0.4;

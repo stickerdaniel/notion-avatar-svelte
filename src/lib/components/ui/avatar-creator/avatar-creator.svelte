@@ -7,7 +7,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import AnimatedDiceButton from './animated-dice-button.svelte';
 	import { avatarContext } from '$lib/contexts/avatarContext';
-	import { DEFAULT_CATEGORIES, type Category, type ColorName, type SelectedItems } from './types';
+	import { DEFAULT_CATEGORIES, type Category, type ColorName } from './types';
 	import { Undo, Redo } from '@lucide/svelte';
 	import * as Avatar from '$lib/components/ui/avatar';
 
