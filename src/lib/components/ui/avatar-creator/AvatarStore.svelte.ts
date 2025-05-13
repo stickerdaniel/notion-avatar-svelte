@@ -9,7 +9,7 @@ import {
 	COLORS,
 	type ColorName
 } from './types';
-import { generateAvatarSvgDataUrl } from './avatar-svg-utils';
+import { generatesvgDataUrl } from './avatar-svg-utils';
 import { StateHistory } from 'runed';
 
 // localStorage key
@@ -72,18 +72,18 @@ export const AVATAR_COLOR_STYLES: Record<
 // Interface for the Avatar store
 export interface IAvatar {
 	// Live editing state - parsed from configJSON
-	readonly currentConfig: AvatarConfiguration;
+	readonly previewConfig: AvatarConfiguration;
 
 	// Derived from live state (for preview inside creator)
-	readonly previewAvatarSvgDataUrl: string;
-	readonly previewAvatarBgClass: string;
+	readonly previewSvgDataUrl: string;
+	readonly previewBgClass: string;
 
 	// Saved state
-	readonly savedAvatarConfiguration: AvatarConfiguration | null;
+	readonly config: AvatarConfiguration | null;
 
 	// Derived from saved state (for display elsewhere)
-	readonly avatarSvgDataUrl: string;
-	readonly avatarBgClass: string;
+	readonly svgDataUrl: string;
+	readonly bgClass: string;
 
 	// Eventing
 	readonly lastSaveTimestamp: number | null;
@@ -97,7 +97,7 @@ export interface IAvatar {
 	updateConfig: (updater: (config: AvatarConfiguration) => void) => void;
 	generateRandomAvatar: (clearSaveData?: boolean) => void;
 	saveAvatar: () => void;
-	loadSavedConfig: (isInitialLoad?: boolean) => void;
+	loadconfig: (isInitialLoad?: boolean) => void;
 	undo: () => void;
 	redo: () => void;
 }
@@ -110,10 +110,10 @@ export class AvatarStoreClass implements IAvatar {
 	isUndoRedoOperation = $state(false);
 
 	// Parsed version of the JSON string (derived)
-	currentConfig = $derived<AvatarConfiguration>(this._parseConfigJSON());
+	previewConfig = $derived<AvatarConfiguration>(this._parseConfigJSON());
 
 	// --- Saved State ---
-	savedAvatarConfiguration = $state<AvatarConfiguration | null>(null);
+	config = $state<AvatarConfiguration | null>(null);
 
 	// --- Eventing State ---
 	lastSaveTimestamp = $state<number | null>(null);
@@ -133,18 +133,16 @@ export class AvatarStoreClass implements IAvatar {
 	canRedo = $derived(this._getCanRedo());
 
 	// --- Derived State Values ---
-	private _liveAvatarLayers = $derived(this._generateLayersFromItems(this.currentConfig.items));
-	previewAvatarSvgDataUrl = $state('');
-	previewAvatarBgClass = $derived(
-		AVATAR_COLOR_STYLES[this.currentConfig.colorName]?.base || AVATAR_COLOR_STYLES[COLORS[0]].base
+	private _liveAvatarLayers = $derived(this._generateLayersFromItems(this.previewConfig.items));
+	previewSvgDataUrl = $state('');
+	previewBgClass = $derived(
+		AVATAR_COLOR_STYLES[this.previewConfig.colorName]?.base || AVATAR_COLOR_STYLES[COLORS[0]].base
 	);
 
-	private _savedAvatarLayers = $derived(
-		this._generateLayersFromItems(this.savedAvatarConfiguration?.items ?? null)
-	);
-	avatarSvgDataUrl = $state('');
-	avatarBgClass = $derived(
-		AVATAR_COLOR_STYLES[this.savedAvatarConfiguration?.colorName ?? COLORS[0]]?.base ||
+	private _savedAvatarLayers = $derived(this._generateLayersFromItems(this.config?.items ?? null));
+	svgDataUrl = $state('');
+	bgClass = $derived(
+		AVATAR_COLOR_STYLES[this.config?.colorName ?? COLORS[0]]?.base ||
 			AVATAR_COLOR_STYLES[COLORS[0]].base
 	);
 
@@ -153,7 +151,7 @@ export class AvatarStoreClass implements IAvatar {
 		this._initializeDefaultConfig();
 
 		// Initialize from saved configuration
-		this.loadSavedConfig(true);
+		this.loadconfig(true);
 
 		// Setup the history tracker - must be after config initialization
 		this._history = new StateHistory(
@@ -169,26 +167,26 @@ export class AvatarStoreClass implements IAvatar {
 		$effect(() => {
 			const layers = this._liveAvatarLayers;
 			if (layers.length === 0) {
-				this.previewAvatarSvgDataUrl = '';
+				this.previewSvgDataUrl = '';
 				return;
 			}
 
 			// Use IIFE for the async operation
 			(async () => {
-				this.previewAvatarSvgDataUrl = await generateAvatarSvgDataUrl(layers);
+				this.previewSvgDataUrl = await generatesvgDataUrl(layers);
 			})();
 		});
 
 		$effect(() => {
 			const layers = this._savedAvatarLayers;
 			if (layers.length === 0) {
-				this.avatarSvgDataUrl = '';
+				this.svgDataUrl = '';
 				return;
 			}
 
 			// Use IIFE for the async operation
 			(async () => {
-				this.avatarSvgDataUrl = await generateAvatarSvgDataUrl(layers);
+				this.svgDataUrl = await generatesvgDataUrl(layers);
 			})();
 		});
 	}
@@ -240,11 +238,11 @@ export class AvatarStoreClass implements IAvatar {
 	 * Update the configuration with a callback function
 	 */
 	updateConfig = (updater: (config: AvatarConfiguration) => void): void => {
-		const currentConfig = this._parseConfigJSON();
-		updater(currentConfig);
+		const previewConfig = this._parseConfigJSON();
+		updater(previewConfig);
 
 		// Update the config JSON
-		const newConfigJSON = JSON.stringify(currentConfig);
+		const newConfigJSON = JSON.stringify(previewConfig);
 		this.configJSON = newConfigJSON;
 	};
 
@@ -266,7 +264,7 @@ export class AvatarStoreClass implements IAvatar {
 	/**
 	 * Load saved avatar configuration from localStorage
 	 */
-	loadSavedConfig = (isInitialLoad = false) => {
+	loadconfig = (isInitialLoad = false) => {
 		if (typeof window !== 'undefined') {
 			try {
 				const storedConfigJson = localStorage.getItem(AVATAR_CONFIG_STORAGE_KEY);
@@ -279,7 +277,7 @@ export class AvatarStoreClass implements IAvatar {
 					}
 
 					// Update saved configuration
-					this.savedAvatarConfiguration = loadedConfig;
+					this.config = loadedConfig;
 
 					// Initialize live editing state from saved config
 					this.configJSON = JSON.stringify(loadedConfig);
@@ -357,9 +355,9 @@ export class AvatarStoreClass implements IAvatar {
 	 * Save the current live editing state to localStorage and update saved state
 	 */
 	saveAvatar = () => {
-		const currentConfig = this._parseConfigJSON();
+		const previewConfig = this._parseConfigJSON();
 		const configToSave = {
-			...currentConfig,
+			...previewConfig,
 			lastModified: new Date().toISOString()
 		};
 
@@ -371,7 +369,7 @@ export class AvatarStoreClass implements IAvatar {
 				localStorage.setItem(AVATAR_CONFIG_STORAGE_KEY, configJSON);
 
 				// Update in-memory saved state
-				this.savedAvatarConfiguration = configToSave;
+				this.config = configToSave;
 
 				// Update save event state
 				this.lastSaveData = configToSave;

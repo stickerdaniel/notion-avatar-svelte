@@ -3,8 +3,8 @@
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { GithubIcon, SquareArrowOutUpRight } from '@lucide/svelte';
 
-	// Import the Avatar components and the context
-	import * as Avatar from '$lib/components/ui/avatar/index.js';
+	// Import the new Avatar components and the context
+	import * as Avatar from '$lib/components/ui/avatar-creator/avatar/index.js'; // Updated import
 	import { avatarContext } from '$lib/contexts/avatarContext.js';
 
 	const avatarStore = avatarContext.get();
@@ -83,31 +83,27 @@
 							<p class="text-center text-sm text-muted-foreground">
 								Shows what's currently being edited, before saving.
 							</p>
-							<Avatar.Root class="h-24 w-24 border-2 {avatarStore.previewAvatarBgClass}">
-								{#if avatarStore.previewAvatarSvgDataUrl}
-									<Avatar.Image
-										src={avatarStore.previewAvatarSvgDataUrl}
-										alt={avatarStore.currentConfig.username || 'User Avatar'}
-									/>
-								{:else}
-									<Avatar.Fallback class="text-2xl">
-										{avatarStore.currentConfig.username
-											? avatarStore.currentConfig.username.substring(0, 2).toUpperCase()
-											: 'AV'}
-									</Avatar.Fallback>
-								{/if}
+							<Avatar.Root usePreview={true} class="h-24 w-24 border-2">
+								<Avatar.Image />
+								<Avatar.Fallback class="text-2xl" />
 							</Avatar.Root>
-							{#if avatarStore.currentConfig.username}
-								<p class="mt-2 text-lg font-medium">{avatarStore.currentConfig.username}</p>
-							{/if}
+
+							<p class="mt-2 text-lg font-medium">
+								{avatarStore.previewConfig.username ?? '...'}
+							</p>
 							<p class="text-xs text-muted-foreground">
-								Background: {avatarStore.currentConfig.colorName}
+								Background: {avatarStore.previewConfig.colorName ?? '...'}
+							</p>
+							<p class="text-[10px] text-muted-foreground/80">
+								Last Edit: {avatarStore.previewConfig.lastModified ?? '...'}
 							</p>
 							<div class="mt-2 w-full rounded-md bg-secondary/50 p-1.5 text-xs">
 								<p class="font-semibold">How to access:</p>
-								<p class="mt-1 font-mono text-[10px]">avatarStore.previewAvatarSvgDataUrl</p>
-								<p class="font-mono text-[10px]">avatarStore.previewAvatarBgClass</p>
-								<p class="font-mono text-[10px]">avatarStore.currentConfig.username</p>
+								<p class="mt-1 font-mono text-[10px]">avatarStore.previewSvgDataUrl</p>
+								<p class="font-mono text-[10px]">avatarStore.previewBgClass</p>
+								<p class="font-mono text-[10px]">avatarStore.previewConfig.username</p>
+								<p class="font-mono text-[10px]">avatarStore.previewConfig.colorName</p>
+								<p class="font-mono text-[10px]">avatarStore.previewConfig.lastModified</p>
 							</div>
 						</div>
 
@@ -117,33 +113,27 @@
 							<p class="text-center text-sm text-muted-foreground">
 								Shows the last explicitly saved version (persisted in localStorage).
 							</p>
-							<Avatar.Root class="h-24 w-24 border-2 {avatarStore.avatarBgClass}">
-								{#if avatarStore.avatarSvgDataUrl}
-									<Avatar.Image
-										src={avatarStore.avatarSvgDataUrl}
-										alt={avatarStore.savedAvatarConfiguration?.username || 'User Avatar'}
-									/>
-								{:else}
-									<Avatar.Fallback class="text-2xl">
-										{avatarStore.savedAvatarConfiguration?.username
-											? avatarStore.savedAvatarConfiguration.username.substring(0, 2).toUpperCase()
-											: 'AV'}
-									</Avatar.Fallback>
-								{/if}
+							<Avatar.Root class="h-24 w-24 border-2">
+								<Avatar.Image />
+								<Avatar.Fallback class="text-2xl" />
 							</Avatar.Root>
-							{#if avatarStore.savedAvatarConfiguration?.username}
-								<p class="mt-2 text-lg font-medium">
-									{avatarStore.savedAvatarConfiguration.username}
-								</p>
-							{/if}
+
+							<p class="mt-2 text-lg font-medium">
+								{avatarStore.config?.username ?? '...'}
+							</p>
 							<p class="text-xs text-muted-foreground">
-								Background: {avatarStore.savedAvatarConfiguration?.colorName ?? 'N/A'}
+								Background: {avatarStore.config?.colorName ?? '...'}
+							</p>
+							<p class="text-[10px] text-muted-foreground/80">
+								Last Saved: {avatarStore.config?.lastModified ?? '...'}
 							</p>
 							<div class="mt-2 w-full rounded-md bg-secondary/50 p-1.5 text-xs">
 								<p class="font-semibold">How to access:</p>
-								<p class="mt-1 font-mono text-[10px]">avatarStore.avatarSvgDataUrl</p>
-								<p class="font-mono text-[10px]">avatarStore.avatarBgClass</p>
-								<p class="font-mono text-[10px]">avatarStore.savedAvatarConfiguration?.username</p>
+								<p class="mt-1 font-mono text-[10px]">avatarStore.svgDataUrl</p>
+								<p class="font-mono text-[10px]">avatarStore.bgClass</p>
+								<p class="font-mono text-[10px]">avatarStore.config?.username</p>
+								<p class="font-mono text-[10px]">avatarStore.config?.colorName</p>
+								<p class="font-mono text-[10px]">avatarStore.config?.lastModified</p>
 							</div>
 						</div>
 					</div>

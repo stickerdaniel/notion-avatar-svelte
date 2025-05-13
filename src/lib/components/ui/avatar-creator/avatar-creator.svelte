@@ -23,9 +23,9 @@
 	let activeTab = $state(categories[0]?.id ?? '');
 
 	// Local copies of state that we'll sync with the store
-	let selectedItems = $state<SelectedItems>({ ...avatarStore.currentConfig.items });
-	let selectedColor = $state<ColorName>(avatarStore.currentConfig.colorName);
-	let username = $state<string>(avatarStore.currentConfig.username);
+	let selectedItems = $state<SelectedItems>({ ...avatarStore.previewConfig.items });
+	let selectedColor = $state<ColorName>(avatarStore.previewConfig.colorName);
+	let username = $state<string>(avatarStore.previewConfig.username);
 
 	// Watch for changes in our local state and update the store
 	$effect(() => {
@@ -57,9 +57,9 @@
 
 	// Watch for changes in the store and update our local state
 	$effect(() => {
-		selectedItems = { ...avatarStore.currentConfig.items };
-		selectedColor = avatarStore.currentConfig.colorName;
-		username = avatarStore.currentConfig.username;
+		selectedItems = { ...avatarStore.previewConfig.items };
+		selectedColor = avatarStore.previewConfig.colorName;
+		username = avatarStore.previewConfig.username;
 	});
 
 	// Optional: Example of reacting to the save event from the store
@@ -87,40 +87,38 @@
 			<div class="flex grow flex-col items-center gap-4">
 				<div class="flex grow items-center">
 					<AvatarPreview
-						svgDataUrl={avatarStore.previewAvatarSvgDataUrl}
-						previewBgClass={avatarStore.previewAvatarBgClass}
+						svgDataUrl={avatarStore.previewSvgDataUrl}
+						previewBgClass={avatarStore.previewBgClass}
 					/>
 				</div>
 				<div
 					class="flex w-full flex-col items-end justify-between gap-4 sm:flex-row-reverse md:flex-row-reverse lg:flex-col lg:items-end"
 				>
-					<div class="flex w-full justify-between gap-2">
-						<div class="flex gap-2">
-							<Button
-								variant="secondary"
-								size="icon"
-								disabled={!avatarStore.canUndo}
-								aria-label="Undo"
-								onclick={avatarStore.undo}
-								class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
-							>
-								<div class="flex h-full w-full items-center justify-center">
-									<Undo2 class="h-4 w-4" />
-								</div>
-							</Button>
-							<Button
-								variant="secondary"
-								size="icon"
-								disabled={!avatarStore.canRedo}
-								aria-label="Redo"
-								onclick={avatarStore.redo}
-								class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
-							>
-								<div class="flex h-full w-full items-center justify-center">
-									<Redo2 class="h-4 w-4" />
-								</div>
-							</Button>
-						</div>
+					<div class="flex gap-2">
+						<Button
+							variant="secondary"
+							size="icon"
+							disabled={!avatarStore.canUndo}
+							aria-label="Undo"
+							onclick={avatarStore.undo}
+							class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
+						>
+							<div class="flex h-full w-full items-center justify-center">
+								<Undo2 class="h-4 w-4" />
+							</div>
+						</Button>
+						<Button
+							variant="secondary"
+							size="icon"
+							disabled={!avatarStore.canRedo}
+							aria-label="Redo"
+							onclick={avatarStore.redo}
+							class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
+						>
+							<div class="flex h-full w-full items-center justify-center">
+								<Redo2 class="h-4 w-4" />
+							</div>
+						</Button>
 						<AnimatedDiceButton
 							onDicethrow={avatarStore.generateRandomAvatar}
 							ariaLabel="Generate random avatar"

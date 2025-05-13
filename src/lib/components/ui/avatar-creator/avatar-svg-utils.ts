@@ -4,7 +4,7 @@
  * @param flipped Whether the avatar should be horizontally flipped (currently unused).
  * @returns A promise that resolves to the SVG data URL string.
  */
-export async function generateAvatarSvgDataUrl(
+export async function generatesvgDataUrl(
 	layers: string[],
 	flipped: boolean = false
 ): Promise<string> {
