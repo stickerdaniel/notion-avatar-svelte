@@ -1,6 +1,5 @@
 # Notion Avatar Svelte
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fstickerdaniel%2Fnotion-avatar-svelte)
 [![Built with Svelte](https://img.shields.io/badge/Built%20With-Svelte-FF3E00?style=flat&logo=svelte)](https://svelte.dev/)
 [![UI Components: shadcn-svelte](https://img.shields.io/badge/UI-shadcn--svelte-black?style=flat)](https://next.shadcn-svelte.com/)
 [![State Management: Runed](https://img.shields.io/badge/State-Runed-7149EB?style=flat)](https://runed.dev/)
