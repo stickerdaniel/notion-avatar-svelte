@@ -15,6 +15,14 @@ import { StateHistory } from 'runed';
 // localStorage key
 const AVATAR_CONFIG_STORAGE_KEY = 'notionAvatarConfig';
 
+// Custom error class for avatar configuration validation errors
+export class AvatarConfigValidationError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'AvatarConfigValidationError';
+	}
+}
+
 export const AVATAR_COLOR_STYLES: Record<
 	ColorName,
 	{ base: string; hover: string; selected: string }
@@ -100,6 +108,8 @@ export interface IAvatar {
 	loadconfig: (isInitialLoad?: boolean) => void;
 	undo: () => void;
 	redo: () => void;
+	importConfig: (configJsonString: string) => void;
+	validateAndParseConfig: (config: unknown) => AvatarConfiguration;
 }
 
 export class AvatarStoreClass implements IAvatar {
@@ -205,11 +215,49 @@ export class AvatarStoreClass implements IAvatar {
 			if (!this.configJSON) {
 				return this._createDefaultConfig();
 			}
-			return JSON.parse(this.configJSON) as AvatarConfiguration;
+			return this.validateAndParseConfig(JSON.parse(this.configJSON));
 		} catch (error) {
 			console.error('Error parsing config JSON:', error);
 			return this._createDefaultConfig();
 		}
+	}
+
+	/**
+	 * Validate and parse a config object into a valid AvatarConfiguration
+	 * @throws AvatarConfigValidationError if validation fails
+	 */
+	validateAndParseConfig(config: unknown): AvatarConfiguration {
+		// Check if it has the basic required properties
+		if (!config || typeof config !== 'object') {
+			throw new AvatarConfigValidationError('Config must be an object');
+		}
+
+		// Safe type assertion after basic validation
+		const avatarConfig = config as Partial<AvatarConfiguration>;
+
+		if (typeof avatarConfig.version !== 'number') {
+			throw new AvatarConfigValidationError('Config must have a numeric version');
+		}
+		if (typeof avatarConfig.username !== 'string') {
+			throw new AvatarConfigValidationError('Config must have a string username');
+		}
+		if (typeof avatarConfig.lastModified !== 'string') {
+			throw new AvatarConfigValidationError('Config must have a lastModified date string');
+		}
+		if (!avatarConfig.items || typeof avatarConfig.items !== 'object') {
+			throw new AvatarConfigValidationError('Config must have an items object');
+		}
+		if (typeof avatarConfig.colorName !== 'string') {
+			throw new AvatarConfigValidationError('Config must have a colorName string');
+		}
+
+		// Validate colorName is in available colors, or default it
+		if (!COLORS.includes(avatarConfig.colorName as ColorName)) {
+			avatarConfig.colorName = COLORS[0];
+		}
+
+		// At this point we've validated all required fields
+		return avatarConfig as AvatarConfiguration;
 	}
 
 	/**
@@ -257,12 +305,8 @@ export class AvatarStoreClass implements IAvatar {
 			try {
 				const storedConfigJson = localStorage.getItem(AVATAR_CONFIG_STORAGE_KEY);
 				if (storedConfigJson) {
-					const loadedConfig = JSON.parse(storedConfigJson) as AvatarConfiguration;
-
-					// Validate colorName
-					if (!COLORS.includes(loadedConfig.colorName as ColorName)) {
-						loadedConfig.colorName = COLORS[0];
-					}
+					const parsedConfig = JSON.parse(storedConfigJson);
+					const loadedConfig = this.validateAndParseConfig(parsedConfig);
 					this.config = loadedConfig; // Update saved state (for display elsewhere)
 					this.configJSON = JSON.stringify(loadedConfig); // StateHistory will log this initial load
 				} else if (isInitialLoad) {
@@ -355,5 +399,35 @@ export class AvatarStoreClass implements IAvatar {
 	 */
 	redo = () => {
 		this._history.redo(); // StateHistory setter changes configJSON, which is logged by StateHistory
+	};
+
+	/**
+	 * Import an avatar configuration from an external source
+	 * @throws AvatarConfigValidationError if the config is invalid or JSON is malformed
+	 */
+	importConfig = (configJsonString: string): void => {
+		let parsedConfig: unknown;
+		try {
+			parsedConfig = JSON.parse(configJsonString);
+		} catch (error) {
+			// If JSON parsing fails, throw a specific error
+			throw new AvatarConfigValidationError('Invalid JSON format');
+		}
+
+		// Will throw AvatarConfigValidationError if validation fails
+		const validConfig = this.validateAndParseConfig(parsedConfig);
+
+		// Update both the preview and saved states
+		this.configJSON = JSON.stringify(validConfig); // Store the re-serialized valid config
+		this.config = validConfig;
+
+		// Update timestamp
+		this.lastSaveData = validConfig;
+		this.lastSaveTimestamp = Date.now();
+
+		// Also save to localStorage
+		if (typeof window !== 'undefined') {
+			localStorage.setItem(AVATAR_CONFIG_STORAGE_KEY, JSON.stringify(validConfig));
+		}
 	};
 }

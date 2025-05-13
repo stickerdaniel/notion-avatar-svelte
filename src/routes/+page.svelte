@@ -2,7 +2,7 @@
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Download, GithubIcon, Redo, SquareArrowOutUpRight, Undo, Upload } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
-	import type { AvatarConfiguration } from '$lib/components/ui/avatar-creator/types';
+	import { AvatarConfigValidationError } from '$lib/components/ui/avatar-creator/AvatarStore.svelte';
 
 	// Import the new Avatar components and the context
 	import * as Avatar from '$lib/components/ui/avatar';
@@ -60,24 +60,22 @@
 			reader.onload = (event) => {
 				try {
 					const content = event.target?.result as string;
-					// Parse JSON to validate syntax
-					const parsedConfig = JSON.parse(content);
 
-					// Validate configuration structure
-					if (!isValidAvatarConfig(parsedConfig)) {
-						throw new Error('Invalid avatar configuration structure');
-					}
-
-					// If validation passes, update the configJSON
-					avatarStore.configJSON = content;
+					// Pass the JSON string to the store's importConfig method to validate and parse
+					avatarStore.importConfig(content);
 
 					// Show success toast
 					toast.success('Avatar configuration loaded', {
 						description: file.name
 					});
 				} catch (error) {
-					toast.error('Invalid JSON file', {
-						description: error instanceof Error ? error.message : 'Unknown error'
+					let errorMessage = 'Unknown error';
+					if (error instanceof AvatarConfigValidationError || error instanceof Error) {
+						errorMessage = error.message;
+					}
+
+					toast.error('Invalid avatar configuration', {
+						description: errorMessage
 					});
 				}
 			};
@@ -86,35 +84,6 @@
 		};
 
 		input.click();
-	};
-
-	// Function to validate avatar configuration structure
-	const isValidAvatarConfig = (config: unknown): boolean => {
-		try {
-			// Log for debugging
-			console.log('Validating config:', config);
-
-			// Check if it has the basic required properties
-			if (!config || typeof config !== 'object') return false;
-
-			// Safe type assertion after basic validation
-			const avatarConfig = config as Partial<AvatarConfiguration>;
-
-			if (typeof avatarConfig.version !== 'number') return false;
-			if (typeof avatarConfig.username !== 'string') return false;
-			if (typeof avatarConfig.lastModified !== 'string') return false;
-			if (!avatarConfig.items || typeof avatarConfig.items !== 'object') return false;
-			if (typeof avatarConfig.colorName !== 'string') return false;
-
-			// Just verify items is an object - it may have keys structured differently
-			// than our hard-coded list, so we'll be more flexible
-			if (typeof avatarConfig.items !== 'object') return false;
-
-			return true;
-		} catch (error) {
-			console.error('Validation error:', error);
-			return false;
-		}
 	};
 </script>
 
