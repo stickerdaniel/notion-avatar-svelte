@@ -253,7 +253,7 @@
 							<Card.Title>avatarStore.configJSON</Card.Title>
 							<Card.Description
 								>Primary JSON string for the avatar's settings. This serialized data is the main
-								shared datapoint that drives the editor, and previews.</Card.Description
+								shared datapoint that drives the editor, previews and history.</Card.Description
 							>
 						</Card.Header>
 						<Card.Content>
