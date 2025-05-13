@@ -139,16 +139,14 @@
 									</Avatar.Root>
 									<div class="flex h-full flex-col justify-between gap-1">
 										<div class="grid flex-1 text-left text-sm leading-tight">
-											<span class="truncate font-semibold"
-												>{avatarStore.config?.username ?? '...'}</span
-											>
-											<span class="truncate text-xs"
-												>{avatarStore.config?.lastModified ?? '...'}</span
-											>
+											<span class="truncate font-semibold">{avatarStore.config?.username}</span>
+											<span class="truncate text-xs">{avatarStore.config?.lastModified}</span>
 										</div>
-										<Badge class="w-fit bg-secondary" variant="outline"
-											>{avatarStore.config?.colorName ?? '...'}</Badge
-										>
+										{#if avatarStore.config?.colorName}
+											<Badge class="w-fit bg-secondary" variant="outline"
+												>{avatarStore.config?.colorName}</Badge
+											>
+										{/if}
 									</div>
 								</div>
 
