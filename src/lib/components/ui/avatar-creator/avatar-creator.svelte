@@ -7,7 +7,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import AnimatedDiceButton from './animated-dice-button.svelte';
 	import { avatarContext } from '$lib/contexts/avatarContext';
-	import { DEFAULT_CATEGORIES, type Category, type SelectedItems, type ColorName } from './types';
+	import { DEFAULT_CATEGORIES, type Category, type ColorName, type SelectedItems } from './types';
 	import { Undo2, Redo2 } from '@lucide/svelte';
 	import * as Avatar from '$lib/components/ui/avatar';
 
@@ -20,60 +20,32 @@
 	}
 
 	const categories: Category[] = DEFAULT_CATEGORIES;
-	let activeTab = $state(categories[0]?.id ?? '');
+	let activeTab = $state(categories[0]?.id ?? ''); // For CategorySelector UI
 
-	// Local copies of state that we'll sync with the store
-	let selectedItems = $state<SelectedItems>({ ...avatarStore.previewConfig.items });
-	let selectedColor = $state<ColorName>(avatarStore.previewConfig.colorName);
-	let username = $state<string>(avatarStore.previewConfig.username);
-
-	// Watch for changes in our local state and update the store
-	$effect(() => {
-		// Skip updates if an undo/redo operation is in progress
+	// Event handler for username input
+	function handleUsernameInput(event: Event) {
 		if (avatarStore.isUndoRedoOperation) return;
-
+		const newUsername = (event.currentTarget as HTMLInputElement).value;
 		avatarStore.updateConfig((config) => {
-			config.items = selectedItems;
+			config.username = newUsername;
 		});
-	});
+	}
 
-	$effect(() => {
-		// Skip updates if an undo/redo operation is in progress
+	// Event handler for color selection
+	function handleColorSelect(color: ColorName) {
 		if (avatarStore.isUndoRedoOperation) return;
-
 		avatarStore.updateConfig((config) => {
-			config.colorName = selectedColor;
+			config.colorName = color;
 		});
-	});
+	}
 
-	$effect(() => {
-		// Skip updates if an undo/redo operation is in progress
+	// Event handler for item selection in CategorySelector
+	function handleItemSelect(categoryId: string, itemIndex: number) {
 		if (avatarStore.isUndoRedoOperation) return;
-
 		avatarStore.updateConfig((config) => {
-			config.username = username;
+			config.items[categoryId] = itemIndex;
 		});
-	});
-
-	// Watch for changes in the store and update our local state
-	$effect(() => {
-		selectedItems = { ...avatarStore.previewConfig.items };
-		selectedColor = avatarStore.previewConfig.colorName;
-		username = avatarStore.previewConfig.username;
-	});
-
-	// Optional: Example of reacting to the save event from the store
-	$effect(() => {
-		if (avatarStore.lastSaveTimestamp) {
-			console.log(
-				'Avatar saved at:',
-				new Date(avatarStore.lastSaveTimestamp).toLocaleTimeString(),
-				'Data:',
-				avatarStore.lastSaveData
-			);
-			// Here you could trigger a toast notification, etc.
-		}
-	});
+	}
 </script>
 
 <Card.Root class="w-full max-w-2xl">
@@ -83,7 +55,12 @@
 	</Card.Header>
 	<Card.Content>
 		<div class="flex w-full flex-col-reverse justify-center gap-4 lg:flex-row">
-			<CategorySelector bind:activeTab bind:selectedItems {categories} />
+			<CategorySelector
+				bind:activeTab
+				{categories}
+				currentSelectedItems={avatarStore.previewConfig.items}
+				onItemSelect={handleItemSelect}
+			/>
 			<div class="flex grow flex-col items-center gap-4">
 				<div class="flex grow flex-col items-center justify-center gap-3">
 					<Avatar.Root class="h-36 w-36 {avatarStore.previewBgClass}">
@@ -123,11 +100,20 @@
 							size="icon"
 						/>
 					</div>
-					<ColorSelector bind:selectedColor></ColorSelector>
+					<ColorSelector
+						selectedValue={avatarStore.previewConfig.colorName}
+						onColorSelect={handleColorSelect}
+					/>
 				</div>
 				<div class="grid w-full flex-col items-start gap-1.5">
 					<Label for="username">Your Name</Label>
-					<Input type="text" class="w-full" id="username" bind:value={username} />
+					<Input
+						type="text"
+						class="w-full"
+						id="username"
+						value={avatarStore.previewConfig.username}
+						oninput={handleUsernameInput}
+					/>
 				</div>
 			</div>
 		</div>

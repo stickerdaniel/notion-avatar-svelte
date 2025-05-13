@@ -6,13 +6,20 @@
 	import { cn } from '$lib/utils';
 
 	let {
-		selectedColor = $bindable<ColorName | undefined>()
+		selectedValue,
+		onColorSelect
 	}: {
-		selectedColor?: ColorName;
+		selectedValue: ColorName | undefined;
+		onColorSelect: (color: ColorName) => void;
 	} = $props();
 </script>
 
-<RadioToggleGroup.Root bind:value={selectedColor} class="flex flex-row items-center -space-x-3">
+<RadioToggleGroup.Root
+	value={selectedValue}
+	class="flex flex-row items-center -space-x-3"
+	role="radiogroup"
+	aria-label="Color Selector"
+>
 	{#each COLORS as color (color)}
 		<RadioToggleGroup.Item
 			value={color}
@@ -20,13 +27,15 @@
 			class={cn(
 				'transform rounded-full ring-2 ring-background transition-transform duration-75 ease-in-out',
 				'active:scale-95',
-				selectedColor === color ? '' : 'hover:scale-105 ',
+				selectedValue === color ? '' : 'hover:scale-105 ',
 				AVATAR_COLOR_STYLES[color as ColorName].base,
 				AVATAR_COLOR_STYLES[color as ColorName].hover,
 				AVATAR_COLOR_STYLES[color as ColorName].selected
 			)}
+			onclick={() => onColorSelect(color)}
+			aria-pressed={selectedValue === color}
 		>
-			{#if selectedColor === color}<Check color="" />{/if}
+			{#if selectedValue === color}<Check color="" />{/if}
 		</RadioToggleGroup.Item>
 	{/each}
 </RadioToggleGroup.Root>

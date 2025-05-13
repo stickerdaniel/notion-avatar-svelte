@@ -7,82 +7,31 @@
 	import { type Category, type SelectedItems, getPartImagePath } from './types';
 
 	let {
-		selectedItems = $bindable<SelectedItems>(),
-		activeTab = $bindable<string>(),
-		categories
+		activeTab = $bindable<string>(''),
+		categories,
+		currentSelectedItems,
+		onItemSelect
 	}: {
-		selectedItems?: SelectedItems;
 		activeTab?: string;
 		categories: Category[];
+		currentSelectedItems: SelectedItems;
+		onItemSelect: (categoryId: string, itemIndex: number) => void;
 	} = $props();
 
-	// Initialize selectedValues for each category, but only if they don't exist in selectedItems
-	// This prevents overwriting loaded values from localStorage
-	const initialSelectedValues: Record<string, string> = {};
-	categories.forEach((category) => {
-		const initialIndex =
-			selectedItems &&
-			selectedItems[category.id] !== undefined &&
-			selectedItems[category.id] !== null
-				? Number(selectedItems[category.id])
-				: 0;
-		initialSelectedValues[category.id] = category.id + initialIndex.toString();
-	});
-	let selectedValues = $state(initialSelectedValues);
+	if (!activeTab && categories.length > 0) {
+		activeTab = categories[0].id;
+	}
 
-	// Watch for changes in selectedValues and update selectedItems
-	$effect(() => {
-		const newSelectedItems: SelectedItems = {};
-
-		for (const [categoryId, value] of Object.entries(selectedValues)) {
-			if (value) {
-				// Extract the index from the value and ensure it's a valid number
-				const indexStr = value.replace(categoryId, '');
-				const parsedIndex = parseInt(indexStr, 10);
-
-				// Only add if it's a valid number
-				if (!isNaN(parsedIndex)) {
-					newSelectedItems[categoryId] = parsedIndex;
-				}
-			}
-		}
-
-		selectedItems = newSelectedItems;
-	});
-
-	// Initialize/Update selectedValues from selectedItems prop if it changes
-	$effect(() => {
-		if (selectedItems) {
-			for (const [categoryId, indexValue] of Object.entries(selectedItems)) {
-				if (indexValue !== undefined && indexValue !== null) {
-					const newValue = categoryId + indexValue.toString();
-					// Only update if different to prevent potential loops if not careful,
-					// though $state handles distinctness.
-					if (selectedValues[categoryId] !== newValue) {
-						selectedValues[categoryId] = newValue;
-					}
-				} else {
-					// If an item in selectedItems becomes null/undefined, ensure a default for radio group.
-					// Radio groups must have a value. Defaulting to "0".
-					const defaultValue = categoryId + '0';
-					if (selectedValues[categoryId] !== defaultValue) {
-						selectedValues[categoryId] = defaultValue;
-					}
-				}
-			}
-		}
-	});
-
-	// Navigation between tabs
 	function scrollTabs(direction: 'up' | 'down') {
 		const categoryIds = categories.map((category) => category.id);
-		const currentIndex = categoryIds.indexOf(activeTab);
+		const currentIdx = categoryIds.indexOf(activeTab);
+		const currentIndex = currentIdx === -1 ? 0 : currentIdx;
 
 		const n = categoryIds.length;
+		if (n === 0) return;
 		const delta = direction === 'up' ? -1 : 1;
 		const newIndex = (currentIndex + delta + n) % n;
 
-		// Update active tab
 		activeTab = categoryIds[newIndex];
 	}
 </script>
@@ -132,22 +81,29 @@
 
 	<!-- Tab content -->
 	{#each categories as category (category.id)}
+		{@const currentCategoryItemIndex = currentSelectedItems[category.id] ?? 0}
+		{@const radioGroupValueForDisplay = category.id + currentCategoryItemIndex.toString()}
 		<Tabs.Content value={category.id} class="mt-0 h-fit lg:w-[12.2rem]">
 			<ScrollArea class="h-[26.5rem] w-full rounded-md border">
 				<RadioToggleGroup.Root
 					variant="outline"
-					bind:value={selectedValues[category.id]}
+					value={radioGroupValueForDisplay}
 					class="flex flex-wrap justify-start gap-1 p-2"
+					role="radiogroup"
+					aria-label={`${category.name} items`}
 				>
 					{#each Array(category.maxItems) as _, index (index)}
 						{@const imageSrc = getPartImagePath(category.id, index)}
+						{@const itemValueForComparison = category.id + index.toString()}
 						<RadioToggleGroup.Item
-							value={category.id + index.toString()}
+							value={itemValueForComparison}
 							aria-label={`Select ${category.name} ${index + 1}`}
 							class="h-14 w-14 p-0 transition-transform duration-75 ease-in-out active:scale-95"
+							onclick={() => onItemSelect(category.id, index)}
+							aria-pressed={radioGroupValueForDisplay === itemValueForComparison}
 						>
 							<div
-								class={`duration-5 flex h-full w-full transform items-center justify-center transition-transform ease-in-out ${selectedValues[category.id] !== category.id + index.toString() ? 'hover:scale-110' : ''} active:scale-100 active:duration-0`}
+								class={`duration-5 flex h-full w-full transform items-center justify-center transition-transform ease-in-out ${radioGroupValueForDisplay !== itemValueForComparison ? 'hover:scale-110' : ''} active:scale-100 active:duration-0`}
 							>
 								<img
 									src={imageSrc}
