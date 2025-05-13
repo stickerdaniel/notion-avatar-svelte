@@ -1,0 +1,124 @@
+
+      <svg viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          
+    <filter id="avatar-gr0i33d-filter" x="-20%" y="-20%" width="140%" height="140%" 
+            filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" 
+            color-interpolation-filters="linearRGB">
+      <feMorphology operator="dilate" radius="20 20" in="SourceAlpha" result="morphology"/>
+      <feFlood flood-color="#ffffff" flood-opacity="1" result="flood"/>
+      <feComposite in="flood" in2="morphology" operator="in" result="composite"/>
+      <feMerge result="merge">
+        <feMergeNode in="composite" result="mergeNode"/>
+        <feMergeNode in="SourceGraphic" result="mergeNode1"/>
+      </feMerge>
+    </filter>
+  
+        </defs>
+        <g id="avatar-gr0i33d-avatar" filter="url(#avatar-gr0i33d-filter)">
+          
+          <g id="avatar-gr0i33d-face" fill="#ffffff" 
+             >
+            
+    <title>Face/ 1</title>
+    <g id="Face/-1" stroke="none" stroke-width="1"  fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M532,379 C664.54834,379 772,486.45166 772,619 C772,751.54834 664.54834,879 532,879 C435.13263,879 351.668898,801.612202 313.752775,718.980575 L313.322946,718.989282 L312,719 C267.81722,719 232,683.18278 232,639 C232,599.134956 261.158843,566.080325 299.312086,560.00055 C325.599297,455.979213 419.809919,379 532,379 Z M295.858895,624.545187 L304.141105,655.454813" id="Path" stroke="#000000" stroke-width="24"></path>
+    </g>
+
+          </g>
+        
+
+          <g id="avatar-gr0i33d-details"  
+             >
+            
+    <title>Details/ 0</title>
+    <g id="Details/-0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"></g>
+
+          </g>
+        
+
+          <g id="avatar-gr0i33d-mouth"  
+             >
+            
+    <title>Mouth/ 10</title>
+    <g id="Mouth/-10" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M549,759 C576.33038,765.666667 599.663714,769 619,769 C638.336286,769 655.002953,765.666667 669,759 C656.33038,792.333333 632.997047,809 599,809 C565.002953,809 548.336286,792.333333 549,759 Z" id="Path" stroke="#000000" stroke-width="16"></path>
+    </g>
+
+          </g>
+        
+
+          <g id="avatar-gr0i33d-nose"  
+             >
+            
+<g id="Nose/ 13">
+<path id="Path" fill-rule="evenodd" clip-rule="evenodd" d="M644 560C644 560 665.892 613.522 673 623C676 627 693.906 641.256 692.774 653.58C690.065 683.076 644 684.359 644 684.359C644 684.359 700 689.489 700 653.58C700 637.222 687 632 674 620C666.959 613.5 644 560 644 560Z" fill="black" stroke="black" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+
+          </g>
+        
+
+          <g id="avatar-gr0i33d-eyes"  
+             >
+            
+    <title>Eyes/ 7</title>
+    <g id="Eyes/-7" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M570,516 C578.836556,516 586,526.745166 586,540 C586,553.254834 578.836556,564 570,564 C561.163444,564 554,553.254834 554,540 C554,526.745166 561.163444,516 570,516 Z M708,516 C716.836556,516 724,526.745166 724,540 C724,553.254834 716.836556,564 708,564 C699.163444,564 692,553.254834 692,540 C692,526.745166 699.163444,516 708,516 Z M568,527 C564.686292,527 562,529.686292 562,533 C562,536.313708 564.686292,539 568,539 C571.313708,539 574,536.313708 574,533 C574,529.686292 571.313708,527 568,527 Z M706,527 C702.686292,527 700,529.686292 700,533 C700,536.313708 702.686292,539 706,539 C709.313708,539 712,536.313708 712,533 C712,529.686292 709.313708,527 706,527 Z" id="Combined-Shape" fill="#000000"></path>
+    </g>
+
+          </g>
+        
+
+          <g id="avatar-gr0i33d-eyebrows"  
+             >
+            
+<g id="Eyebrows/ 11">
+<g id="Group">
+<path id="Path" fill-rule="evenodd" clip-rule="evenodd" d="M682.541 491.005C682.541 491.005 728.644 489.216 741.813 495.149C754.982 501.082 753.21 511.484 753.21 511.484C753.21 511.484 746.419 503.992 737.34 499.348C728.26 494.703 682.541 491.005 682.541 491.005Z" fill="black" stroke="black" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Path_2" fill-rule="evenodd" clip-rule="evenodd" d="M595.459 491.005C595.459 491.005 549.356 489.216 536.187 495.149C523.018 501.082 524.79 511.484 524.79 511.484C524.79 511.484 531.581 503.992 540.66 499.348C549.74 494.703 595.459 491.005 595.459 491.005Z" fill="black" stroke="black" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+
+          </g>
+        
+
+          <g id="avatar-gr0i33d-beard"  
+             >
+            
+    <title>Beard/ 0</title>
+    <g id="Beard/-0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"></g>
+
+          </g>
+        
+
+          <g id="avatar-gr0i33d-hair"  
+             >
+            
+    <title>Hairstyle/ 25</title>
+    <g id="Hairstyle/-25" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M227,151 C291,143 344.152059,161.487028 368.024158,212.689811 C410.238527,194.447151 459.304239,186 515,186 C629.125983,186 703.747536,236.594939 747,304 C779.083989,354 792.083989,420.666667 786,504 L782.3412,503.1612 C722.927067,489.4804 699,484 661,460 C635.666667,444 602.333333,419.666667 561,387 C524.333333,437 495.333333,470 474,486 C442,510 357,547 304,565 C251,583 232,598 232,648 C232,681.333333 258.666667,705 312,719 C325.996223,746.033167 340.996223,769.366501 357,789 C373.003777,808.633499 393.003777,825.633499 417,840 C335.666667,855.333333 262.333333,855.333333 197,840 C131.666667,824.666667 79.3333333,791 40,739 C94.6666667,735 127.666667,710.333333 139,665 C169.469054,543.123784 93,519 93,379 C93,239 147.699952,160.912506 227,151 Z" id="Path" stroke="#000000" stroke-width="12" fill="#000000"></path>
+    </g>
+
+          </g>
+        
+
+          <g id="avatar-gr0i33d-accessories"  
+             >
+            
+    <title>Accessories/ 0</title>
+    <g id="Accessories/-0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"></g>
+
+          </g>
+        
+
+          <g id="avatar-gr0i33d-glasses"  
+             >
+            
+    <title>Glasses/ 0</title>
+    <g id="Glasses/-0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"></g>
+
+          </g>
+        
+        </g>
+      </svg>
+    
