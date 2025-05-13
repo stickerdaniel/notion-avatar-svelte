@@ -1,8 +1,6 @@
 # sv
+
 ![CleanShot 2025-05-13 at 02 15 03@2x](https://github.com/user-attachments/assets/6ef9f94b-8801-4997-8ba9-e3ac6f59030d)
-
-
-
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 

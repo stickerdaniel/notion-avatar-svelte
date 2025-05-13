@@ -92,7 +92,7 @@
 					role="radiogroup"
 					aria-label={`${category.name} items`}
 				>
-					{#each Array(category.maxItems) as _unused, index (index)}
+					{#each Array(category.maxItems) as _, index (index)}
 						{@const imageSrc = getPartImagePath(category.id, index)}
 						{@const itemValueForComparison = category.id + index.toString()}
 						<RadioToggleGroup.Item
