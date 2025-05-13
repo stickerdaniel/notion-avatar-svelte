@@ -1,11 +1,13 @@
 <script lang="ts">
-	import AvatarCreator from '$lib/components/ui/avatar-creator/avatar-creator.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import { GithubIcon, SquareArrowOutUpRight } from '@lucide/svelte';
+	import { GithubIcon, Redo, SquareArrowOutUpRight, Undo } from '@lucide/svelte';
 
 	// Import the new Avatar components and the context
-	import * as Avatar from '$lib/components/ui/avatar-creator/avatar/index.js'; // Updated import
+	import * as Avatar from '$lib/components/ui/avatar';
+	import * as Card from '$lib/components/ui/card/index.js';
 	import { avatarContext } from '$lib/contexts/avatarContext.js';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import AvatarCreator from '$lib/components/ui/avatar-creator/avatar-creator.svelte';
 
 	const avatarStore = avatarContext.get();
 </script>
@@ -47,94 +49,139 @@
 			<AvatarCreator />
 
 			{#if avatarStore}
-				<div class="mt-10 flex flex-col gap-8">
-					<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+				<div class="flex flex-col gap-5">
+					<div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 						<!-- Example 1: Live Preview (Current Editing State) -->
-						<div class="flex h-full flex-col items-center gap-4 rounded-lg border p-6">
-							<h2 class="text-xl font-semibold">Live Preview Example</h2>
-							<p class="text-center text-sm text-muted-foreground">
-								Shows what's currently being edited, before saving.
-							</p>
-							<Avatar.Root usePreview={true} class="h-24 w-24 border-2">
-								<Avatar.Image />
-								<Avatar.Fallback class="text-2xl" />
-							</Avatar.Root>
+						<Card.Root>
+							<Card.Header>
+								<Card.Title>Live Preview Example</Card.Title>
+								<Card.Description>
+									Shows what's currently being edited, before saving.
+								</Card.Description>
+							</Card.Header>
+							<Card.Content class="flex flex-col gap-4">
+								<!-- Avatar Preview -->
+								<div class="flex gap-2 text-left text-sm">
+									<Avatar.Root class="h-16 w-16	 rounded-xl {avatarStore.previewBgClass}">
+										<Avatar.Image src={avatarStore.previewSvgDataUrl} />
+										<Avatar.Fallback />
+									</Avatar.Root>
+									<div class="flex h-full flex-col justify-between gap-1">
+										<div class="grid flex-1 text-left text-sm leading-tight">
+											<span class="truncate font-semibold"
+												>{avatarStore.previewConfig.username}
+											</span>
+											<span class="truncate text-xs">{avatarStore.previewConfig.lastModified}</span>
+										</div>
+										<Badge class="w-fit bg-secondary" variant="outline"
+											>{avatarStore.previewConfig.colorName}
+										</Badge>
+									</div>
+								</div>
 
-							<p class="mt-2 text-lg font-medium">
-								{avatarStore.previewConfig.username ?? '...'}
-							</p>
-							<p class="text-xs text-muted-foreground">
-								Background: {avatarStore.previewConfig.colorName ?? '...'}
-							</p>
-							<p class="text-[10px] text-muted-foreground/80">
-								Last Edit: {avatarStore.previewConfig.lastModified ?? '...'}
-							</p>
-							<div class="mt-2 w-full rounded-md bg-secondary/50 p-1.5 text-xs">
-								<p class="font-semibold">How to access:</p>
-								<p class="mt-1 font-mono text-[10px]">avatarStore.previewSvgDataUrl</p>
-								<p class="font-mono text-[10px]">avatarStore.previewBgClass</p>
-								<p class="font-mono text-[10px]">avatarStore.previewConfig.username</p>
-								<p class="font-mono text-[10px]">avatarStore.previewConfig.colorName</p>
-								<p class="font-mono text-[10px]">avatarStore.previewConfig.lastModified</p>
-							</div>
-						</div>
+								<!-- How to access -->
+								<div class="mt-2 w-full truncate">
+									<p class="text-xs font-semibold">How to access:</p>
+									<p class="font-mono text-xs text-muted-foreground">
+										avatarStore.previewSvgDataUrl
+									</p>
+									<p class="font-mono text-xs text-muted-foreground">avatarStore.previewBgClass</p>
+									<p class="font-mono text-xs text-muted-foreground">
+										avatarStore.previewConfig.username
+									</p>
+									<p class="font-mono text-xs text-muted-foreground">
+										avatarStore.previewConfig.colorName
+									</p>
+									<p class="font-mono text-xs text-muted-foreground">
+										avatarStore.previewConfig.lastModified
+									</p>
+								</div>
+							</Card.Content>
+						</Card.Root>
 
 						<!-- Example 2: Saved Avatar (Persisted State) -->
-						<div class="flex h-full flex-col items-center gap-4 rounded-lg border p-6">
-							<h2 class="text-xl font-semibold">Saved Avatar Example</h2>
-							<p class="text-center text-sm text-muted-foreground">
-								Shows the last explicitly saved version (persisted in localStorage).
-							</p>
-							<Avatar.Root class="h-24 w-24 border-2">
-								<Avatar.Image />
-								<Avatar.Fallback class="text-2xl" />
-							</Avatar.Root>
+						<Card.Root>
+							<Card.Header>
+								<Card.Title>Saved Avatar Example</Card.Title>
+								<Card.Description>
+									Shows the last explicitly saved version (persisted in localStorage).
+								</Card.Description>
+							</Card.Header>
+							<Card.Content class="flex flex-col gap-4">
+								<!-- Avatar Preview -->
+								<div class="flex gap-2 text-left text-sm">
+									<Avatar.Root class="h-16 w-16 rounded-xl {avatarStore.bgClass}">
+										<Avatar.Image src={avatarStore.svgDataUrl} />
+										<Avatar.Fallback />
+									</Avatar.Root>
+									<div class="flex h-full flex-col justify-between gap-1">
+										<div class="grid flex-1 text-left text-sm leading-tight">
+											<span class="truncate font-semibold"
+												>{avatarStore.config?.username ?? '...'}</span
+											>
+											<span class="truncate text-xs"
+												>{avatarStore.config?.lastModified ?? '...'}</span
+											>
+										</div>
+										<Badge class="w-fit bg-secondary" variant="outline"
+											>{avatarStore.config?.colorName ?? '...'}</Badge
+										>
+									</div>
+								</div>
 
-							<p class="mt-2 text-lg font-medium">
-								{avatarStore.config?.username ?? '...'}
-							</p>
-							<p class="text-xs text-muted-foreground">
-								Background: {avatarStore.config?.colorName ?? '...'}
-							</p>
-							<p class="text-[10px] text-muted-foreground/80">
-								Last Saved: {avatarStore.config?.lastModified ?? '...'}
-							</p>
-							<div class="mt-2 w-full rounded-md bg-secondary/50 p-1.5 text-xs">
-								<p class="font-semibold">How to access:</p>
-								<p class="mt-1 font-mono text-[10px]">avatarStore.svgDataUrl</p>
-								<p class="font-mono text-[10px]">avatarStore.bgClass</p>
-								<p class="font-mono text-[10px]">avatarStore.config?.username</p>
-								<p class="font-mono text-[10px]">avatarStore.config?.colorName</p>
-								<p class="font-mono text-[10px]">avatarStore.config?.lastModified</p>
-							</div>
-						</div>
+								<!-- How to access -->
+								<div class="mt-2 w-full truncate">
+									<p class="text-xs font-semibold">How to access:</p>
+									<p class="font-mono text-xs text-muted-foreground">avatarStore.svgDataUrl</p>
+									<p class="font-mono text-xs text-muted-foreground">avatarStore.bgClass</p>
+									<p class="font-mono text-xs text-muted-foreground">
+										avatarStore.config?.username
+									</p>
+									<p class="font-mono text-xs text-muted-foreground">
+										avatarStore.config?.colorName
+									</p>
+									<p class="font-mono text-xs text-muted-foreground">
+										avatarStore.config?.lastModified
+									</p>
+								</div>
+							</Card.Content>
+						</Card.Root>
 					</div>
 
 					<!-- JSON Debug Display -->
-					<div class="mb-4 mt-6 overflow-hidden rounded-lg border bg-secondary/10 p-4">
-						<div class="flex items-center justify-between">
-							<h3 class="text-sm font-semibold">avatarStore.configJSON</h3>
-						</div>
-						<pre class="text-xs">{JSON.stringify(JSON.parse(avatarStore.configJSON), null, 2)}</pre>
-
-						<!-- Add Undo/Redo buttons -->
-						<div class="mt-2 flex justify-end gap-2">
-							<button
-								class="rounded border px-2 py-1 text-xs disabled:opacity-50"
+					<Card.Root>
+						<Card.Header>
+							<Card.Title>avatarStore.configJSON</Card.Title>
+							<Card.Description
+								>Svelte State variable that contains the current avatar configuration.</Card.Description
+							>
+						</Card.Header>
+						<Card.Content>
+							<pre class="text-xs">{JSON.stringify(
+									JSON.parse(avatarStore.configJSON),
+									null,
+									2
+								)}</pre>
+						</Card.Content>
+						<Card.Footer class="flex justify-end gap-2">
+							<Button
+								size="icon"
+								variant="secondary"
 								disabled={!avatarStore.canUndo}
 								onclick={avatarStore.undo}
 							>
-								Undo
-							</button>
-							<button
-								class="rounded border px-2 py-1 text-xs disabled:opacity-50"
+								<Undo />
+							</Button>
+							<Button
+								size="icon"
+								variant="secondary"
 								disabled={!avatarStore.canRedo}
 								onclick={avatarStore.redo}
 							>
-								Redo
-							</button>
-						</div>
-					</div>
+								<Redo />
+							</Button>
+						</Card.Footer>
+					</Card.Root>
 				</div>
 			{/if}
 		</div>

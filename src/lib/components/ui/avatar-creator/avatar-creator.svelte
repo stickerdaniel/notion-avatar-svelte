@@ -9,7 +9,7 @@
 	import { avatarContext } from '$lib/contexts/avatarContext';
 	import { DEFAULT_CATEGORIES, type Category, type SelectedItems, type ColorName } from './types';
 	import { Undo2, Redo2 } from '@lucide/svelte';
-	import * as Avatar from './avatar/index.js';
+	import * as Avatar from '$lib/components/ui/avatar';
 
 	// Get the Avatar store instance from context
 	const avatarStore = avatarContext.get();
@@ -86,8 +86,8 @@
 			<CategorySelector bind:activeTab bind:selectedItems {categories} />
 			<div class="flex grow flex-col items-center gap-4">
 				<div class="flex grow items-center">
-					<Avatar.Root usePreview={true} class="h-36 w-36">
-						<Avatar.Image />
+					<Avatar.Root class="h-36 w-36 {avatarStore.previewBgClass}">
+						<Avatar.Image src={avatarStore.previewSvgDataUrl} />
 						<Avatar.Fallback />
 					</Avatar.Root>
 				</div>
