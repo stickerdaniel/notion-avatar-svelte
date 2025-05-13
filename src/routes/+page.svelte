@@ -127,7 +127,7 @@
 							<Card.Header>
 								<Card.Title>Saved Avatar Example</Card.Title>
 								<Card.Description>
-									Shows the last explicitly saved version (persisted in localStorage).
+									Shows the last saved version.<br />(persisted in localStorage)
 								</Card.Description>
 							</Card.Header>
 							<Card.Content class="flex flex-col gap-4">

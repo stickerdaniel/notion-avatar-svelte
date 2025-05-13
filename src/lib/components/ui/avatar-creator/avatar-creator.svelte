@@ -79,7 +79,7 @@
 <Card.Root class="w-full max-w-2xl">
 	<Card.Header>
 		<Card.Title>Hello, stranger! Let's fix that.</Card.Title>
-		<Card.Description>Put a face to your username.</Card.Description>
+		<Card.Description>Put a face to your name.</Card.Description>
 	</Card.Header>
 	<Card.Content>
 		<div class="flex w-full flex-col-reverse justify-center gap-4 lg:flex-row">
@@ -126,7 +126,7 @@
 					<ColorSelector bind:selectedColor></ColorSelector>
 				</div>
 				<div class="grid w-full flex-col items-start gap-1.5">
-					<Label for="username">Your Username</Label>
+					<Label for="username">Your Name</Label>
 					<Input type="text" class="w-full" id="username" bind:value={username} />
 				</div>
 			</div>
