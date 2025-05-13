@@ -85,11 +85,12 @@
 		<div class="flex w-full flex-col-reverse justify-center gap-4 lg:flex-row">
 			<CategorySelector bind:activeTab bind:selectedItems {categories} />
 			<div class="flex grow flex-col items-center gap-4">
-				<div class="flex grow items-center">
+				<div class="flex grow flex-col items-center justify-center gap-3">
 					<Avatar.Root class="h-36 w-36 {avatarStore.previewBgClass}">
 						<Avatar.Image src={avatarStore.previewSvgDataUrl} />
 						<Avatar.Fallback />
 					</Avatar.Root>
+					<span class="h-4 text-lg font-medium">{avatarStore.previewConfig.username}</span>
 				</div>
 				<div
 					class="flex w-full flex-col items-end justify-between gap-4 sm:flex-row-reverse md:flex-row-reverse lg:flex-col lg:items-end"
