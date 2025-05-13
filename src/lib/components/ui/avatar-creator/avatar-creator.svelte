@@ -1,7 +1,6 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import AvatarPreview from './avatar-preview.svelte';
 	import CategorySelector from './category-selector.svelte';
 	import ColorSelector from './color-selector.svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -10,6 +9,7 @@
 	import { avatarContext } from '$lib/contexts/avatarContext';
 	import { DEFAULT_CATEGORIES, type Category, type SelectedItems, type ColorName } from './types';
 	import { Undo2, Redo2 } from '@lucide/svelte';
+	import * as Avatar from './avatar/index.js';
 
 	// Get the Avatar store instance from context
 	const avatarStore = avatarContext.get();
@@ -78,7 +78,7 @@
 
 <Card.Root class="w-full max-w-2xl">
 	<Card.Header>
-		<Card.Title>Hello! Stranger? Let's fix that.</Card.Title>
+		<Card.Title>Hello, stranger! Let's fix that.</Card.Title>
 		<Card.Description>Put a face to your username.</Card.Description>
 	</Card.Header>
 	<Card.Content>
@@ -86,10 +86,10 @@
 			<CategorySelector bind:activeTab bind:selectedItems {categories} />
 			<div class="flex grow flex-col items-center gap-4">
 				<div class="flex grow items-center">
-					<AvatarPreview
-						svgDataUrl={avatarStore.previewSvgDataUrl}
-						previewBgClass={avatarStore.previewBgClass}
-					/>
+					<Avatar.Root usePreview={true} class="h-36 w-36">
+						<Avatar.Image />
+						<Avatar.Fallback />
+					</Avatar.Root>
 				</div>
 				<div
 					class="flex w-full flex-col items-end justify-between gap-4 sm:flex-row-reverse md:flex-row-reverse lg:flex-col lg:items-end"
