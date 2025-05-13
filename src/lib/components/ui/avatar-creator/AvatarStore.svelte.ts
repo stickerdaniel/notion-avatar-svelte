@@ -106,9 +106,6 @@ export class AvatarStoreClass implements IAvatar {
 	// --- The single source of truth: config as JSON string ---
 	configJSON = $state<string>('');
 
-	// Flag to indicate if changes are coming from undo/redo
-	isUndoRedoOperation = $state(false);
-
 	// Parsed version of the JSON string (derived)
 	previewConfig = $derived<AvatarConfiguration>(this._parseConfigJSON());
 
@@ -147,21 +144,19 @@ export class AvatarStoreClass implements IAvatar {
 	);
 
 	constructor() {
-		// Initialize with default configuration
-		this._initializeDefaultConfig();
+		this._initializeDefaultConfig(); // Sets initial configJSON
 
-		// Initialize from saved configuration
-		this.loadconfig(true);
-
-		// Setup the history tracker - must be after config initialization
-		this._history = new StateHistory(
-			// Getter for the current state - just return the JSON string
-			() => this.configJSON,
-			// Setter for restoring a state - set the JSON string
+		// Initialize history AFTER initial configJSON is set
+		this._history = new StateHistory<string>(
+			() => this.configJSON, // Getter for StateHistory
 			(jsonString) => {
+				// Setter for StateHistory (when undo/redo applies a state)
 				this.configJSON = jsonString;
 			}
 		);
+		// Load config after history is initialized.
+		// loadconfig will manage isUndoRedoOperation for initial load.
+		this.loadconfig(true);
 
 		// Setup effects to update SVG URLs when their respective layers change
 		$effect(() => {
@@ -170,8 +165,6 @@ export class AvatarStoreClass implements IAvatar {
 				this.previewSvgDataUrl = '';
 				return;
 			}
-
-			// Use IIFE for the async operation
 			(async () => {
 				this.previewSvgDataUrl = await generatesvgDataUrl(layers);
 			})();
@@ -183,8 +176,6 @@ export class AvatarStoreClass implements IAvatar {
 				this.svgDataUrl = '';
 				return;
 			}
-
-			// Use IIFE for the async operation
 			(async () => {
 				this.svgDataUrl = await generatesvgDataUrl(layers);
 			})();
@@ -202,7 +193,6 @@ export class AvatarStoreClass implements IAvatar {
 			colorName: COLORS[0],
 			lastModified: new Date().toISOString()
 		};
-
 		this.configJSON = JSON.stringify(defaultConfig);
 	}
 
@@ -238,12 +228,10 @@ export class AvatarStoreClass implements IAvatar {
 	 * Update the configuration with a callback function
 	 */
 	updateConfig = (updater: (config: AvatarConfiguration) => void): void => {
-		const previewConfig = this._parseConfigJSON();
-		updater(previewConfig);
-
-		// Update the config JSON
-		const newConfigJSON = JSON.stringify(previewConfig);
-		this.configJSON = newConfigJSON;
+		const currentParsedConfig = this._parseConfigJSON();
+		updater(currentParsedConfig);
+		currentParsedConfig.lastModified = new Date().toISOString(); // Centralized timestamp update
+		this.configJSON = JSON.stringify(currentParsedConfig); // StateHistory will automatically log this change
 	};
 
 	/**
@@ -251,7 +239,6 @@ export class AvatarStoreClass implements IAvatar {
 	 */
 	private _generateLayersFromItems(items: SelectedItems | null): string[] {
 		if (!items) return [];
-
 		return LAYER_ORDER.map((categoryId) => {
 			const selectedIndex = items[categoryId];
 			if (selectedIndex !== null && selectedIndex >= 0) {
@@ -275,12 +262,8 @@ export class AvatarStoreClass implements IAvatar {
 					if (!COLORS.includes(loadedConfig.colorName as ColorName)) {
 						loadedConfig.colorName = COLORS[0];
 					}
-
-					// Update saved configuration
-					this.config = loadedConfig;
-
-					// Initialize live editing state from saved config
-					this.configJSON = JSON.stringify(loadedConfig);
+					this.config = loadedConfig; // Update saved state (for display elsewhere)
+					this.configJSON = JSON.stringify(loadedConfig); // StateHistory will log this initial load
 				} else if (isInitialLoad) {
 					// Generate random if no saved config exists and it's the initial load
 					this.generateRandomAvatar(false);
@@ -299,15 +282,12 @@ export class AvatarStoreClass implements IAvatar {
 	 * Generate random avatar configuration (affects live editing state only)
 	 */
 	generateRandomAvatar = (clearSaveData = true) => {
-		// Set the flag to prevent circular updates - we'll reuse the same flag
-		this.isUndoRedoOperation = true;
-
+		// updateConfig will handle history push.
 		const newSelectedItems: SelectedItems = {};
 		const INCLUDE_GLASSES_PROBABILITY = 0.4;
 
 		for (const category of this.categories) {
 			let selectedItemIndex: number;
-
 			switch (category.id) {
 				case 'beard':
 				case 'accessories':
@@ -328,50 +308,30 @@ export class AvatarStoreClass implements IAvatar {
 						category.maxItems > 0 ? Math.floor(Math.random() * category.maxItems) : 0;
 					break;
 			}
-
 			newSelectedItems[category.id] = selectedItemIndex;
 		}
 
-		// Update live state through the updateConfig method
 		this.updateConfig((config) => {
 			config.items = newSelectedItems;
 			config.colorName = COLORS[Math.floor(Math.random() * COLORS.length)];
-			config.lastModified = new Date().toISOString();
 		});
-
-		// Optionally clear save event data
-		if (clearSaveData) {
-			this.lastSaveTimestamp = null;
-			this.lastSaveData = null;
-		}
-
-		// Reset the flag after a short delay to allow derived values to update
-		setTimeout(() => {
-			this.isUndoRedoOperation = false;
-		}, 0);
 	};
 
 	/**
 	 * Save the current live editing state to localStorage and update saved state
 	 */
 	saveAvatar = () => {
-		const previewConfig = this._parseConfigJSON();
+		const previewConfig = this._parseConfigJSON(); // This is the live editing state
 		const configToSave = {
 			...previewConfig,
-			lastModified: new Date().toISOString()
+			lastModified: new Date().toISOString() // re-stamp on save
 		};
 
 		if (typeof window !== 'undefined') {
 			try {
-				const configJSON = JSON.stringify(configToSave);
-
-				// Save to localStorage
-				localStorage.setItem(AVATAR_CONFIG_STORAGE_KEY, configJSON);
-
-				// Update in-memory saved state
-				this.config = configToSave;
-
-				// Update save event state
+				const configJSONToSave = JSON.stringify(configToSave);
+				localStorage.setItem(AVATAR_CONFIG_STORAGE_KEY, configJSONToSave);
+				this.config = configToSave; // Update in-memory 'saved' state
 				this.lastSaveData = configToSave;
 				this.lastSaveTimestamp = Date.now();
 			} catch (error) {
@@ -386,35 +346,13 @@ export class AvatarStoreClass implements IAvatar {
 	 * Undo the last change to the avatar
 	 */
 	undo = () => {
-		if (this.canUndo) {
-			// Set the flag to prevent circular updates
-			this.isUndoRedoOperation = true;
-
-			// Perform the undo
-			this._history.undo();
-
-			// Reset the flag after a short delay to allow derived values to update
-			setTimeout(() => {
-				this.isUndoRedoOperation = false;
-			}, 0);
-		}
+		this._history.undo(); // StateHistory setter changes configJSON, which is logged by StateHistory
 	};
 
 	/**
 	 * Redo a previously undone change
 	 */
 	redo = () => {
-		if (this.canRedo) {
-			// Set the flag to prevent circular updates
-			this.isUndoRedoOperation = true;
-
-			// Perform the redo
-			this._history.redo();
-
-			// Reset the flag after a short delay to allow derived values to update
-			setTimeout(() => {
-				this.isUndoRedoOperation = false;
-			}, 0);
-		}
+		this._history.redo(); // StateHistory setter changes configJSON, which is logged by StateHistory
 	};
 }

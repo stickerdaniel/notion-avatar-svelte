@@ -24,7 +24,6 @@
 
 	// Event handler for username input
 	function handleUsernameInput(event: Event) {
-		if (avatarStore.isUndoRedoOperation) return;
 		const newUsername = (event.currentTarget as HTMLInputElement).value;
 		avatarStore.updateConfig((config) => {
 			config.username = newUsername;
@@ -33,7 +32,6 @@
 
 	// Event handler for color selection
 	function handleColorSelect(color: ColorName) {
-		if (avatarStore.isUndoRedoOperation) return;
 		avatarStore.updateConfig((config) => {
 			config.colorName = color;
 		});
@@ -41,7 +39,6 @@
 
 	// Event handler for item selection in CategorySelector
 	function handleItemSelect(categoryId: string, itemIndex: number) {
-		if (avatarStore.isUndoRedoOperation) return;
 		avatarStore.updateConfig((config) => {
 			config.items[categoryId] = itemIndex;
 		});
