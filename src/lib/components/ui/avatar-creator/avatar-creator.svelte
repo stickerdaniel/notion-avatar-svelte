@@ -103,9 +103,7 @@
 							onclick={avatarStore.undo}
 							class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
 						>
-							<div class="flex h-full w-full items-center justify-center">
-								<Undo2 class="h-4 w-4" />
-							</div>
+							<Undo2 />
 						</Button>
 						<Button
 							variant="secondary"
@@ -115,15 +113,12 @@
 							onclick={avatarStore.redo}
 							class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
 						>
-							<div class="flex h-full w-full items-center justify-center">
-								<Redo2 class="h-4 w-4" />
-							</div>
+							<Redo2 />
 						</Button>
 						<AnimatedDiceButton
 							onDicethrow={avatarStore.generateRandomAvatar}
 							ariaLabel="Generate random avatar"
 							variant="secondary"
-							size="icon"
 						/>
 					</div>
 					<ColorSelector bind:selectedColor></ColorSelector>
