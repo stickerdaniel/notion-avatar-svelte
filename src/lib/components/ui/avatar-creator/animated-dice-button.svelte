@@ -9,7 +9,7 @@
 	let {
 		class: className = '',
 		variant = 'default' as ButtonProps['variant'],
-		size = 'icon' as ButtonProps['size'],
+		size = 'default' as ButtonProps['size'],
 		ariaLabel = 'Generate random',
 		onDicethrow
 	}: {

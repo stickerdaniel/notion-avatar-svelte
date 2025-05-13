@@ -119,6 +119,7 @@
 							onDicethrow={avatarStore.generateRandomAvatar}
 							ariaLabel="Generate random avatar"
 							variant="secondary"
+							size="icon"
 						/>
 					</div>
 					<ColorSelector bind:selectedColor></ColorSelector>
