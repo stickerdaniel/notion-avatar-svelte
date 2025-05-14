@@ -14,11 +14,10 @@ A customizable Notion-style avatar creator built with Svelte 5, featuring a clea
 
 - **Intuitive Avatar Creator**: Customize faces, hair, accessories, and more
 - **Modern State Management**: Built with Svelte 5 Runes and Runed for powerful, reactive state
-- **Undo/Redo Support**: Full history tracking with state restoration
+- **Undo/Redo Support**: Full history tracking with Runed StateHistory
 - **Import/Export**: Save and load avatar configurations as JSON
 - **Mobile-Friendly**: Responsive design works on all screen sizes
 - **Accessible UI**: Built with shadcn-svelte components for accessibility
-- **Dark Mode Support**: Seamless light and dark theme integration
 
 ## 🔧 Installation
 
