@@ -58,49 +58,51 @@
 				currentSelectedItems={avatarStore.previewConfig.items}
 				onItemSelect={handleItemSelect}
 			/>
-			<div class="flex grow flex-col items-center gap-4">
-				<div class="flex grow flex-col items-center justify-center gap-3">
-					<Avatar.Root class="h-36 w-36 {avatarStore.previewBgClass}">
-						<Avatar.Image src={avatarStore.previewSvgDataUrl} />
-						<Avatar.Fallback />
-					</Avatar.Root>
-					<span class="h-4 text-lg font-medium">{avatarStore.previewConfig.username}</span>
-				</div>
-				<div
-					class="flex w-full flex-col items-end justify-between gap-4 sm:flex-row-reverse md:flex-row-reverse lg:flex-col lg:items-end"
-				>
-					<div class="flex gap-2">
-						<Button
-							variant="secondary"
-							size="icon"
-							disabled={!avatarStore.canUndo}
-							aria-label="Undo"
-							onclick={avatarStore.undo}
-							class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
-						>
-							<Undo />
-						</Button>
-						<Button
-							variant="secondary"
-							size="icon"
-							disabled={!avatarStore.canRedo}
-							aria-label="Redo"
-							onclick={avatarStore.redo}
-							class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
-						>
-							<Redo />
-						</Button>
-						<AnimatedDiceButton
-							onDicethrow={avatarStore.generateRandomAvatar}
-							ariaLabel="Generate random avatar"
-							variant="secondary"
-							size="icon"
+			<div class="flex w-full grow flex-col-reverse items-center gap-4 lg:flex-col">
+				<div class="flex w-full grow flex-col items-center justify-end gap-6 lg:gap-0">
+					<div class="flex h-full flex-col items-center justify-center gap-2">
+						<Avatar.Root class="h-36 w-36 {avatarStore.previewBgClass}">
+							<Avatar.Image src={avatarStore.previewSvgDataUrl} />
+							<Avatar.Fallback />
+						</Avatar.Root>
+						<span class="h-4 text-lg font-medium">{avatarStore.previewConfig.username}</span>
+					</div>
+					<div
+						class="flex w-full flex-col items-end gap-4 sm:flex-row-reverse sm:justify-between lg:flex-col lg:items-end"
+					>
+						<div class="flex gap-2">
+							<Button
+								variant="secondary"
+								size="icon"
+								disabled={!avatarStore.canUndo}
+								aria-label="Undo"
+								onclick={avatarStore.undo}
+								class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
+							>
+								<Undo />
+							</Button>
+							<Button
+								variant="secondary"
+								size="icon"
+								disabled={!avatarStore.canRedo}
+								aria-label="Redo"
+								onclick={avatarStore.redo}
+								class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
+							>
+								<Redo />
+							</Button>
+							<AnimatedDiceButton
+								onDicethrow={avatarStore.generateRandomAvatar}
+								ariaLabel="Generate random avatar"
+								variant="secondary"
+								size="icon"
+							/>
+						</div>
+						<ColorSelector
+							selectedValue={avatarStore.previewConfig.colorName}
+							onColorSelect={handleColorSelect}
 						/>
 					</div>
-					<ColorSelector
-						selectedValue={avatarStore.previewConfig.colorName}
-						onColorSelect={handleColorSelect}
-					/>
 				</div>
 				<div class="grid w-full flex-col items-start gap-1.5">
 					<Label for="username">Your Name</Label>
@@ -113,8 +115,8 @@
 					/>
 				</div>
 			</div>
-		</div>
-	</Card.Content>
+		</div></Card.Content
+	>
 	<Card.Footer class="flex justify-end space-x-2">
 		<Button onclick={avatarStore.saveAvatar}>Save</Button>
 	</Card.Footer>
