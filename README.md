@@ -4,7 +4,7 @@
 [![UI Components: shadcn-svelte](https://img.shields.io/badge/UI-shadcn--svelte-black?style=flat)](https://next.shadcn-svelte.com/)
 [![State Management: Runed](https://img.shields.io/badge/State-Runed-7149EB?style=flat)](https://runed.dev/)
 
-A customizable Notion-style avatar creator built with Svelte 5, featuring a clean, responsive UI and modern state management.
+A customizable Notion-style avatar editor built with Svelte 5, featuring a clean, responsive UI and modern state management.
 
 ![CleanShot 2025-05-13 at 02 15 03@2x](https://github.com/user-attachments/assets/6ef9f94b-8801-4997-8ba9-e3ac6f59030d)
 
