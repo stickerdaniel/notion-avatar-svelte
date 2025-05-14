@@ -46,11 +46,11 @@
 </script>
 
 <Card.Root class="w-full max-w-2xl">
-	<Card.Header>
+	<Card.Header class="p-4 sm:p-6">
 		<Card.Title>Hello, stranger! Let's fix that.</Card.Title>
 		<Card.Description>Put a face to your name.</Card.Description>
 	</Card.Header>
-	<Card.Content>
+	<Card.Content class="p-4 sm:p-6">
 		<div class="flex w-full flex-col-reverse justify-center gap-4 lg:flex-row">
 			<CategorySelector
 				bind:activeTab
@@ -117,7 +117,7 @@
 			</div>
 		</div></Card.Content
 	>
-	<Card.Footer class="flex justify-end space-x-2">
+	<Card.Footer class="flex justify-end space-x-2 p-4 sm:p-6">
 		<Button onclick={avatarStore.saveAvatar}>Save</Button>
 	</Card.Footer>
 </Card.Root>

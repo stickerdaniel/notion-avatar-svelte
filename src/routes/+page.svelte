@@ -154,13 +154,13 @@
 					<div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 						<!-- Example 1: Live Preview (Current Editing State) -->
 						<Card.Root>
-							<Card.Header>
+							<Card.Header class="p-4 sm:p-6">
 								<Card.Title>Live Preview Example</Card.Title>
 								<Card.Description>
 									Shows what's currently being edited, before saving.
 								</Card.Description>
 							</Card.Header>
-							<Card.Content class="flex flex-col gap-4">
+							<Card.Content class="flex flex-col gap-4 p-4 sm:p-6">
 								<!-- Avatar Preview -->
 								<div class="flex gap-2 text-left text-sm">
 									<Avatar.Root class="h-16 w-16	 rounded-xl {avatarStore.previewBgClass}">
@@ -202,13 +202,13 @@
 
 						<!-- Example 2: Saved Avatar (Persisted State) -->
 						<Card.Root>
-							<Card.Header>
+							<Card.Header class="p-4 sm:p-6">
 								<Card.Title>Saved Avatar Example</Card.Title>
 								<Card.Description>
 									Shows the last saved version.<br />(persisted in localStorage)
 								</Card.Description>
 							</Card.Header>
-							<Card.Content class="flex flex-col gap-4">
+							<Card.Content class="flex flex-col gap-4 p-4 sm:p-6">
 								<!-- Avatar Preview -->
 								<div class="flex gap-2 text-left text-sm">
 									<Avatar.Root class="h-16 w-16 rounded-xl {avatarStore.bgClass}">
@@ -249,21 +249,21 @@
 
 					<!-- JSON Debug Display -->
 					<Card.Root>
-						<Card.Header>
+						<Card.Header class="p-4 sm:p-6">
 							<Card.Title>avatarStore.configJSON</Card.Title>
 							<Card.Description
 								>Primary JSON string for the avatar's settings. This serialized data is the main
 								shared datapoint that drives the editor, previews and history.</Card.Description
 							>
 						</Card.Header>
-						<Card.Content>
+						<Card.Content class="p-4 sm:p-6">
 							<pre class="text-xs">{JSON.stringify(
 									JSON.parse(avatarStore.configJSON),
 									null,
 									2
 								)}</pre>
 						</Card.Content>
-						<Card.Footer class="flex justify-end gap-2">
+						<Card.Footer class="flex justify-end gap-2 p-4 sm:p-6">
 							<Button size="icon" variant="secondary" onclick={downloadConfig}>
 								<Download />
 							</Button>
