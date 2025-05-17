@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import CategorySelector from './category-selector.svelte';
 	import ColorSelector from './color-selector.svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -8,7 +9,7 @@
 	import AnimatedDiceButton from './animated-dice-button.svelte';
 	import { avatarContext } from '$lib/contexts/avatarContext';
 	import { DEFAULT_CATEGORIES, type Category, type ColorName } from './types';
-	import { Undo, Redo } from '@lucide/svelte';
+	import { Undo, Redo, Download } from '@lucide/svelte';
 	import * as Avatar from '$lib/components/ui/avatar';
 
 	// Get the Avatar store instance from context
@@ -118,6 +119,25 @@
 		</div></Card.Content
 	>
 	<Card.Footer class="flex justify-end space-x-2 p-4 sm:p-6">
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger>
+				<Button variant="ghost" class="gap-2">
+					<Download size={16} />
+					Download
+				</Button>
+			</DropdownMenu.Trigger>
+			<DropdownMenu.Content>
+				<DropdownMenu.Item onclick={avatarStore.downloadAvatarWithoutOutline}>
+					Transparent Background
+				</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={avatarStore.downloadAvatarWithOutline}>
+					Transparent with Outline
+				</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={avatarStore.downloadAvatarWithBackground}>
+					Colored Background
+				</DropdownMenu.Item>
+			</DropdownMenu.Content>
+		</DropdownMenu.Root>
 		<Button onclick={avatarStore.saveAvatar}>Save</Button>
 	</Card.Footer>
 </Card.Root>

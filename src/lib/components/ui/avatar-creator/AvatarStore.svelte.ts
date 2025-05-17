@@ -9,7 +9,12 @@ import {
 	COLORS,
 	type ColorName
 } from './types';
-import { generateSvgDataUrl } from './avatar-svg-utils';
+import {
+	generateSvgDataUrl,
+	generateSvgWithoutOutlineDataUrl,
+	generateSvgWithOutlineDataUrl,
+	generateSvgWithColoredBackgroundDataUrl
+} from './avatar-svg-utils';
 import { StateHistory } from 'runed';
 
 // localStorage key
@@ -77,6 +82,18 @@ export const AVATAR_COLOR_STYLES: Record<
 	}
 };
 
+// Map Tailwind base classes from AVATAR_COLOR_STYLES to HEX codes for svg download generation
+const TAILWIND_CLASS_TO_HEX_MAP: Record<string, string> = {
+	'bg-rose-400': '#FB7185',
+	'bg-pink-400': '#F472B6',
+	'bg-purple-400': '#C084FC',
+	'bg-blue-400': '#60A5FA',
+	'bg-teal-400': '#2DD4BF',
+	'bg-green-400': '#4ADE80',
+	'bg-yellow-300': '#FDE047',
+	'bg-orange-300': '#FDBA74'
+};
+
 // Interface for the Avatar store
 export interface IAvatar {
 	// Live editing state - parsed from configJSON
@@ -110,6 +127,9 @@ export interface IAvatar {
 	redo: () => void;
 	importConfig: (configJsonString: string) => void;
 	validateAndParseConfig: (config: unknown) => AvatarConfiguration;
+	downloadAvatarWithoutOutline: () => void;
+	downloadAvatarWithOutline: () => void;
+	downloadAvatarWithBackground: () => void;
 }
 
 export class AvatarStoreClass implements IAvatar {
@@ -421,4 +441,87 @@ export class AvatarStoreClass implements IAvatar {
 		// History will automatically track this change to configJSON.
 		this.configJSON = JSON.stringify(validConfig);
 	};
+
+	/**
+	 * Downloads the avatar SVG without an outline (completely transparent background)
+	 */
+	downloadAvatarWithoutOutline = async () => {
+		const layers = this._previewAvatarLayers;
+		if (layers.length === 0) {
+			console.error('No avatar to download');
+			return;
+		}
+
+		try {
+			const svgDataUrl = await generateSvgWithoutOutlineDataUrl(layers);
+			this._downloadSvg(
+				svgDataUrl,
+				`avatar-${this.previewConfig.username || 'unnamed'}-no-outline`
+			);
+		} catch (error) {
+			console.error('Failed to download avatar:', error);
+		}
+	};
+
+	/**
+	 * Downloads the avatar SVG with outline but transparent background
+	 */
+	downloadAvatarWithOutline = async () => {
+		const layers = this._previewAvatarLayers;
+		if (layers.length === 0) {
+			console.error('No avatar to download');
+			return;
+		}
+
+		try {
+			const svgDataUrl = await generateSvgWithOutlineDataUrl(layers);
+			this._downloadSvg(
+				svgDataUrl,
+				`avatar-${this.previewConfig.username || 'unnamed'}-with-outline`
+			);
+		} catch (error) {
+			console.error('Failed to download avatar with outline:', error);
+		}
+	};
+
+	/**
+	 * Downloads the avatar SVG with the current background color
+	 */
+	downloadAvatarWithBackground = async () => {
+		const layers = this._previewAvatarLayers;
+		if (layers.length === 0) {
+			console.error('No avatar to download');
+			return;
+		}
+
+		try {
+			// Get the hex color for the current color name
+			const colorName = this.previewConfig.colorName;
+			const tailwindClass =
+				AVATAR_COLOR_STYLES[colorName]?.base || AVATAR_COLOR_STYLES[COLORS[0]].base;
+			const backgroundColor = TAILWIND_CLASS_TO_HEX_MAP[tailwindClass] || '#FFFFFF'; // Default to white if not found
+
+			const svgDataUrl = await generateSvgWithColoredBackgroundDataUrl(layers, backgroundColor);
+			this._downloadSvg(svgDataUrl, `avatar-${this.previewConfig.username || 'unnamed'}-with-bg`);
+		} catch (error) {
+			console.error('Failed to download avatar with background:', error);
+		}
+	};
+
+	/**
+	 * Helper method to trigger the browser download of an SVG file
+	 * @param svgDataUrl The SVG data URL
+	 * @param filename The name of the file without extension
+	 */
+	private _downloadSvg(svgDataUrl: string, filename: string): void {
+		if (typeof window === 'undefined') return;
+
+		// Create an anchor element and trigger download
+		const a = document.createElement('a');
+		a.href = svgDataUrl;
+		a.download = `${filename}.svg`;
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+	}
 }
