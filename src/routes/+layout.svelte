@@ -4,6 +4,10 @@
 	import { AvatarStoreClass } from '$lib/components/ui/avatar-creator/AvatarStore.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
 
+	// Vercel Speed Insights for performance monitoring
+	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+	injectSpeedInsights();
+
 	let { children } = $props();
 
 	// Instantiate and set the AvatarStore in the context
