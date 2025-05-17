@@ -11,6 +11,7 @@
 	import { DEFAULT_CATEGORIES, type Category, type ColorName } from './types';
 	import { Undo, Redo, Download } from '@lucide/svelte';
 	import * as Avatar from '$lib/components/ui/avatar';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
 	// Get the Avatar store instance from context
 	const avatarStore = avatarContext.get();
@@ -71,34 +72,57 @@
 					<div
 						class="flex w-full flex-col items-end gap-4 sm:flex-row-reverse sm:justify-between lg:flex-col lg:items-end"
 					>
-						<div class="flex gap-2">
-							<Button
-								variant="secondary"
-								size="icon"
-								disabled={!avatarStore.canUndo}
-								aria-label="Undo"
-								onclick={avatarStore.undo}
-								class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
-							>
-								<Undo />
-							</Button>
-							<Button
-								variant="secondary"
-								size="icon"
-								disabled={!avatarStore.canRedo}
-								aria-label="Redo"
-								onclick={avatarStore.redo}
-								class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
-							>
-								<Redo />
-							</Button>
-							<AnimatedDiceButton
-								onDicethrow={avatarStore.generateRandomAvatar}
-								ariaLabel="Generate random avatar"
-								variant="secondary"
-								size="icon"
-							/>
-						</div>
+						<Tooltip.Provider>
+							<div class="flex gap-2">
+								<Tooltip.Root>
+									<Tooltip.Trigger>
+										<Button
+											variant="secondary"
+											size="icon"
+											disabled={!avatarStore.canUndo}
+											aria-label="Undo"
+											onclick={avatarStore.undo}
+											class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
+										>
+											<Undo />
+										</Button>
+									</Tooltip.Trigger>
+									<Tooltip.Content>
+										<p>Undo</p>
+									</Tooltip.Content>
+								</Tooltip.Root>
+								<Tooltip.Root>
+									<Tooltip.Trigger>
+										<Button
+											variant="secondary"
+											size="icon"
+											disabled={!avatarStore.canRedo}
+											aria-label="Redo"
+											onclick={avatarStore.redo}
+											class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
+										>
+											<Redo />
+										</Button>
+									</Tooltip.Trigger>
+									<Tooltip.Content>
+										<p>Redo</p>
+									</Tooltip.Content>
+								</Tooltip.Root>
+								<Tooltip.Root>
+									<Tooltip.Trigger>
+										<AnimatedDiceButton
+											onDicethrow={avatarStore.generateRandomAvatar}
+											ariaLabel="Generate random avatar"
+											variant="secondary"
+											size="icon"
+										/>
+									</Tooltip.Trigger>
+									<Tooltip.Content>
+										<p>Generate random avatar</p>
+									</Tooltip.Content>
+								</Tooltip.Root>
+							</div>
+						</Tooltip.Provider>
 						<ColorSelector
 							selectedValue={avatarStore.previewConfig.colorName}
 							onColorSelect={handleColorSelect}
