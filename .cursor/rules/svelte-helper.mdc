@@ -107,7 +107,9 @@ This pattern uses JavaScript classes combined with Svelte Runes (`$state`) to cr
     *   **`onClickOutside`:** Detects clicks outside a specified element, useful for closing dropdowns/modals.
     *   **`FiniteStateMachine`:** Defines strongly-typed state machines for managing complex component states and transitions.
     *   **(Other utilities):** Runed offers many more utilities for element interaction (`ElementRect`, `useIntersectionObserver`), sensor data (`useGeolocation`), animation (`AnimationFrames`), state history (`StateHistory`), debouncing (`Debounced`, `useDebounce`), and more.
-    *   **Recommendation:** Familiarize yourself with the Runed utilities and use them where they fit the problem domain. Request the [Runed documentation](https://runed.dev/docs) when considering a specific utility for detailed usage instructions.
-*   **Shadcn-Svelte:** High-quality, accessible UI components. Follow setup at [next.shadcn-svelte.com](https://next.shadcn-svelte.com). (`bunx --bun shadcn-svelte-add@latest init`)
-*   **Superforms/Formsnap:** Robust form handling with validation. Implementation in next.shadcn-svelte form uses Superforms, Formasnap and Zod. Follow form setup at [next.shadcn-svelte.com/docs/components/form](https://next.shadcn-svelte.com/docs/components/form).
-*   **Threlte, Svelte Flow:** Consider for specialized UI needs: 3D graphics, node-based diagrams, respectively.
+    *   **Recommendation:** Familiarize yourself with the Runed utilities and use them where they fit the problem domain. Request the @Runed documentation when considering a specific utility for detailed usage instructions.
+*   **Shadcn-Svelte:** High-quality, accessible UI components. Follow setup at @next.shadcn-svelte.com. (`bunx --bun shadcn-svelte-add@latest init`)
+*   **Superforms/Formsnap:** Robust form handling with validation. Implementation in next.shadcn-svelte form uses Superforms, Formasnap and Zod. Follow form setup at @next.shadcn-svelte.com/docs/components/form.
+*   **Specialized UI needs:** Consider Threlte for 3D gr[](mdc:https:/next.shadcn-svelte.com/docs/components/form)aphics, Svelte Flow for node-based diagrams and https://sv-blocks.vercel.app/ for traditional marketing website blocks.
+
+
