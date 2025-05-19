@@ -2,7 +2,6 @@ import {
 	DEFAULT_CATEGORIES,
 	LAYER_ORDER,
 	getPreviewImagePath,
-	createDefaultSelectedItems,
 	type Category,
 	type SelectedItems,
 	type AvatarConfiguration,
@@ -15,7 +14,7 @@ import {
 	generateSvgWithOutlineDataUrl,
 	generateSvgWithColoredBackgroundDataUrl
 } from './avatar-svg-utils';
-import { StateHistory } from 'runed';
+import { StateHistory, PersistedState } from 'runed';
 
 // localStorage key
 const AVATAR_CONFIG_STORAGE_KEY = 'notionAvatarConfig';
@@ -96,17 +95,10 @@ const TAILWIND_CLASS_TO_HEX_MAP: Record<string, string> = {
 
 // Interface for the Avatar store
 export interface IAvatar {
-	// Live editing state - parsed from configJSON
-	readonly previewConfig: AvatarConfiguration;
+	// Live editing state - parsed from configJSON (which is PersistedState.current)
+	readonly config: AvatarConfiguration;
 
-	// Derived from live state (for preview inside creator)
-	readonly previewSvgDataUrl: string;
-	readonly previewBgClass: string;
-
-	// Saved state
-	readonly config: AvatarConfiguration | null;
-
-	// Derived from saved state (for display elsewhere)
+	// Derived from live state
 	readonly svgDataUrl: string;
 	readonly bgClass: string;
 
@@ -122,7 +114,6 @@ export interface IAvatar {
 	updateConfig: (updater: (config: AvatarConfiguration) => void) => void;
 	generateRandomAvatar: (clearSaveData?: boolean) => void;
 	saveAvatar: () => void;
-	loadconfig: (isInitialLoad?: boolean) => void;
 	undo: () => void;
 	redo: () => void;
 	importConfig: (configJsonString: string) => void;
@@ -133,14 +124,23 @@ export interface IAvatar {
 }
 
 export class AvatarStoreClass implements IAvatar {
-	// --- The single source of truth: config as JSON string ---
-	configJSON = $state<string>('');
+	// --- The single source of truth: config as JSON string, now managed by PersistedState ---
+	private _configPersistedState: PersistedState<string>;
 
-	// Parsed version of the JSON string (derived)
-	previewConfig = $derived<AvatarConfiguration>(this._parseConfigJSON());
+	// Getter to maintain the configJSON property for StateHistory and internal logic
+	get configJSON(): string {
+		const current = this._configPersistedState.current;
+		// If current is somehow not a string (possible during initialization or hydration),
+		// ensure we return a string for consistent behavior
+		return typeof current === 'string' ? current : JSON.stringify(current);
+	}
+	// Setter to allow StateHistory and other methods to update the persisted state
+	set configJSON(value: string) {
+		this._configPersistedState.current = value;
+	}
 
-	// --- Saved State ---
-	config = $state<AvatarConfiguration | null>(null);
+	// Parsed version of the JSON string (derived from PersistedState's current value)
+	config = $derived<AvatarConfiguration>(this._parseConfigJSON());
 
 	// --- Eventing State ---
 	lastSaveTimestamp = $state<number | null>(null);
@@ -160,46 +160,28 @@ export class AvatarStoreClass implements IAvatar {
 	canRedo = $derived(this._getCanRedo());
 
 	// --- Derived State Values ---
-	private _previewAvatarLayers = $derived(this._generateLayersFromItems(this.previewConfig.items));
-	previewSvgDataUrl = $state('');
-	previewBgClass = $derived(
-		AVATAR_COLOR_STYLES[this.previewConfig.colorName]?.base || AVATAR_COLOR_STYLES[COLORS[0]].base
-	);
-
-	private _avatarLayers = $derived(this._generateLayersFromItems(this.config?.items ?? null));
+	private _avatarLayers = $derived(this._generateLayersFromItems(this.config.items));
 	svgDataUrl = $state('');
 	bgClass = $derived(
-		AVATAR_COLOR_STYLES[this.config?.colorName ?? COLORS[0]]?.base ||
+		AVATAR_COLOR_STYLES[this.config.colorName as ColorName]?.base ||
 			AVATAR_COLOR_STYLES[COLORS[0]].base
 	);
 
 	constructor() {
-		this._initializeDefaultConfig(); // Sets initial configJSON
+		const initialRandomConfig = this._generateInitialRandomConfig();
+		const initialRandomConfigJSON = JSON.stringify(initialRandomConfig);
 
-		// Initialize history AFTER initial configJSON is set
+		this._configPersistedState = new PersistedState<string>(
+			AVATAR_CONFIG_STORAGE_KEY,
+			initialRandomConfigJSON
+		);
+
 		this._history = new StateHistory<string>(
-			() => this.configJSON, // Getter for StateHistory
+			() => this.configJSON,
 			(jsonString) => {
-				// Setter for StateHistory (when undo/redo applies a state)
 				this.configJSON = jsonString;
 			}
 		);
-		// Load config after history is initialized.
-		// loadconfig will manage isUndoRedoOperation for initial load.
-		this.loadconfig(true);
-
-		// Setup effects to update SVG URLs when their respective layers change
-		// we can't use $effect here because generateSvgDataUrl is async
-		$effect(() => {
-			const layers = this._previewAvatarLayers;
-			if (layers.length === 0) {
-				this.previewSvgDataUrl = '';
-				return;
-			}
-			(async () => {
-				this.previewSvgDataUrl = await generateSvgDataUrl(layers);
-			})();
-		});
 
 		$effect(() => {
 			const layers = this._avatarLayers;
@@ -214,17 +196,52 @@ export class AvatarStoreClass implements IAvatar {
 	}
 
 	/**
-	 * Initialize with default configuration
+	 * Generates a random set of avatar items and a color name.
+	 * This is the core randomization logic used by both initial generation and user-triggered randomization.
 	 */
-	private _initializeDefaultConfig(): void {
-		const defaultConfig: AvatarConfiguration = {
+	private _getRandomItemsAndColor(): { items: SelectedItems; colorName: ColorName } {
+		const items: SelectedItems = {};
+		const INCLUDE_GLASSES_PROBABILITY = 0.4;
+
+		for (const category of this.categories) {
+			let selectedItemIndex: number;
+			switch (category.id) {
+				case 'beard':
+				case 'accessories':
+				case 'details':
+					selectedItemIndex = 0; // Default to none for these categories
+					break;
+				case 'glasses':
+					if (Math.random() < INCLUDE_GLASSES_PROBABILITY && category.maxItems > 1) {
+						selectedItemIndex = Math.floor(Math.random() * (category.maxItems - 1)) + 1;
+					} else {
+						selectedItemIndex = 0;
+					}
+					break;
+				default:
+					selectedItemIndex =
+						category.maxItems > 0 ? Math.floor(Math.random() * category.maxItems) : 0;
+					break;
+			}
+			items[category.id] = selectedItemIndex;
+		}
+		const colorName = COLORS[Math.floor(Math.random() * COLORS.length)];
+		return { items, colorName };
+	}
+
+	/**
+	 * Creates a new, fully randomized AvatarConfiguration object.
+	 * This is used for the initial state if nothing is in localStorage.
+	 */
+	private _generateInitialRandomConfig(): AvatarConfiguration {
+		const { items, colorName } = this._getRandomItemsAndColor();
+		return {
 			version: 1,
-			username: '',
-			items: createDefaultSelectedItems(),
-			colorName: COLORS[0],
+			username: '', // Initial random avatars can have an empty username
+			items,
+			colorName,
 			lastModified: new Date().toISOString()
 		};
-		this.configJSON = JSON.stringify(defaultConfig);
 	}
 
 	/**
@@ -232,13 +249,17 @@ export class AvatarStoreClass implements IAvatar {
 	 */
 	private _parseConfigJSON(): AvatarConfiguration {
 		try {
-			if (!this.configJSON) {
-				return this._createDefaultConfig();
+			// Use the getter for configJSON which reads from PersistedState
+			const currentJson = this.configJSON;
+			if (!currentJson) {
+				// This case should ideally be handled by PersistedState's initial value
+				return this._generateInitialRandomConfig();
 			}
-			return this.validateAndParseConfig(JSON.parse(this.configJSON));
+			return this.validateAndParseConfig(JSON.parse(currentJson));
 		} catch (error) {
 			console.error('Error parsing config JSON:', error);
-			return this._createDefaultConfig();
+			// Fallback to default if parsing PersistedState's content fails
+			return this._generateInitialRandomConfig();
 		}
 	}
 
@@ -281,26 +302,13 @@ export class AvatarStoreClass implements IAvatar {
 	}
 
 	/**
-	 * Create a default config object
-	 */
-	private _createDefaultConfig(): AvatarConfiguration {
-		return {
-			version: 1,
-			username: '',
-			items: createDefaultSelectedItems(),
-			colorName: COLORS[0],
-			lastModified: new Date().toISOString()
-		};
-	}
-
-	/**
 	 * Update the configuration with a callback function
 	 */
 	updateConfig = (updater: (config: AvatarConfiguration) => void): void => {
 		const currentParsedConfig = this._parseConfigJSON();
 		updater(currentParsedConfig);
 		currentParsedConfig.lastModified = new Date().toISOString(); // Centralized timestamp update
-		this.configJSON = JSON.stringify(currentParsedConfig); // StateHistory will automatically log this change
+		this.configJSON = JSON.stringify(currentParsedConfig); // Updates PersistedState via setter, StateHistory logs this
 	};
 
 	/**
@@ -318,67 +326,14 @@ export class AvatarStoreClass implements IAvatar {
 	}
 
 	/**
-	 * Load saved avatar configuration from localStorage
-	 */
-	loadconfig = (isInitialLoad = false) => {
-		if (typeof window !== 'undefined') {
-			try {
-				const storedConfigJson = localStorage.getItem(AVATAR_CONFIG_STORAGE_KEY);
-				if (storedConfigJson) {
-					const parsedConfig = JSON.parse(storedConfigJson);
-					const loadedConfig = this.validateAndParseConfig(parsedConfig);
-					this.config = loadedConfig; // Update saved state (for display elsewhere)
-					this.configJSON = JSON.stringify(loadedConfig); // StateHistory will log this initial load
-				} else if (isInitialLoad) {
-					// Generate random if no saved config exists and it's the initial load
-					this.generateRandomAvatar();
-				}
-			} catch (error) {
-				console.error('Failed to load avatar configuration:', error);
-				if (isInitialLoad) this.generateRandomAvatar();
-			}
-		} else if (isInitialLoad) {
-			// Handle SSR case
-			this.generateRandomAvatar();
-		}
-	};
-
-	/**
 	 * Generate random avatar configuration (affects live editing state only)
 	 */
 	generateRandomAvatar = () => {
-		// updateConfig will handle history push.
-		const newSelectedItems: SelectedItems = {};
-		const INCLUDE_GLASSES_PROBABILITY = 0.4;
-
-		for (const category of this.categories) {
-			let selectedItemIndex: number;
-			switch (category.id) {
-				case 'beard':
-				case 'accessories':
-				case 'details':
-					selectedItemIndex = 0; // Default to none
-					break;
-
-				case 'glasses':
-					if (Math.random() < INCLUDE_GLASSES_PROBABILITY && category.maxItems > 1) {
-						selectedItemIndex = Math.floor(Math.random() * (category.maxItems - 1)) + 1;
-					} else {
-						selectedItemIndex = 0;
-					}
-					break;
-
-				default:
-					selectedItemIndex =
-						category.maxItems > 0 ? Math.floor(Math.random() * category.maxItems) : 0;
-					break;
-			}
-			newSelectedItems[category.id] = selectedItemIndex;
-		}
-
+		const { items, colorName } = this._getRandomItemsAndColor();
 		this.updateConfig((config) => {
-			config.items = newSelectedItems;
-			config.colorName = COLORS[Math.floor(Math.random() * COLORS.length)];
+			config.items = items;
+			config.colorName = colorName;
+			// username is not changed here, only items and color
 		});
 	};
 
@@ -386,25 +341,17 @@ export class AvatarStoreClass implements IAvatar {
 	 * Save the current live editing state to localStorage and update saved state
 	 */
 	saveAvatar = () => {
-		const previewConfig = this._parseConfigJSON(); // This is the live editing state
+		const previewConfig = this._parseConfigJSON(); // This is the live editing state from PersistedState
 		const configToSave = {
 			...previewConfig,
 			lastModified: new Date().toISOString() // re-stamp on save
 		};
 
-		if (typeof window !== 'undefined') {
-			try {
-				const configJSONToSave = JSON.stringify(configToSave);
-				localStorage.setItem(AVATAR_CONFIG_STORAGE_KEY, configJSONToSave);
-				this.config = configToSave; // Update in-memory 'saved' state
-				this.lastSaveData = configToSave;
-				this.lastSaveTimestamp = Date.now();
-			} catch (error) {
-				console.error('Failed to save avatar configuration:', error);
-			}
-		} else {
-			console.warn('localStorage not available. Avatar configuration not saved.');
-		}
+		// PersistedState handles saving to localStorage automatically when its '.current' is set.		// We just need to ensure our internal representation of "saved" data for eventing is updated.
+		this.configJSON = JSON.stringify(configToSave); // This updates PersistedState & triggers StateHistory.
+
+		this.lastSaveData = configToSave; // Update for eventing/UI feedback
+		this.lastSaveTimestamp = Date.now(); // Update for eventing/UI feedback
 	};
 
 	/**
@@ -438,7 +385,7 @@ export class AvatarStoreClass implements IAvatar {
 		const validConfig = this.validateAndParseConfig(parsedConfig);
 
 		// Update ONLY the live editing state (configJSON drives previewConfig)
-		// History will automatically track this change to configJSON.
+		// History will automatically track this change to configJSON (which updates PersistedState).
 		this.configJSON = JSON.stringify(validConfig);
 	};
 
@@ -446,7 +393,7 @@ export class AvatarStoreClass implements IAvatar {
 	 * Downloads the avatar SVG without an outline (completely transparent background)
 	 */
 	downloadAvatarWithoutOutline = async () => {
-		const layers = this._previewAvatarLayers;
+		const layers = this._avatarLayers;
 		if (layers.length === 0) {
 			console.error('No avatar to download');
 			return;
@@ -454,10 +401,7 @@ export class AvatarStoreClass implements IAvatar {
 
 		try {
 			const svgDataUrl = await generateSvgWithoutOutlineDataUrl(layers);
-			this._downloadSvg(
-				svgDataUrl,
-				`avatar-${this.previewConfig.username || 'unnamed'}-no-outline`
-			);
+			this._downloadSvg(svgDataUrl, `avatar-${this.config.username || 'unnamed'}-no-outline`);
 		} catch (error) {
 			console.error('Failed to download avatar:', error);
 		}
@@ -467,7 +411,7 @@ export class AvatarStoreClass implements IAvatar {
 	 * Downloads the avatar SVG with outline but transparent background
 	 */
 	downloadAvatarWithOutline = async () => {
-		const layers = this._previewAvatarLayers;
+		const layers = this._avatarLayers;
 		if (layers.length === 0) {
 			console.error('No avatar to download');
 			return;
@@ -475,10 +419,7 @@ export class AvatarStoreClass implements IAvatar {
 
 		try {
 			const svgDataUrl = await generateSvgWithOutlineDataUrl(layers);
-			this._downloadSvg(
-				svgDataUrl,
-				`avatar-${this.previewConfig.username || 'unnamed'}-with-outline`
-			);
+			this._downloadSvg(svgDataUrl, `avatar-${this.config.username || 'unnamed'}-with-outline`);
 		} catch (error) {
 			console.error('Failed to download avatar with outline:', error);
 		}
@@ -488,7 +429,7 @@ export class AvatarStoreClass implements IAvatar {
 	 * Downloads the avatar SVG with the current background color
 	 */
 	downloadAvatarWithBackground = async () => {
-		const layers = this._previewAvatarLayers;
+		const layers = this._avatarLayers;
 		if (layers.length === 0) {
 			console.error('No avatar to download');
 			return;
@@ -496,13 +437,13 @@ export class AvatarStoreClass implements IAvatar {
 
 		try {
 			// Get the hex color for the current color name
-			const colorName = this.previewConfig.colorName;
+			const colorName = this.config.colorName as ColorName;
 			const tailwindClass =
 				AVATAR_COLOR_STYLES[colorName]?.base || AVATAR_COLOR_STYLES[COLORS[0]].base;
-			const backgroundColor = TAILWIND_CLASS_TO_HEX_MAP[tailwindClass] || '#FFFFFF'; // Default to white if not found
+			const backgroundColor = TAILWIND_CLASS_TO_HEX_MAP[tailwindClass] || '#FFFFFF';
 
 			const svgDataUrl = await generateSvgWithColoredBackgroundDataUrl(layers, backgroundColor);
-			this._downloadSvg(svgDataUrl, `avatar-${this.previewConfig.username || 'unnamed'}-with-bg`);
+			this._downloadSvg(svgDataUrl, `avatar-${this.config.username || 'unnamed'}-with-bg`);
 		} catch (error) {
 			console.error('Failed to download avatar with background:', error);
 		}

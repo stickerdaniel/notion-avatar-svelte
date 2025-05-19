@@ -57,17 +57,17 @@
 			<CategorySelector
 				bind:activeTab
 				{categories}
-				currentSelectedItems={avatarStore.previewConfig.items}
+				currentSelectedItems={avatarStore.config.items}
 				onItemSelect={handleItemSelect}
 			/>
 			<div class="flex w-full grow flex-col-reverse items-center gap-4 lg:flex-col">
 				<div class="flex w-full grow flex-col items-center justify-end gap-6 lg:gap-0">
 					<div class="flex h-full flex-col items-center justify-center gap-2">
-						<Avatar.Root class="h-36 w-36 {avatarStore.previewBgClass}">
-							<Avatar.Image src={avatarStore.previewSvgDataUrl} />
+						<Avatar.Root class="h-36 w-36 {avatarStore.bgClass}">
+							<Avatar.Image src={avatarStore.svgDataUrl} />
 							<Avatar.Fallback />
 						</Avatar.Root>
-						<span class="h-4 text-lg font-medium">{avatarStore.previewConfig.username}</span>
+						<span class="h-4 text-lg font-medium">{avatarStore.config.username}</span>
 					</div>
 					<div
 						class="flex w-full flex-col items-end gap-4 sm:flex-row-reverse sm:justify-between lg:flex-col lg:items-end"
@@ -124,7 +124,7 @@
 							</div>
 						</Tooltip.Provider>
 						<ColorSelector
-							selectedValue={avatarStore.previewConfig.colorName}
+							selectedValue={avatarStore.config.colorName}
 							onColorSelect={handleColorSelect}
 						/>
 					</div>
@@ -135,7 +135,7 @@
 						type="text"
 						class="w-full"
 						id="username"
-						value={avatarStore.previewConfig.username}
+						value={avatarStore.config.username}
 						oninput={handleUsernameInput}
 					/>
 				</div>

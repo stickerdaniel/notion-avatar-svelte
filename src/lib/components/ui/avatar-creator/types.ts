@@ -63,19 +63,6 @@ export function getPartImagePath(category: string, index: number): string {
 }
 
 /**
- * Creates a default selected items configuration
- */
-export function createDefaultSelectedItems(): SelectedItems {
-	const selectedItems: SelectedItems = {};
-
-	for (const category of DEFAULT_CATEGORIES) {
-		selectedItems[category.id] = 0;
-	}
-
-	return selectedItems;
-}
-
-/**
  * The order in which to render avatar layers (bottom to top)
  */
 export const LAYER_ORDER: string[] = [

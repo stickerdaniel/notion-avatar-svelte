@@ -151,109 +151,54 @@
 
 			{#if avatarStore}
 				<div class="flex flex-col gap-5">
-					<div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-						<!-- Example 1: Live Preview (Current Editing State) -->
-						<Card.Root>
-							<Card.Header class="p-4 sm:p-6">
-								<Card.Title>Live Preview Example</Card.Title>
-								<Card.Description>
-									Shows what's currently being edited, before saving.
-								</Card.Description>
-							</Card.Header>
-							<Card.Content class="flex flex-col gap-4 p-4 sm:p-6">
-								<!-- Avatar Preview -->
-								<div class="flex gap-2 text-left text-sm">
-									<Avatar.Root class="h-16 w-16	 rounded-xl {avatarStore.previewBgClass}">
-										<Avatar.Image src={avatarStore.previewSvgDataUrl} />
-										<Avatar.Fallback />
-									</Avatar.Root>
-									<div class="flex h-full flex-col justify-between gap-1">
-										<div class="grid flex-1 text-left text-sm leading-tight">
-											<span class="truncate font-semibold"
-												>{avatarStore.previewConfig.username}
-											</span>
-											<span class="truncate text-xs">{avatarStore.previewConfig.lastModified}</span>
-										</div>
-										<Badge class="w-fit bg-secondary" variant="outline"
-											>{avatarStore.previewConfig.colorName}
-										</Badge>
+					<!-- Example 1: Live State Example -->
+					<Card.Root>
+						<Card.Header class="p-4 sm:p-6">
+							<Card.Title>Live State Example</Card.Title>
+							<Card.Description>
+								Shows what's currently being edited. This state is persisted in localStorage.
+							</Card.Description>
+						</Card.Header>
+						<Card.Content class="flex flex-col gap-4 p-4 sm:p-6">
+							<!-- Avatar Preview -->
+							<div class="flex gap-2 text-left text-sm">
+								<Avatar.Root class="h-16 w-16 rounded-xl {avatarStore.bgClass}">
+									<Avatar.Image src={avatarStore.svgDataUrl} />
+									<Avatar.Fallback />
+								</Avatar.Root>
+								<div class="flex h-full flex-col justify-between gap-1">
+									<div class="grid flex-1 text-left text-sm leading-tight">
+										<span class="truncate font-semibold">{avatarStore.config.username} </span>
+										<span class="truncate text-xs">{avatarStore.config.lastModified}</span>
 									</div>
+									<Badge class="w-fit bg-secondary" variant="outline"
+										>{avatarStore.config.colorName}
+									</Badge>
 								</div>
+							</div>
 
-								<!-- How to access -->
-								<div class="mt-2 w-full truncate">
-									<p class="text-xs font-semibold">How to access:</p>
-									<p class="font-mono text-xs text-muted-foreground">
-										avatarStore.previewSvgDataUrl
-									</p>
-									<p class="font-mono text-xs text-muted-foreground">avatarStore.previewBgClass</p>
-									<p class="font-mono text-xs text-muted-foreground">
-										avatarStore.previewConfig.username
-									</p>
-									<p class="font-mono text-xs text-muted-foreground">
-										avatarStore.previewConfig.colorName
-									</p>
-									<p class="font-mono text-xs text-muted-foreground">
-										avatarStore.previewConfig.lastModified
-									</p>
-								</div>
-							</Card.Content>
-						</Card.Root>
-
-						<!-- Example 2: Saved Avatar (Persisted State) -->
-						<Card.Root>
-							<Card.Header class="p-4 sm:p-6">
-								<Card.Title>Saved Avatar Example</Card.Title>
-								<Card.Description>
-									Shows the last saved version.<br />(persisted in localStorage)
-								</Card.Description>
-							</Card.Header>
-							<Card.Content class="flex flex-col gap-4 p-4 sm:p-6">
-								<!-- Avatar Preview -->
-								<div class="flex gap-2 text-left text-sm">
-									<Avatar.Root class="h-16 w-16 rounded-xl {avatarStore.bgClass}">
-										<Avatar.Image src={avatarStore.svgDataUrl} />
-										<Avatar.Fallback />
-									</Avatar.Root>
-									<div class="flex h-full flex-col justify-between gap-1">
-										<div class="grid flex-1 text-left text-sm leading-tight">
-											<span class="truncate font-semibold">{avatarStore.config?.username}</span>
-											<span class="truncate text-xs">{avatarStore.config?.lastModified}</span>
-										</div>
-										{#if avatarStore.config?.colorName}
-											<Badge class="w-fit bg-secondary" variant="outline"
-												>{avatarStore.config?.colorName}</Badge
-											>
-										{/if}
-									</div>
-								</div>
-
-								<!-- How to access -->
-								<div class="mt-2 w-full truncate">
-									<p class="text-xs font-semibold">How to access:</p>
-									<p class="font-mono text-xs text-muted-foreground">avatarStore.svgDataUrl</p>
-									<p class="font-mono text-xs text-muted-foreground">avatarStore.bgClass</p>
-									<p class="font-mono text-xs text-muted-foreground">
-										avatarStore.config?.username
-									</p>
-									<p class="font-mono text-xs text-muted-foreground">
-										avatarStore.config?.colorName
-									</p>
-									<p class="font-mono text-xs text-muted-foreground">
-										avatarStore.config?.lastModified
-									</p>
-								</div>
-							</Card.Content>
-						</Card.Root>
-					</div>
+							<!-- How to access -->
+							<div class="mt-2 w-full truncate">
+								<p class="text-xs font-semibold">How to access:</p>
+								<p class="font-mono text-xs text-muted-foreground">avatarStore.svgDataUrl</p>
+								<p class="font-mono text-xs text-muted-foreground">avatarStore.bgClass</p>
+								<p class="font-mono text-xs text-muted-foreground">avatarStore.config.username</p>
+								<p class="font-mono text-xs text-muted-foreground">avatarStore.config.colorName</p>
+								<p class="font-mono text-xs text-muted-foreground">
+									avatarStore.config.lastModified
+								</p>
+							</div>
+						</Card.Content>
+					</Card.Root>
 
 					<!-- JSON Debug Display -->
 					<Card.Root>
 						<Card.Header class="p-4 sm:p-6">
-							<Card.Title>avatarStore.configJSON</Card.Title>
+							<Card.Title>avatarStore.configJSON (Persisted State)</Card.Title>
 							<Card.Description
 								>Primary JSON string for the avatar's settings. This serialized data is the main
-								shared datapoint that drives the editor, previews and history.</Card.Description
+								shared datapoint that drives the editor, previews and history. It is managed by
+								PersistedState and reflects the content of localStorage.</Card.Description
 							>
 						</Card.Header>
 						<Card.Content class="p-4 sm:p-6">
