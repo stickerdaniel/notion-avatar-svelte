@@ -8,7 +8,7 @@ A customizable Notion-style avatar editor built with Svelte 5, featuring a clean
 
 ![CleanShot 2025-05-13 at 02 15 03@2x](https://github.com/user-attachments/assets/6ef9f94b-8801-4997-8ba9-e3ac6f59030d)
 
-**Live Demo:** [notion-avatar-svelte.vercel.app](https://avatar.daniel.sticker.name/)
+**Live Demo:** https://avatar.daniel.sticker.name/
 
 ## 📋 Features
 
