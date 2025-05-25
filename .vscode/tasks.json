@@ -18,42 +18,6 @@
 			}
 		},
 		{
-			"label": "bun format",
-			"type": "shell",
-			"command": "bun",
-			"args": ["run", "format"],
-			"group": "none",
-			"problemMatcher": [],
-			"detail": "Format the codebase",
-			"presentation": {
-				"clear": true
-			}
-		},
-		{
-			"label": "bun lint",
-			"type": "shell",
-			"command": "bun",
-			"args": ["run", "lint"],
-			"group": "test",
-			"problemMatcher": ["$eslint-compact"],
-			"detail": "Lint the codebase",
-			"presentation": {
-				"clear": true
-			}
-		},
-		{
-			"label": "bun check",
-			"type": "shell",
-			"command": "bun",
-			"args": ["run", "check"],
-			"group": "test",
-			"problemMatcher": ["$tsc"],
-			"detail": "Run Svelte check for type errors",
-			"presentation": {
-				"clear": true
-			}
-		},
-		{
 			"label": "bun lint-staged (pre-commit)",
 			"type": "shell",
 			"command": "bunx lint-staged",
@@ -63,18 +27,6 @@
 			},
 			"problemMatcher": ["$eslint-compact", "$tsc"],
 			"detail": "Format, lint, and type check staged files via lint-staged",
-			"presentation": {
-				"clear": true
-			}
-		},
-		{
-			"label": "vercel --prod",
-			"type": "shell",
-			"command": "vercel",
-			"args": ["--prod"],
-			"group": "none",
-			"problemMatcher": [],
-			"detail": "Deploy the production version of the site",
 			"presentation": {
 				"clear": true
 			}
