@@ -22,4 +22,4 @@ Reference issues with #issue_number.
 
 Example: fix(config): handle comments in environment variables
 
-After successfully implementing a feature, suggest a suitable commit message.
+After successfully implementing a feature, suggest a suitable commit message. Only commit (git commit) if the user explicitly asks you to.
