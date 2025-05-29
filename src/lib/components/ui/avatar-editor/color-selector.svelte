@@ -3,7 +3,7 @@
 	import { Check } from '@lucide/svelte';
 	import { COLORS, type ColorName } from './types';
 	import { AVATAR_COLOR_STYLES } from './AvatarStore.svelte';
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/utils/utils';
 
 	let {
 		selectedValue,

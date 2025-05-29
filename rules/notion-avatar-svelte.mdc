@@ -1,16 +1,15 @@
+---
+description: Usage instructions for the notion svelte avatar editor
+globs: 
+alwaysApply: false
+---
+In the +layout.svelte, add
+
 <!-- src/routes/+layout.svelte -->
 <script lang="ts">
 	import '../app.css';
 	import { avatarContext } from '$lib/components/ui/avatar-editor/avatarContext';
 	import { AvatarStoreClass } from '$lib/components/ui/avatar-editor/AvatarStore.svelte';
-	import { Toaster } from '$lib/components/ui/sonner';
-
-	// Vercel Speed Insights for performance monitoring and analytics
-	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
-	injectSpeedInsights();
-	import { dev } from '$app/environment';
-	import { injectAnalytics } from '@vercel/analytics/sveltekit';
-	injectAnalytics({ mode: dev ? 'development' : 'production' });
 
 	let { children } = $props();
 
@@ -19,6 +18,15 @@
 	avatarContext.set(new AvatarStoreClass());
 </script>
 
-<Toaster />
-
 {@render children()}
+
+to access the avatar context anywhere in your app.
+
+To render the Avatar Editor:
+
+<!-- src/routes/+page.svelte -->
+<script lang="ts">
+	import AvatarCreator from '$lib/components/ui/avatar-editor/avatar-editor.svelte';
+</script>
+
+<AvatarCreator />

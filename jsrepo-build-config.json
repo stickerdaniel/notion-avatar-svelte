@@ -1,0 +1,52 @@
+{
+	"$schema": "https://unpkg.com/jsrepo@2.2.1/schemas/registry-config.json",
+	"name": "@stickerdaniel/notion-avatar-svelte",
+	"version": "0.0.4",
+	"meta": {
+		"authors": ["Daniel Sticker"],
+		"bugs": "https://github.com/stickerdaniel/notion-avatar-svelte/issues",
+		"description": "Notion-style avatar editor for Svelte 5 with customizable features and download options.",
+		"homepage": "https://github.com/stickerdaniel/notion-avatar-svelte",
+		"repository": "https://github.com/stickerdaniel/notion-avatar-svelte",
+		"tags": ["svelte", "avatar", "notion", "editor", "shadcn-svelte", "shadcn", "components"]
+	},
+	"readme": "README.md",
+	"dirs": ["./src/lib/components", "./src/lib"],
+	"doNotListBlocks": [],
+	"doNotListCategories": [],
+	"listBlocks": ["avatar-editor", "radio-toggle-group"],
+	"listCategories": [],
+	"excludeDeps": ["svelte", "@sveltejs/kit"],
+	"includeBlocks": [],
+	"includeCategories": ["ui", "utils"],
+	"excludeBlocks": [],
+	"excludeCategories": [],
+	"preview": true,
+	"peerDependencies": {
+		"svelte": {
+			"version": "^5.0.0",
+			"message": "This registry requires Svelte 5 and shadcn-svelte@next. Run 'bunx shadcn-svelte@next init' first."
+		},
+		"tailwindcss": {
+			"version": "^3.0.0",
+			"message": "TailwindCSS is required for styling"
+		}
+	},
+	"configFiles": [
+		{
+			"name": "Cursor Rules",
+			"path": "./rules/notion-avatar-svelte.mdc",
+			"expectedPath": "./.cursor/rules/notion-avatar-svelte.mdc",
+			"optional": true
+		}
+	],
+	"rules": {
+		"no-category-index-file-dependency": "warn",
+		"no-unpinned-dependency": "warn",
+		"require-local-dependency-exists": "error",
+		"max-local-dependencies": ["warn", 15],
+		"no-circular-dependency": "error",
+		"no-unused-block": "warn",
+		"no-framework-dependency": "error"
+	}
+}

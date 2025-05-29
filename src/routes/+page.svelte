@@ -1,14 +1,14 @@
 <!-- src/routes/+page.svelte -->
 <script lang="ts">
-	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { Badge } from '$lib/components/ui/badge';
 	import { Download, GithubIcon, Redo, SquareArrowOutUpRight, Undo, Upload } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { AvatarConfigValidationError } from '$lib/components/ui/avatar-editor/AvatarStore.svelte';
 
 	// Import the new Avatar components and the context
 	import * as Avatar from '$lib/components/ui/avatar';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { avatarContext } from '$lib/contexts/avatarContext.js';
+	import * as Card from '$lib/components/ui/card';
+	import { avatarContext } from '$lib/components/ui/avatar-editor/avatarContext';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import AvatarCreator from '$lib/components/ui/avatar-editor/avatar-editor.svelte';
 	import { Separator } from '$lib/components/ui/separator';

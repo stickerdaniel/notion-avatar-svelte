@@ -8,7 +8,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import AnimatedDiceButton from './animated-dice-button.svelte';
-	import { avatarContext } from '$lib/contexts/avatarContext';
+	import { avatarContext } from './avatarContext';
 	import {
 		DEFAULT_CATEGORIES,
 		type Category,

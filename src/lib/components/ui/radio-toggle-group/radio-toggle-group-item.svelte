@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { RadioGroup as RadioGroupPrimitive } from 'bits-ui';
 	import { getRadioToggleGroupCtx } from './radio-toggle-group.svelte';
-	import { cn } from '$lib/utils.js';
+	import { cn } from '$lib/utils/utils';
 	import { type ToggleVariants, toggleVariants } from '$lib/components/ui/toggle/index.js';
 
 	let {
