@@ -18,9 +18,9 @@
 			}
 		},
 		{
-			"label": "bunx lint-staged",
+			"label": "bun lint-staged",
 			"type": "shell",
-			"command": "bunx",
+			"command": "bun",
 			"args": ["lint-staged"],
 			"group": {
 				"kind": "test",
