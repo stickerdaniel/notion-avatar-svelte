@@ -3,6 +3,7 @@
 [![Built with Svelte](https://img.shields.io/badge/Built%20With-Svelte-FF3E00?style=flat&logo=svelte)](https://svelte.dev/)
 [![UI Components: shadcn-svelte](https://img.shields.io/badge/UI-shadcn--svelte-black?style=flat)](https://next.shadcn-svelte.com/)
 [![State Management: Runed](https://img.shields.io/badge/State-Runed-7149EB?style=flat)](https://runed.dev/)
+[![Available on jsrepo](https://img.shields.io/badge/jsrepo-@stickerdaniel%2Fnotion--avatar--svelte-blue?style=flat)](https://jsrepo.com/@stickerdaniel/notion-avatar-svelte)
 
 A customizable Notion-style avatar editor built with Svelte 5, featuring a clean, responsive UI and modern state management.
 
@@ -19,7 +20,79 @@ A customizable Notion-style avatar editor built with Svelte 5, featuring a clean
 - **Mobile-Friendly**: Responsive design works on all screen sizes
 - **Accessible UI**: Built with shadcn-svelte components for accessibility
 
-## 🔧 Installation
+## ⚡ Quick Start with jsrepo
+
+The easiest way to add the Notion Avatar Editor to your Svelte 5 project:
+
+### Prerequisites
+
+- Svelte 5 project with shadcn-svelte@next configured
+- [jsrepo](https://jsrepo.com/) CLI installed
+
+### Installation
+
+```bash
+# Install jsrepo CLI (if not already installed)
+bun add -g jsrepo
+
+# Initialize shadcn-svelte in your project (if not already done)
+bunx shadcn-svelte@next init
+
+# Add the avatar editor component
+jsrepo add @stickerdaniel/notion-avatar-svelte/ui/avatar-editor
+```
+
+### Usage
+
+To render the Avatar Editor:
+
+```svelte
+<script lang="ts">
+	import AvatarCreator from '$lib/components/ui/avatar-editor/avatar-editor.svelte';
+</script>
+
+<AvatarCreator />
+```
+
+### Advanced: Accessing Avatar Context
+
+To access the avatar context anywhere in your app, add to your `+layout.svelte`:
+
+```svelte
+<!-- src/routes/+layout.svelte -->
+<script lang="ts">
+	import '../app.css';
+	import { avatarContext } from '$lib/components/ui/avatar-editor/avatarContext';
+	import { AvatarStoreClass } from '$lib/components/ui/avatar-editor/AvatarStore.svelte';
+
+	let { children } = $props();
+
+	// Instantiate and set the AvatarStore in the context
+	// This makes it available to all child components within this layout.
+	avatarContext.set(new AvatarStoreClass());
+</script>
+
+{@render children()}
+```
+
+Then you can use in any component:
+
+```svelte
+<script lang="ts">
+	import * as Avatar from '$lib/components/ui/avatar';
+	import { avatarContext } from '$lib/components/ui/avatar-editor/avatarContext';
+	// Get the shared avatar store
+	const avatar = avatarContext.get();
+</script>
+
+<pre class="text-xs">{JSON.stringify(JSON.parse(avatar.configJSON), null, 2)}</pre>
+<Avatar.Root>
+	<Avatar.Image src={avatar.svgDataUrl} />
+	<Avatar.Fallback>Avatar</Avatar.Fallback>
+</Avatar.Root>
+```
+
+## 🔧 Manual Installation
 
 ### Prerequisites
 
