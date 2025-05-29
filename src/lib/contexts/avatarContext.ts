@@ -1,5 +1,6 @@
+// src/lib/contexts/avatarContext.ts
 import { Context } from 'runed';
-import type { AvatarStoreClass } from '$lib/components/ui/avatar-creator/AvatarStore.svelte';
+import type { AvatarStoreClass } from '$lib/components/ui/avatar-editor/AvatarStore.svelte';
 
 /**
  * Svelte Runed Context for sharing the AvatarStoreClass instance.
@@ -7,7 +8,7 @@ import type { AvatarStoreClass } from '$lib/components/ui/avatar-creator/AvatarS
  * Usage:
  * // In a parent component (e.g., +layout.svelte):
  * import { avatarContext } from '$lib/contexts/avatarContext';
- * import { AvatarStoreClass } from '$lib/components/ui/avatar-creator/AvatarStore.svelte';
+ * import { AvatarStoreClass } from '$lib/components/ui/avatar-editor/AvatarStore.svelte';
  * avatarContext.set(new AvatarStoreClass());
  *
  * // In a child component:

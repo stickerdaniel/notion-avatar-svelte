@@ -1,7 +1,8 @@
+<!-- src/routes/+layout.svelte -->
 <script lang="ts">
 	import '../app.css';
 	import { avatarContext } from '$lib/contexts/avatarContext';
-	import { AvatarStoreClass } from '$lib/components/ui/avatar-creator/AvatarStore.svelte';
+	import { AvatarStoreClass } from '$lib/components/ui/avatar-editor/AvatarStore.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
 
 	// Vercel Speed Insights for performance monitoring and analytics

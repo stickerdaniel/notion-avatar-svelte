@@ -1,5 +1,6 @@
+// src/lib/components/ui/avatar-editor/types.ts
 /**
- * Avatar creator type definitions
+ * Avatar editor type definitions
  */
 
 // Color Definitions
@@ -33,7 +34,7 @@ export type SelectedItems = {
 };
 
 /**
- * Default categories for the avatar creator
+ * Default categories for the avatar editor
  */
 export const DEFAULT_CATEGORIES: Category[] = [
 	{ id: 'face', name: 'Face', maxItems: 16 },
@@ -52,14 +53,14 @@ export const DEFAULT_CATEGORIES: Category[] = [
  * Gets the path to a preview image for a category item
  */
 export function getPreviewImagePath(category: string, index: number): string {
-	return `/avatar-creator/preview/${category}/${index}.svg`;
+	return `/avatar-editor/preview/${category}/${index}.svg`;
 }
 
 /**
  * Gets the path to a part image for the avatar preview
  */
 export function getPartImagePath(category: string, index: number): string {
-	return `/avatar-creator/part/${category}/${category}-${index}.svg`;
+	return `/avatar-editor/part/${category}/${category}-${index}.svg`;
 }
 
 /**

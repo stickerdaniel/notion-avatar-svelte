@@ -1,3 +1,4 @@
+<!-- src/lib/components/ui/avatar-editor/avatar-editor.svelte -->
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -8,7 +9,12 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import AnimatedDiceButton from './animated-dice-button.svelte';
 	import { avatarContext } from '$lib/contexts/avatarContext';
-	import { DEFAULT_CATEGORIES, type Category, type ColorName } from './types';
+	import {
+		DEFAULT_CATEGORIES,
+		type Category,
+		type ColorName,
+		type AvatarConfiguration
+	} from './types';
 	import { Undo, Redo, Download } from '@lucide/svelte';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
@@ -27,21 +33,21 @@
 	// Event handler for username input
 	function handleUsernameInput(event: Event) {
 		const newUsername = (event.currentTarget as HTMLInputElement).value;
-		avatarStore.updateConfig((config) => {
+		avatarStore.updateConfig((config: AvatarConfiguration) => {
 			config.username = newUsername;
 		});
 	}
 
 	// Event handler for color selection
 	function handleColorSelect(color: ColorName) {
-		avatarStore.updateConfig((config) => {
+		avatarStore.updateConfig((config: AvatarConfiguration) => {
 			config.colorName = color;
 		});
 	}
 
 	// Event handler for item selection in CategorySelector
 	function handleItemSelect(categoryId: string, itemIndex: number) {
-		avatarStore.updateConfig((config) => {
+		avatarStore.updateConfig((config: AvatarConfiguration) => {
 			config.items[categoryId] = itemIndex;
 		});
 	}

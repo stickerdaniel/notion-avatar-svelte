@@ -12,7 +12,7 @@ A customizable Notion-style avatar editor built with Svelte 5, featuring a clean
 
 ## 📋 Features
 
-- **Intuitive Avatar Creator**: Customize faces, hair, accessories, and more
+- **Intuitive Avatar Editor**: Customize faces, hair, accessories, and more
 - **Modern State Management**: Built with Svelte 5 Runes and Runed for powerful, reactive state
 - **Undo/Redo Support**: Full history tracking with Runed StateHistory
 - **Import/Export**: Save and load avatar configurations as JSON
@@ -97,14 +97,14 @@ The application uses a modern state management approach with Svelte 5 Runes and 
 ```typescript
 // Class-based store with Svelte 5 Runes
 export class AvatarStoreClass implements IAvatar {
-  // Reactive state with $state rune
-  configJSON = $state<string>('');
-  
-  // Derived state with $derived rune
-  previewConfig = $derived<AvatarConfiguration>(this._parseConfigJSON());
-  
-  // History tracking with Runed
-  private _history: StateHistory<string>;
+	// Reactive state with $state rune
+	configJSON = $state<string>('');
+
+	// Derived state with $derived rune
+	previewConfig = $derived<AvatarConfiguration>(this._parseConfigJSON());
+
+	// History tracking with Runed
+	private _history: StateHistory<string>;
 }
 ```
 
@@ -115,15 +115,6 @@ Key aspects of the state management:
 - **History Management**: The `StateHistory` class from Runed provides undo/redo functionality
 - **Context API**: The store is made available app-wide using Runed's `Context` system
 
-### Component Structure
-
-The UI is built with [shadcn-svelte](https://next.shadcn-svelte.com/) components:
-
-- **Avatar Creator**: Main component for customizing avatars
-- **Category Selector**: Interface for selecting different avatar parts
-- **Color Selector**: UI for choosing avatar background colors
-- **Animated Dice Button**: Interactive randomizer with animation
-
 ## 🎨 Customization
 
 ### Theming
@@ -132,25 +123,14 @@ The project uses Tailwind CSS with customizable themes via shadcn-svelte:
 
 1. Visit [shadcn-svelte themes](https://next.shadcn-svelte.com/themes) to explore and customize the color palette
 2. Edit the `src/app.css` file to apply your custom theme variables
-3. Update the `tailwind.config.ts` file to extend or modify the theme further
 
 ### Adding New Avatar Parts
 
 To add new avatar parts:
 
-1. Add SVG files to `static/avatar-creator/part/[category]/[category]-[index].svg`
-2. Add preview images to `static/avatar-creator/preview/[category]/[index].svg`
-3. Update the `DEFAULT_CATEGORIES` array in `src/lib/components/ui/avatar-creator/types.ts`
-
-## 📦 Building for Production
-
-```bash
-# Build the application
-bun run build
-
-# Preview the production build
-bun run preview
-```
+1. Add SVG files to `static/avatar-editor/part/[category]/[category]-[index].svg`
+2. Add preview images to `static/avatar-editor/preview/[category]/[index].svg`
+3. Update the `DEFAULT_CATEGORIES` array in `src/lib/components/ui/avatar-editor/types.ts`
 
 ## 🤝 Contributing
 
