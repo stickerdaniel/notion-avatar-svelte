@@ -2,8 +2,8 @@
 
 [![Built with Svelte](https://img.shields.io/badge/Built%20With-Svelte-FF3E00?style=flat&logo=svelte)](https://svelte.dev/)
 [![UI Components: shadcn-svelte](https://img.shields.io/badge/UI-shadcn--svelte-black?style=flat)](https://next.shadcn-svelte.com/)
-[![State Management: Runed](https://img.shields.io/badge/State-Runed-7149EB?style=flat)](https://runed.dev/)
-[![Available on jsrepo](https://img.shields.io/badge/jsrepo-@stickerdaniel%2Fnotion--avatar--svelte-blue?style=flat)](https://jsrepo.com/@stickerdaniel/notion-avatar-svelte)
+[![State Management: Runed](https://img.shields.io/badge/State-Runed-orange?style=flat)](https://runed.dev/)
+[![Available on JSrepo](https://img.shields.io/badge/JSrepo-@stickerdaniel%2Fnotion--avatar--svelte-yellow?style=flat)](https://jsrepo.com/@stickerdaniel/notion-avatar-svelte)
 
 A customizable Notion-style avatar editor built with Svelte 5, featuring a clean, responsive UI and modern state management.
 
