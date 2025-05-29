@@ -21,11 +21,6 @@
 
 	// Get the Avatar store instance from context
 	const avatarStore = avatarContext.get();
-	// Ensure avatarStore is not undefined, though context.get() should throw if not set.
-	if (!avatarStore) {
-		// This case should ideally not happen if context is set in layout
-		throw new Error('AvatarStore not found in context. Make sure it is set in a parent layout.');
-	}
 
 	const categories: Category[] = DEFAULT_CATEGORIES;
 	let activeTab = $state(categories[0]?.id ?? ''); // For CategorySelector UI
