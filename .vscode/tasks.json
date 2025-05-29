@@ -3,7 +3,7 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "bun dev (run dev server)",
+			"label": "bun run dev",
 			"type": "shell",
 			"command": "bun",
 			"args": ["run", "dev"],
@@ -18,15 +18,27 @@
 			}
 		},
 		{
-			"label": "bun lint-staged (pre-commit)",
+			"label": "bunx lint-staged",
 			"type": "shell",
-			"command": "bunx lint-staged",
+			"command": "bunx",
+			"args": ["lint-staged"],
 			"group": {
 				"kind": "test",
 				"isDefault": true
 			},
 			"problemMatcher": ["$eslint-compact", "$tsc"],
 			"detail": "Format, lint, and type check staged files via lint-staged",
+			"presentation": {
+				"clear": true
+			}
+		},
+		{
+			"label": "bun run release:registry",
+			"type": "shell",
+			"command": "bun",
+			"args": ["run", "release:registry"],
+			"problemMatcher": [],
+			"detail": "Release the registry to jsrepo",
 			"presentation": {
 				"clear": true
 			}
