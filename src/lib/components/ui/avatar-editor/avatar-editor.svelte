@@ -68,7 +68,7 @@
 							<Avatar.Image src={avatarStore.svgDataUrl} />
 							<Avatar.Fallback />
 						</Avatar.Root>
-						<span class="h-4 text-lg font-medium">{avatarStore.config.username}</span>
+						<p class="h-4 text-lg font-medium">{avatarStore.config.username}</p>
 					</div>
 					<div
 						class="flex w-full flex-col items-end gap-4 sm:flex-row-reverse sm:justify-between lg:flex-col lg:items-end"

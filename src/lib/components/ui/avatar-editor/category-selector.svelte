@@ -22,6 +22,19 @@
 		activeTab = categories[0].id;
 	}
 
+	// Track loaded images to prevent showing broken placeholders
+	let loadedImages = $state<Set<string>>(new Set());
+
+	function handleImageLoad(imageSrc: string) {
+		loadedImages.add(imageSrc);
+		loadedImages = new Set(loadedImages); // Trigger reactivity
+	}
+
+	function handleImageError(imageSrc: string) {
+		// Don't add to loaded set if there's an error
+		console.warn('Failed to load image:', imageSrc);
+	}
+
 	function scrollTabs(direction: 'up' | 'down') {
 		const categoryIds = categories.map((category) => category.id);
 		const currentIdx = categoryIds.indexOf(activeTab);
@@ -95,6 +108,7 @@
 					{#each Array(category.maxItems) as _, index (index)}
 						{@const imageSrc = getPartImagePath(category.id, index)}
 						{@const itemValueForComparison = category.id + index.toString()}
+						{@const isImageLoaded = loadedImages.has(imageSrc)}
 						<RadioToggleGroup.Item
 							value={itemValueForComparison}
 							aria-label={`Select ${category.name} ${index + 1}`}
@@ -103,14 +117,28 @@
 							aria-pressed={radioGroupValueForDisplay === itemValueForComparison}
 						>
 							<div
-								class={`duration-5 flex h-full w-full transform items-center justify-center transition-transform ease-in-out ${radioGroupValueForDisplay !== itemValueForComparison ? 'hover:scale-110' : ''} active:scale-100 active:duration-0`}
+								class={`flex h-full w-full transform items-center justify-center transition-transform duration-5 ease-in-out ${radioGroupValueForDisplay !== itemValueForComparison ? 'hover:scale-110' : ''} active:scale-100 active:duration-0`}
 							>
-								<img
-									src={imageSrc}
-									alt={`${category.name} Preview ${index + 1}`}
-									class="h-full w-full scale-50 object-contain"
-									loading="lazy"
-								/>
+								{#if isImageLoaded}
+									<img
+										src={imageSrc}
+										alt={`${category.name} Preview ${index + 1}`}
+										class="h-full w-full scale-50 object-contain"
+										loading="lazy"
+									/>
+								{:else}
+									<!-- Hidden image to trigger loading -->
+									<img
+										src={imageSrc}
+										alt=""
+										class="pointer-events-none absolute opacity-0"
+										loading="lazy"
+										onload={() => handleImageLoad(imageSrc)}
+										onerror={() => handleImageError(imageSrc)}
+									/>
+									<!-- Empty placeholder while loading -->
+									<div class="h-full w-full"></div>
+								{/if}
 							</div>
 						</RadioToggleGroup.Item>
 					{/each}
