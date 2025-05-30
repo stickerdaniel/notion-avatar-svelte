@@ -5,7 +5,7 @@ alwaysApply: true
 ---
 ## Svelte Project Coding Instructions
 
-Use Svelte 5's new syntax with TypeScript for reactivity, props, events, and content passing. Prioritize this over Svelte 4 syntax. Use `bun` as the package manager ("bun add", "bun add -d (for dev dependencies), "bunx").
+Use Svelte 5's new syntax with TypeScript for reactivity, props, events, and content passing. Prioritize this over Svelte 4 syntax, always. Use `bun` as the package manager ("bun add", "bun add -d (for dev dependencies), "bunx").
 
 **Key Svelte 5 Syntax Changes & Rune Usage:**
 
@@ -31,10 +31,26 @@ Use Svelte 5's new syntax with TypeScript for reactivity, props, events, and con
 *   **Events:** Use standard HTML event attributes (`onclick={handler}`, `onsubmit={handler}`) instead of `on:`.
 *   **Content/Slots:** Use `{#snippet name()}...{/snippet}` to define content snippets and `{@render name()}` to render them. Pass snippets as props: `let { header } = $props<{ header: Snippet }>();`. The default content passed between component tags is available via the implicit `children` snippet prop.
 *   **TypeScript:** Always use `<script lang="ts">`. Explicitly type variables, props, function arguments/returns, and derived arrays.
-Runes are a core Svelte 5 feature and dont require any imports.
+Runes are a core Svelte 5 feature that works out of the box. They don't require any imports.
+
+**Assets**
+For best performance, put most static assets used in components (like images) under `src` (e.g., `src/lib/assets`).
+
+*   **`src` Assets:** Vite processes these, adding content hashes to filenames (\( myImage-a89cfcb3.png \)). This enables aggressive browser caching, significantly reducing load times. Standard reference via `import`:
+    ```svelte
+    <script>
+      import img from '$lib/images/img.avif';
+    </script>
+
+    <img src={img} alt="Image" />
+    ```
+*   **`static` Assets:** Use *only* for files needing a fixed root path (\( robots.txt, favicon.ico \)) that *shouldn't* be processed by Vite. These don't get hashed and require slower browser validation checks.
+
+Always add the `svelte-preprocess-import-assets` package (`bun add -d svelte-preprocess-import-assets`) to use simpler syntax that doesnt require the additional import: `<img src="$lib/images/img.avif" alt="Image" />`. Always ask the user to provide images in the .avif format if its a .png or .jpg image (for cdn images as well).
+
 **State Management: Class-Based Stores (Pattern Summary)**
 
-This pattern uses JavaScript classes combined with Svelte Runes (`$state`) to create powerful, encapsulated, and reusable state containers, often replacing or complementing traditional Svelte stores (`writable`, `readable`).
+This pattern uses JavaScript classes combined with Svelte Runes (`$state`) to create powerful, encapsulated, and reusable state containers, often replacing or complementing traditional Svelte stores (`writable`, `readable`). Use this 
 
 *   **What:** Define a standard JS/TS class (usually in a `.svelte.ts` file, e.g., `src/lib/MyStore.svelte.ts`). Inside the class, use `$state()` to make instance properties reactive. Methods within the class operate on these reactive properties.
 *   **Why:** Encapsulation, organization, reusability, testability, TypeScript friendly.
@@ -65,15 +81,15 @@ This pattern uses JavaScript classes combined with Svelte Runes (`$state`) to cr
         ```
 
     3.  **Share State via Runed Context (Recommended & SSR Safe):**
-        *   **a) Install Runed:** `bun add runed`
-        *   **b) Define Context (`context.ts` or `MyStore.svelte.ts`):**
+        *   **1) Install Runed:** `bun add runed`
+        *   **2) Define Context (`context.ts` or `MyStore.svelte.ts`):**
             ```typescript
             // src/lib/import { Context } from 'runed';
             import { MyStoreClass } from './MyStore.svelte';
 
             export const myStoreContext = new Context<MyStoreClass>('myStore');
             ```
-        *   **c) Set Context in Ancestor (`+layout.svelte`):**
+        *   **3) Set Context in Ancestor (`+layout.svelte`):**
             ```svelte
             // src/routes/+layout.svelte
             <script lang="ts">
@@ -86,7 +102,7 @@ This pattern uses JavaScript classes combined with Svelte Runes (`$state`) to cr
             </script>
             {@render children()}
             ```
-        *   **d) Get Context in Descendants:**
+        *   **4) Get Context in Descendants:**
             ```svelte
             // src/lib/components/SomeChild.svelte
             <script lang="ts">
@@ -96,9 +112,9 @@ This pattern uses JavaScript classes combined with Svelte Runes (`$state`) to cr
             <!-- ... use store.count, store.increment() ... -->
             ```
 
-**Tooling Suggestions:**
+**Toolset:**
 
-*   **Runed (`bun add runed`):** A collection of utilities specifically for Svelte 5 Runes. Highly recommended for simplifying common patterns. Key utilities include:
+*   **Runed:** A collection of utilities specifically for Svelte 5 Runes. Highly recommended for simplifying common patterns. Install with `bun add runed`. Key utilities include:
     *   **`<Context>`:** Provides a type-safe and ergonomic wrapper around Svelte's context API. **Use this for sharing class-based stores.**
     *   **`resource`:** Combines reactive state with async data fetching, handling loading/error states and cancellation.
     *   **`watch`:** Similar to `$effect`, but with explicitly defined reactive dependencies. Useful for more control over when effects run. Variants like `watch.pre` exist.
@@ -106,10 +122,13 @@ This pattern uses JavaScript classes combined with Svelte Runes (`$state`) to cr
     *   **`useEventListener`:** Attaches event listeners (e.g., to `window` or `document`) with automatic cleanup when the component unmounts.
     *   **`onClickOutside`:** Detects clicks outside a specified element, useful for closing dropdowns/modals.
     *   **`FiniteStateMachine`:** Defines strongly-typed state machines for managing complex component states and transitions.
-    *   **(Other utilities):** Runed offers many more utilities for element interaction (`ElementRect`, `useIntersectionObserver`), sensor data (`useGeolocation`), animation (`AnimationFrames`), state history (`StateHistory`), debouncing (`Debounced`, `useDebounce`), and more.
-    *   **Recommendation:** Familiarize yourself with the Runed utilities and use them where they fit the problem domain. Request the @Runed documentation when considering a specific utility for detailed usage instructions.
-*   **Shadcn-Svelte:** High-quality, accessible UI components. Follow setup at @next.shadcn-svelte.com. (`bunx --bun shadcn-svelte-add@latest init`)
-*   **Superforms/Formsnap:** Robust form handling with validation. Implementation in next.shadcn-svelte form uses Superforms, Formasnap and Zod. Follow form setup at @next.shadcn-svelte.com/docs/components/form.
-*   **Specialized UI needs:** Consider Threlte for 3D gr[](mdc:https:/next.shadcn-svelte.com/docs/components/form)aphics, Svelte Flow for node-based diagrams and https://sv-blocks.vercel.app/ for traditional marketing website blocks.
-
-
+    *   **(Other utilities):** Runed offers many more utilities for element interaction (`ElementRect`, `useIntersectionObserver`), sensor data (`useGeolocation`), `AnimationFrames`, `StateHistory`, `Debounced`, `useDebounce`, and more.
+    *   **Important:** Suggest the use of runed utilities where they fit the problem domain. Request the @Runed documentation before using a specific utility to get detailed usage instructions.
+*   **Shadcn-Svelte:** High-quality, accessible UI components. Docs at @next.shadcn-svelte.com (`bun x shadcn-svelte@next init`). These components look awesome by default and do not require additional tailwind classes. More components: @shadcn-svelte-extras.com. 
+*   **Icons:** Lucide @lucide.dev/guide/packages/lucide-svelte `bun add @lucide/svelte`. Usage: 
+    <script>
+    import { Skull } from '@lucide/svelte';
+    </script>
+    <Skull />
+*   **Superforms/Formsnap:** Robust form handling with validation. Implementation in next.shadcn-svelte form uses Superforms and Formsnap. Follow form setup at @next.shadcn-svelte.com/docs/components/form.
+*   **Specialized UI needs:** Use Threlte for 3D graphics, Svelte Flow for node-based diagrams and @sv-blocks.vercel.app for traditional website components like Hero, Features and CTA blocks.
