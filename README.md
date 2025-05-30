@@ -1,33 +1,32 @@
 # Notion Avatar Svelte
 
-[![Built with Svelte](https://img.shields.io/badge/Built%20With-Svelte-FF3E00?style=flat&logo=svelte)](https://svelte.dev/)
+[![Built with Svelte](https://img.shields.io/badge/Built%20With-Svelte-d43106?style=flat&logo=svelte)](https://svelte.dev/)
 [![UI Components: shadcn-svelte](https://img.shields.io/badge/UI-shadcn--svelte-black?style=flat)](https://next.shadcn-svelte.com/)
-[![State Management: Runed](https://img.shields.io/badge/State-Runed-orange?style=flat)](https://runed.dev/)
-[![Available on JSrepo](https://img.shields.io/badge/JSrepo-@stickerdaniel%2Fnotion--avatar--svelte-yellow?style=flat)](https://jsrepo.com/@stickerdaniel/notion-avatar-svelte)
+[![State Management: Runed](https://img.shields.io/badge/State-Runed-f64a00?style=flat)](https://runed.dev/)
+[![Available on JSrepo](https://img.shields.io/badge/JSrepo-@stickerdaniel%2Fnotion--avatar--svelte-f7dd1e?style=flat)](https://jsrepo.com/@stickerdaniel/notion-avatar-svelte)
 
 A customizable Notion-style avatar editor built with Svelte 5, featuring a clean, responsive UI and modern state management.
 
 ![CleanShot 2025-05-13 at 02 15 03@2x](https://github.com/user-attachments/assets/6ef9f94b-8801-4997-8ba9-e3ac6f59030d)
 
-**Live Demo:** https://avatar.daniel.sticker.name/
+**Try it:** https://avatar.daniel.sticker.name/
 
-## 📋 Features
-
+- **Undo/Redo Support**: Full history tracking with [Runed](https://runed.dev/) StateHistory
 - **Intuitive Avatar Editor**: Customize faces, hair, accessories, and more
-- **Modern State Management**: Built with Svelte 5 Runes and Runed for powerful, reactive state
-- **Undo/Redo Support**: Full history tracking with Runed StateHistory
+- **State Management**: Built with Svelte 5 Runes and [Runed](https://runed.dev/)
 - **Import/Export**: Save and load avatar configurations as JSON
 - **Mobile-Friendly**: Responsive design works on all screen sizes
-- **Accessible UI**: Built with shadcn-svelte components for accessibility
+- **Accessible UI**: Built with [shadcn-svelte](https://next.shadcn-svelte.com/) components for accessibility
 
-## ⚡ Quick Start with jsrepo
+## Quick Start with jsrepo
 
 The easiest way to add the Notion Avatar Editor to your Svelte 5 project:
 
 ### Prerequisites
 
-- Svelte 5 project with shadcn-svelte@next configured
+- Svelte 5 project
 - [jsrepo](https://jsrepo.com/) CLI installed
+- [bun](https://bun.sh/) installed (recommended, this guide uses [bun](https://bun.sh/) but you can use npm or pnpm if you prefer)
 
 ### Installation
 
@@ -44,19 +43,7 @@ jsrepo add @stickerdaniel/notion-avatar-svelte/ui/avatar-editor
 
 ### Usage
 
-To render the Avatar Editor:
-
-```svelte
-<script lang="ts">
-	import AvatarCreator from '$lib/components/ui/avatar-editor/avatar-editor.svelte';
-</script>
-
-<AvatarCreator />
-```
-
-### Advanced: Accessing Avatar Context
-
-To access the avatar context anywhere in your app, add to your `+layout.svelte`:
+add to your `+layout.svelte`:
 
 ```svelte
 <!-- src/routes/+layout.svelte -->
@@ -75,7 +62,17 @@ To access the avatar context anywhere in your app, add to your `+layout.svelte`:
 {@render children()}
 ```
 
-Then you can use in any component:
+and then render the Avatar Editor:
+
+```svelte
+<script lang="ts">
+	import AvatarCreator from '$lib/components/ui/avatar-editor/avatar-editor.svelte';
+</script>
+
+<AvatarCreator />
+```
+
+You can access the avatar context in any component:
 
 ```svelte
 <script lang="ts">
@@ -92,37 +89,14 @@ Then you can use in any component:
 </Avatar.Root>
 ```
 
-## 🔧 Manual Installation
+## Manual Installation
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) (recommended)
+- [Bun](https://bun.sh/)
 - Git
 
-#### Installing Bun
-
-**macOS and Linux**
-
-> **Linux users** — The `unzip` package is required to install Bun. Use `sudo apt install unzip` to install `unzip` package. Kernel version 5.6 or higher is strongly recommended, but the minimum is 5.1. Use `uname -r` to check Kernel version.
-
-```bash
-# macOS, Linux, and WSL
-curl -fsSL https://bun.sh/install | bash
-
-# To install a specific version
-curl -fsSL https://bun.sh/install | bash -s "bun-v1.2.13"
-```
-
-**Windows**
-
-```powershell
-# PowerShell/cmd.exe
-powershell -c "irm bun.sh/install.ps1|iex"
-```
-
-> Bun requires a minimum of Windows 10 version 1809. For support and discussion, please join the **#windows channel on the Bun Discord**.
-
-### Step 1: Clone the Repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/stickerdaniel/notion-avatar-svelte
@@ -131,25 +105,23 @@ cd notion-avatar-svelte
 
 Or download and extract the zip file.
 
-### Step 2: Install Dependencies
+### Install Dependencies
 
 ```bash
 # Install dependencies
 bun install
 ```
 
-## 🚀 Running the Application
+### Lets run the development server
 
-### Using VSCode
-
-The project includes VSCode tasks for common operations:
+The project includes tasks for common operations. They work for VSCode and all forked editors like Cursor.
 
 1. Press `Cmd+Shift+B` (macOS) or `Ctrl+Shift+B` (Windows/Linux) to run the default build task
 2. Select "bun dev (run dev server)" from the task list
 
-Alternatively, open the Command Palette (`Cmd+Shift+P` or `Ctrl+Shift+P`) and type "Run Task", then select "bun dev (run dev server)".
+Or, open the Command Palette (`Cmd+Shift+P` or `Ctrl+Shift+P`) and type "Run Task", then select "bun dev (run dev server)".
 
-### Using Command Line
+### Command Line
 
 ```bash
 # Start the development server
@@ -161,7 +133,7 @@ bun run dev -- --open
 
 The application will be available at `http://localhost:5173/`.
 
-## 🏗️ Architecture
+## Architecture Overview
 
 ### State Management
 
@@ -173,10 +145,7 @@ export class AvatarStoreClass implements IAvatar {
 	// Reactive state with $state rune
 	configJSON = $state<string>('');
 
-	// Derived state with $derived rune
-	previewConfig = $derived<AvatarConfiguration>(this._parseConfigJSON());
-
-	// History tracking with Runed
+	// Undo/Redo History tracking with Runed
 	private _history: StateHistory<string>;
 }
 ```
@@ -188,7 +157,7 @@ Key aspects of the state management:
 - **History Management**: The `StateHistory` class from Runed provides undo/redo functionality
 - **Context API**: The store is made available app-wide using Runed's `Context` system
 
-## 🎨 Customization
+## Customization
 
 ### Theming
 
@@ -201,19 +170,19 @@ The project uses Tailwind CSS with customizable themes via shadcn-svelte:
 
 To add new avatar parts:
 
-1. Add SVG files to `static/avatar-editor/part/[category]/[category]-[index].svg`
-2. Add preview images to `static/avatar-editor/preview/[category]/[index].svg`
+1. Add SVG files to `src/lib/components/ui/avatar-editor/assets/parts/[category]/[category]-[index].svg`
+2. Add preview images to `src/lib/components/ui/avatar-editor/assets/preview/[category]/[index].svg`
 3. Update the `DEFAULT_CATEGORIES` array in `src/lib/components/ui/avatar-editor/types.ts`
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🌟 Acknowledgements
+## Acknowledgements
 
 - Inspired by [Mayandev/notion-avatar](https://github.com/Mayandev/notion-avatar)
 - Built with [Svelte 5](https://svelte.dev/)
@@ -222,4 +191,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-**Note**: This project is not affiliated with Notion. The avatar style is inspired by Notion's UI.
+This project is not affiliated with Notion. The avatar style is inspired by Notion's UI.
