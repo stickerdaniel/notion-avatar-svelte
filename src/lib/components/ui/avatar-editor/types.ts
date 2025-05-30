@@ -51,16 +51,20 @@ export const DEFAULT_CATEGORIES: Category[] = [
 
 /**
  * Gets the path to a preview image for a category item
+ * Note: These paths will be resolved by Vite's asset processing
  */
 export function getPreviewImagePath(category: string, index: number): string {
-	return `/avatar-editor/preview/${category}/${index}.svg`;
+	// Use relative path to the colocated assets
+	return new URL(`./assets/preview/${category}/${index}.svg`, import.meta.url).href;
 }
 
 /**
  * Gets the path to a part image for the avatar preview
+ * Note: These paths will be resolved by Vite's asset processing
  */
 export function getPartImagePath(category: string, index: number): string {
-	return `/avatar-editor/part/${category}/${category}-${index}.svg`;
+	// Use relative path to the colocated assets
+	return new URL(`./assets/part/${category}/${category}-${index}.svg`, import.meta.url).href;
 }
 
 /**

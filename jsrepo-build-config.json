@@ -12,6 +12,7 @@
 	},
 	"readme": "README.md",
 	"dirs": ["./src/lib/components", "./src/lib"],
+	"allowSubdirectories": true,
 	"doNotListBlocks": [],
 	"doNotListCategories": [],
 	"listBlocks": ["avatar-editor", "radio-toggle-group"],

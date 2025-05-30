@@ -53,7 +53,7 @@ async function generateSvgCore(
 				const svgContent = contentMatch ? contentMatch[1] : svgText;
 
 				return `
-          <g id="${avatarId}-${partType}" ${partType.includes('face') ? 'fill="#ffffff"' : ''} 
+          <g id="${avatarId}-${partType}" fill="#ffffff" 
              ${flipped ? 'transform="scale(-1,1) translate(-1080, 0)"' : ''}>
             ${svgContent}
           </g>
