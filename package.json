@@ -48,13 +48,9 @@
 		"@lucide/svelte": "^0.482.0",
 		"@vercel/analytics": "^1.5.0",
 		"@vercel/speed-insights": "^1.2.0",
-		"clsx": "^2.1.1",
-		"formsnap": "2.0.0-next.1",
-		"paneforge": "^1.0.0-next.5",
 		"runed": "^0.26.0",
 		"tailwind-merge": "^3.3.0",
-		"tailwind-variants": "^0.2.1",
-		"vaul-svelte": "^1.0.0-next.7"
+		"tailwind-variants": "^0.2.1"
 	},
 	"lint-staged": {
 		"*.{js,ts,svelte,html,css,md,json}": "prettier --write",
