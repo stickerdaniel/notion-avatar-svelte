@@ -13,6 +13,7 @@
 	import AvatarCreator from '$lib/components/ui/avatar-editor/avatar-editor.svelte';
 	import { Separator } from '$lib/components/ui/separator';
 	import AnimatedDiceButton from '$lib/components/ui/avatar-editor/animated-dice-button.svelte';
+	import { Code } from '$lib/components/ui/code';
 
 	const avatarStore = avatarContext.get();
 
@@ -95,7 +96,7 @@
 
 <div class="flex min-h-svh w-full flex-col items-center justify-center">
 	<div class="mx-auto w-full max-w-2xl px-4 py-10">
-		<div class="flex flex-col gap-10">
+		<div class="flex flex-col gap-8">
 			<div class="flex flex-col gap-1">
 				<h1 class="text-4xl font-bold">Notion Avatar Editor</h1>
 				<p class="text-muted-foreground text-lg">Custom avatars for your next Svelte project.</p>
@@ -149,13 +150,18 @@
 				</div>
 			</div>
 			<AvatarCreator />
-
+			<Code
+				lang="bash"
+				class="!mt-0 mt-2 w-full shadow"
+				hideLines
+				code={`jsrepo add @stickerdaniel/notion-avatar-svelte/ui/avatar-editor`}
+			/>
 			{#if avatarStore}
-				<div class="flex flex-col gap-5">
-					<!-- Example 1: Live State Example -->
+				<div class="flex flex-col gap-4">
+					<!-- State Example -->
 					<Card.Root>
 						<Card.Header class="p-4 sm:p-6">
-							<Card.Title>Live State Example</Card.Title>
+							<Card.Title>State Example</Card.Title>
 							<Card.Description>
 								Shows what's currently being edited. This state is persisted in localStorage.
 							</Card.Description>
@@ -195,11 +201,13 @@
 					<!-- JSON Debug Display -->
 					<Card.Root>
 						<Card.Header class="p-4 sm:p-6">
-							<Card.Title>avatarStore.configJSON (Persisted State)</Card.Title>
+							<Card.Title>avatarStore.configJSON</Card.Title>
 							<Card.Description
-								>Primary JSON string for the avatar's settings. This serialized data is the main
-								shared datapoint that drives the editor, previews and history. It is managed by
-								PersistedState and reflects the content of localStorage.</Card.Description
+								>Core avatar configuration stored as serialized JSON. This data powers the editor
+								interface, live previews, and version history. Managed through <a
+									href="https://www.runed.dev/docs/utilities/persisted-state"
+									target="_blank">PersistedState</a
+								> and synced with localStorage.</Card.Description
 							>
 						</Card.Header>
 						<Card.Content class="p-4 sm:p-6">

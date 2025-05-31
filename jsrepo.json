@@ -1,0 +1,17 @@
+{
+	"$schema": "https://unpkg.com/jsrepo@2.2.1/schemas/project-config.json",
+	"repos": ["@ieedan/shadcn-svelte-extras"],
+	"includeTests": false,
+	"watermark": false,
+	"formatter": "prettier",
+	"configFiles": {
+		"Cursor Rules": "./.cursor/rules/shadcn-svelte-extras.mdc"
+	},
+	"paths": {
+		"*": "./src/lib/components",
+		"ui": "./src/lib/components/ui",
+		"utils": "./src/lib/utils",
+		"hooks": "./src/lib/hooks",
+		"actions": "./src/lib/actions"
+	}
+}

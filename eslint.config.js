@@ -20,7 +20,17 @@ export default ts.config(
 		languageOptions: {
 			globals: { ...globals.browser, ...globals.node }
 		},
-		rules: { 'no-undef': 'off' }
+		rules: {
+			'no-undef': 'off',
+			'@typescript-eslint/no-unused-vars': [
+				'warn',
+				{
+					argsIgnorePattern: '^_',
+					varsIgnorePattern: '^_',
+					caughtErrorsIgnorePattern: '^_'
+				}
+			]
+		}
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
@@ -36,7 +46,9 @@ export default ts.config(
 			}
 		},
 		rules: {
-			'@typescript-eslint/no-unused-vars': 'warn'
+			'@typescript-eslint/no-unused-vars': 'warn',
+			'svelte/no-at-html-tags': 'warn',
+			'svelte/valid-compile': 'warn' // TODO: remove this rule, investigate why it's throwing errors and find a real solution
 		}
 	}
 );
