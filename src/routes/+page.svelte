@@ -93,12 +93,12 @@
 	<meta name="description" content="Create Notion-style avatars with ease." />
 </svelte:head>
 
-<div class="flex min-h-[100svh] w-full flex-col items-center justify-center">
+<div class="flex min-h-svh w-full flex-col items-center justify-center">
 	<div class="mx-auto w-full max-w-2xl px-4 py-10">
 		<div class="flex flex-col gap-10">
 			<div class="flex flex-col gap-1">
 				<h1 class="text-4xl font-bold">Notion Avatar Editor</h1>
-				<p class="text-lg text-muted-foreground">Custom avatars for your next Svelte project.</p>
+				<p class="text-muted-foreground text-lg">Custom avatars for your next Svelte project.</p>
 				<div class="flex flex-col gap-2 sm:flex-row">
 					<div class="flex gap-2">
 						<!-- GitHub repo link -->
@@ -163,7 +163,7 @@
 						<Card.Content class="flex flex-col gap-4 p-4 sm:p-6">
 							<!-- Avatar Preview -->
 							<div class="flex gap-2 text-left text-sm">
-								<Avatar.Root class="h-16 w-16 rounded-xl {avatarStore.bgClass}">
+								<Avatar.Root class="size-16 rounded-xl {avatarStore.bgClass}">
 									<Avatar.Image src={avatarStore.svgDataUrl} />
 									<Avatar.Fallback />
 								</Avatar.Root>
@@ -172,7 +172,7 @@
 										<span class="truncate font-semibold">{avatarStore.config.username} </span>
 										<span class="truncate text-xs">{avatarStore.config.lastModified}</span>
 									</div>
-									<Badge class="w-fit bg-secondary" variant="outline"
+									<Badge class="bg-secondary w-fit" variant="outline"
 										>{avatarStore.config.colorName}
 									</Badge>
 								</div>
@@ -181,11 +181,11 @@
 							<!-- How to access -->
 							<div class="mt-2 w-full truncate">
 								<p class="text-xs font-semibold">How to access:</p>
-								<p class="font-mono text-xs text-muted-foreground">avatarStore.svgDataUrl</p>
-								<p class="font-mono text-xs text-muted-foreground">avatarStore.bgClass</p>
-								<p class="font-mono text-xs text-muted-foreground">avatarStore.config.username</p>
-								<p class="font-mono text-xs text-muted-foreground">avatarStore.config.colorName</p>
-								<p class="font-mono text-xs text-muted-foreground">
+								<p class="text-muted-foreground font-mono text-xs">avatarStore.svgDataUrl</p>
+								<p class="text-muted-foreground font-mono text-xs">avatarStore.bgClass</p>
+								<p class="text-muted-foreground font-mono text-xs">avatarStore.config.username</p>
+								<p class="text-muted-foreground font-mono text-xs">avatarStore.config.colorName</p>
+								<p class="text-muted-foreground font-mono text-xs">
 									avatarStore.config.lastModified
 								</p>
 							</div>

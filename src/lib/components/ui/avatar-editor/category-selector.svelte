@@ -62,7 +62,7 @@
 			<div
 				class="flex h-full w-full transform items-center justify-center transition-transform duration-150 ease-in-out hover:scale-125"
 			>
-				<ChevronsUp class="h-4 w-4" />
+				<ChevronsUp class="size-4" />
 			</div>
 		</Button>
 
@@ -87,7 +87,7 @@
 			<div
 				class="flex h-full w-full transform items-center justify-center transition-transform duration-150 ease-in-out hover:scale-125"
 			>
-				<ChevronsDown class="h-4 w-4" />
+				<ChevronsDown class="size-4" />
 			</div>
 		</Button>
 	</div>
@@ -97,7 +97,7 @@
 		{@const currentCategoryItemIndex = currentSelectedItems[category.id] ?? 0}
 		{@const radioGroupValueForDisplay = category.id + currentCategoryItemIndex.toString()}
 		<Tabs.Content value={category.id} class="mt-0 h-fit lg:w-[12.2rem]">
-			<ScrollArea class="h-[26.5rem] w-full rounded-md border">
+			<ScrollArea class="h-106 w-full rounded-md border">
 				<RadioToggleGroup.Root
 					variant="outline"
 					value={radioGroupValueForDisplay}
@@ -112,7 +112,7 @@
 						<RadioToggleGroup.Item
 							value={itemValueForComparison}
 							aria-label={`Select ${category.name} ${index + 1}`}
-							class="h-14 w-14 p-0 transition-transform duration-75 ease-in-out active:scale-95"
+							class="size-14 p-0 transition-transform duration-75 ease-in-out active:scale-95"
 							onclick={() => onItemSelect(category.id, index)}
 							aria-pressed={radioGroupValueForDisplay === itemValueForComparison}
 						>

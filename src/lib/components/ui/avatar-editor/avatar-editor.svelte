@@ -64,7 +64,7 @@
 			<div class="flex w-full grow flex-col-reverse items-center gap-4 lg:flex-col">
 				<div class="flex w-full grow flex-col items-center justify-end gap-6 lg:gap-0">
 					<div class="flex h-full flex-col items-center justify-center gap-2">
-						<Avatar.Root class="h-36 w-36 {avatarStore.bgClass}">
+						<Avatar.Root class="size-36 {avatarStore.bgClass}">
 							<Avatar.Image src={avatarStore.svgDataUrl} />
 							<Avatar.Fallback />
 						</Avatar.Root>
