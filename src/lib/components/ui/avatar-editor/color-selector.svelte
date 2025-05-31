@@ -25,8 +25,8 @@
 			value={color}
 			aria-label={`Select color ${color}`}
 			class={cn(
-				'transform rounded-full ring-2 ring-background transition-transform duration-75 ease-in-out',
-				'active:scale-95',
+				'ring-background transform rounded-full ring-2 transition-transform duration-75 ease-in-out',
+				'z-0 active:scale-95',
 				selectedValue === color ? '' : 'hover:scale-105 ',
 				AVATAR_COLOR_STYLES[color as ColorName].base,
 				AVATAR_COLOR_STYLES[color as ColorName].hover,
