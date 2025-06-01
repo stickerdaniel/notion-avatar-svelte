@@ -1,6 +1,6 @@
 // src/lib/contexts/avatarContext.ts
 import { Context } from 'runed';
-import type { AvatarStoreClass } from '$lib/components/ui/avatar-editor/AvatarStore.svelte';
+import type { AvatarStoreClass } from './AvatarStore.svelte';
 
 /**
  * Svelte Runed Context for sharing the AvatarStoreClass instance.
