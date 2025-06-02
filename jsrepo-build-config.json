@@ -35,7 +35,7 @@
 	},
 	"configFiles": [
 		{
-			"name": "Cursor Rules",
+			"name": "Notion Avatar Svelte Cursor Rules",
 			"path": "./rules/notion-avatar-svelte.mdc",
 			"expectedPath": "./.cursor/rules/notion-avatar-svelte.mdc",
 			"optional": true
