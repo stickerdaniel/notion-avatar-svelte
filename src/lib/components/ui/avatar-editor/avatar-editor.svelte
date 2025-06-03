@@ -18,6 +18,8 @@
 	import { Undo, Redo, Download } from '@lucide/svelte';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
+	import { cn } from '$lib/utils/utils.js';
 
 	// Get the Avatar store instance from context
 	const avatarStore = avatarContext.get();
@@ -76,34 +78,32 @@
 						<Tooltip.Provider>
 							<div class="flex gap-2">
 								<Tooltip.Root>
-									<Tooltip.Trigger>
-										<Button
-											variant="secondary"
-											size="icon"
-											disabled={!avatarStore.canUndo}
-											aria-label="Undo"
-											onclick={avatarStore.undo}
-											class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
-										>
-											<Undo />
-										</Button>
+									<Tooltip.Trigger
+										disabled={!avatarStore.canUndo}
+										aria-label="Undo"
+										onclick={avatarStore.undo}
+										class={cn(
+											buttonVariants({ variant: 'secondary', size: 'icon' }),
+											'transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95'
+										)}
+									>
+										<Undo />
 									</Tooltip.Trigger>
 									<Tooltip.Content>
 										<p>Undo</p>
 									</Tooltip.Content>
 								</Tooltip.Root>
 								<Tooltip.Root>
-									<Tooltip.Trigger>
-										<Button
-											variant="secondary"
-											size="icon"
-											disabled={!avatarStore.canRedo}
-											aria-label="Redo"
-											onclick={avatarStore.redo}
-											class="transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95"
-										>
-											<Redo />
-										</Button>
+									<Tooltip.Trigger
+										disabled={!avatarStore.canRedo}
+										aria-label="Redo"
+										onclick={avatarStore.redo}
+										class={cn(
+											buttonVariants({ variant: 'secondary', size: 'icon' }),
+											'transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95'
+										)}
+									>
+										<Redo />
 									</Tooltip.Trigger>
 									<Tooltip.Content>
 										<p>Redo</p>
