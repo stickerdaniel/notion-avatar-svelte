@@ -109,19 +109,12 @@
 										<p>Redo</p>
 									</Tooltip.Content>
 								</Tooltip.Root>
-								<Tooltip.Root>
-									<Tooltip.Trigger>
-										<AnimatedDiceButton
-											onDicethrow={avatarStore.generateRandomAvatar}
-											ariaLabel="Generate random avatar"
-											variant="secondary"
-											size="icon"
-										/>
-									</Tooltip.Trigger>
-									<Tooltip.Content>
-										<p>Generate random avatar</p>
-									</Tooltip.Content>
-								</Tooltip.Root>
+								<AnimatedDiceButton
+									onDicethrow={avatarStore.generateRandomAvatar}
+									tooltipText="Generate random avatar"
+									variant="secondary"
+									size="icon"
+								/>
 							</div>
 						</Tooltip.Provider>
 						<ColorSelector
@@ -145,11 +138,9 @@
 	>
 	<Card.Footer class="flex justify-end space-x-2 p-4 sm:p-6">
 		<DropdownMenu.Root>
-			<DropdownMenu.Trigger>
-				<Button variant="ghost" class="gap-2">
-					<Download size={16} />
-					Download
-				</Button>
+			<DropdownMenu.Trigger class={cn(buttonVariants({ variant: 'ghost' }), 'gap-2')}>
+				<Download size={16} />
+				Download
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content>
 				<DropdownMenu.Item onclick={avatarStore.downloadAvatarWithoutOutline}>

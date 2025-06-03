@@ -151,7 +151,7 @@
 						</div>
 					</div>
 					<!-- Theme Selector -->
-					<ThemeSelector />
+					<ThemeSelector variant="ghost" />
 				</div>
 			</div>
 			<AvatarCreator />
@@ -247,7 +247,7 @@
 							</Button>
 							<AnimatedDiceButton
 								onDicethrow={avatarStore.generateRandomAvatar}
-								ariaLabel="Generate random avatar"
+								tooltipText="Generate random avatar"
 								variant="secondary"
 								size="icon"
 							/>
