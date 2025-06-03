@@ -3,10 +3,10 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "bun run dev",
+			"label": "bun run dev -- --open",
 			"type": "shell",
 			"command": "bun",
-			"args": ["run", "dev"],
+			"args": ["run", "dev", "--", "--open"],
 			"group": {
 				"kind": "build",
 				"isDefault": true
