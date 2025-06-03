@@ -1,9 +1,12 @@
 <!-- src/routes/+layout.svelte -->
 <script lang="ts">
 	import '../app.css';
+	import { ModeWatcher } from 'mode-watcher';
+	import { Toaster } from '$lib/components/ui/sonner';
+
+	// Avatar Editor
 	import { avatarContext } from '$lib/components/ui/avatar-editor/avatarContext';
 	import { AvatarStoreClass } from '$lib/components/ui/avatar-editor/AvatarStore.svelte';
-	import { Toaster } from '$lib/components/ui/sonner';
 
 	// Vercel Speed Insights for performance monitoring and analytics
 	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
@@ -19,6 +22,7 @@
 	avatarContext.set(new AvatarStoreClass());
 </script>
 
+<ModeWatcher />
 <Toaster />
 
 {@render children()}

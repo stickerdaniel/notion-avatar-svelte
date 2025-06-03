@@ -41,7 +41,7 @@
 </script>
 
 <script lang="ts">
-	import { cn } from '$lib/utils/utils';
+	import { cn } from '../../../utils/utils.js';
 	import { LoaderCircleIcon } from '@lucide/svelte';
 
 	let {

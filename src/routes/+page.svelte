@@ -14,6 +14,7 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import AnimatedDiceButton from '$lib/components/ui/avatar-editor/animated-dice-button.svelte';
 	import { Code } from '$lib/components/ui/code';
+	import { ThemeSelector } from '$lib/components/ui/theme-selector';
 
 	const avatarStore = avatarContext.get();
 
@@ -100,53 +101,57 @@
 			<div class="flex flex-col gap-1">
 				<h1 class="text-4xl font-bold">Notion Avatar Editor</h1>
 				<p class="text-muted-foreground text-lg">Custom avatars for your next Svelte project.</p>
-				<div class="flex flex-col gap-2 sm:flex-row">
-					<div class="flex gap-2">
-						<!-- GitHub repo link -->
-						<Badge
-							href="https://github.com/stickerdaniel/notion-avatar-svelte"
-							variant="secondary"
-							target="_blank"
-							class="flex w-fit place-items-center gap-2 rounded-md"
-						>
-							<span class="font-semibold">Star on GitHub</span>
-							<GithubIcon class="size-3.5" />
-						</Badge>
-						<!-- Link to the original project below -->
-						<Badge
-							href="https://github.com/Mayandev/notion-avatar"
-							variant="secondary"
-							target="_blank"
-							class="flex w-fit place-items-center gap-2 rounded-md"
-						>
-							<span class="font-semibold">Inspired by</span>
-							<SquareArrowOutUpRight class="size-3.5" />
-						</Badge>
+				<div class="flex flex-row justify-between">
+					<div class="flex flex-col gap-2 sm:flex-row">
+						<div class="flex gap-2">
+							<!-- GitHub repo link -->
+							<Badge
+								href="https://github.com/stickerdaniel/notion-avatar-svelte"
+								variant="secondary"
+								target="_blank"
+								class="flex w-fit place-items-center gap-2 rounded-md"
+							>
+								<span class="font-semibold">Star on GitHub!</span>
+								<GithubIcon class="size-3.5" />
+							</Badge>
+							<!-- Link to the original project below -->
+							<Badge
+								href="https://github.com/Mayandev/notion-avatar"
+								variant="secondary"
+								target="_blank"
+								class="flex w-fit place-items-center gap-2 rounded-md"
+							>
+								<span class="font-semibold">Inspired by</span>
+								<SquareArrowOutUpRight class="size-3.5" />
+							</Badge>
+						</div>
+						<!-- Divider only if larger than sm -->
+						<Separator orientation="vertical" class="hidden md:block" />
+						<div class="flex gap-2">
+							<!-- Link to runed -->
+							<Badge
+								href="https://runed.dev"
+								variant="secondary"
+								target="_blank"
+								class="flex w-fit place-items-center gap-2 rounded-md"
+							>
+								<span class="font-semibold">Runed</span>
+								<SquareArrowOutUpRight class="size-3.5" />
+							</Badge>
+							<!-- link to next.shadcn-svelte 	-->
+							<Badge
+								href="https://next.shadcn-svelte.com"
+								variant="secondary"
+								target="_blank"
+								class="flex w-fit place-items-center gap-2 rounded-md"
+							>
+								<span class="font-semibold">Shadcn Svelte</span>
+								<SquareArrowOutUpRight class="size-3.5" />
+							</Badge>
+						</div>
 					</div>
-					<!-- Divider only if larger than sm -->
-					<Separator orientation="vertical" class="hidden md:block" />
-					<div class="flex gap-2">
-						<!-- Link to runed -->
-						<Badge
-							href="https://runed.dev"
-							variant="secondary"
-							target="_blank"
-							class="flex w-fit place-items-center gap-2 rounded-md"
-						>
-							<span class="font-semibold">Runed</span>
-							<SquareArrowOutUpRight class="size-3.5" />
-						</Badge>
-						<!-- link to next.shadcn-svelte 	-->
-						<Badge
-							href="https://next.shadcn-svelte.com"
-							variant="secondary"
-							target="_blank"
-							class="flex w-fit place-items-center gap-2 rounded-md"
-						>
-							<span class="font-semibold">Shadcn Svelte</span>
-							<SquareArrowOutUpRight class="size-3.5" />
-						</Badge>
-					</div>
+					<!-- Theme Selector -->
+					<ThemeSelector />
 				</div>
 			</div>
 			<AvatarCreator />
