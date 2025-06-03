@@ -1,14 +1,26 @@
 {
 	"$schema": "https://unpkg.com/jsrepo@2.2.1/schemas/registry-config.json",
 	"name": "@stickerdaniel/notion-avatar-svelte",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"meta": {
 		"authors": ["Daniel Sticker"],
 		"bugs": "https://github.com/stickerdaniel/notion-avatar-svelte/issues",
 		"description": "Notion-style avatar editor for Svelte 5 with customizable features and download options.",
 		"homepage": "https://avatar.daniel.sticker.name",
 		"repository": "https://github.com/stickerdaniel/notion-avatar-svelte",
-		"tags": ["svelte", "avatar", "notion", "editor", "shadcn-svelte", "shadcn", "components"]
+		"tags": [
+			"svelte",
+			"sveltejs",
+			"sveltekit",
+			"avatar",
+			"notion",
+			"editor",
+			"avatar-editor",
+			"avatar-generator",
+			"shadcn-svelte",
+			"shadcn",
+			"component"
+		]
 	},
 	"defaultPaths": {
 		"*": "$lib/blocks",
