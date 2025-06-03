@@ -165,13 +165,13 @@
 				<div class="flex flex-col gap-4">
 					<!-- State Example -->
 					<Card.Root>
-						<Card.Header class="p-4 sm:p-6">
+						<Card.Header>
 							<Card.Title>State Example</Card.Title>
 							<Card.Description>
 								Shows what's currently being edited. This state is persisted in localStorage.
 							</Card.Description>
 						</Card.Header>
-						<Card.Content class="flex flex-col gap-4 p-4 sm:p-6">
+						<Card.Content class="flex flex-col gap-4">
 							<!-- Avatar Preview -->
 							<div class="flex gap-2 text-left text-sm">
 								<Avatar.Root class="size-16 rounded-xl {avatarStore.bgClass}">
@@ -191,7 +191,6 @@
 
 							<!-- How to access -->
 							<div class="mt-2 w-full truncate">
-								<p class="text-xs font-semibold">How to access:</p>
 								<p class="text-muted-foreground font-mono text-xs">avatarStore.svgDataUrl</p>
 								<p class="text-muted-foreground font-mono text-xs">avatarStore.bgClass</p>
 								<p class="text-muted-foreground font-mono text-xs">avatarStore.config.username</p>
@@ -205,7 +204,7 @@
 
 					<!-- JSON Debug Display -->
 					<Card.Root>
-						<Card.Header class="p-4 sm:p-6">
+						<Card.Header>
 							<Card.Title>avatarStore.configJSON</Card.Title>
 							<Card.Description
 								>Core avatar configuration stored as serialized JSON. This data powers the editor
@@ -215,14 +214,16 @@
 								> and synced with localStorage.</Card.Description
 							>
 						</Card.Header>
-						<Card.Content class="p-4 sm:p-6">
-							<pre class="text-xs">{JSON.stringify(
-									JSON.parse(avatarStore.configJSON),
-									null,
-									2
-								)}</pre>
+						<Card.Content>
+							<Code
+								lang="json"
+								class="w-full"
+								hideLines
+								variant="secondary"
+								code={JSON.stringify(JSON.parse(avatarStore.configJSON), null, 2)}
+							/>
 						</Card.Content>
-						<Card.Footer class="flex justify-end gap-2 p-4 sm:p-6">
+						<Card.Footer class="flex justify-end gap-2">
 							<Button size="icon" variant="secondary" onclick={downloadConfig}>
 								<Download />
 							</Button>

@@ -51,11 +51,11 @@
 </script>
 
 <Card.Root class="w-full max-w-2xl">
-	<Card.Header class="p-4 sm:p-6">
+	<Card.Header>
 		<Card.Title>Hello, stranger! Let's fix that.</Card.Title>
 		<Card.Description>Put a face to your name.</Card.Description>
 	</Card.Header>
-	<Card.Content class="p-4 sm:p-6">
+	<Card.Content>
 		<div class="flex w-full flex-col-reverse justify-center gap-4 lg:flex-row">
 			<CategorySelector
 				bind:activeTab
