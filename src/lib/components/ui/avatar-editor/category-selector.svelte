@@ -4,6 +4,7 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ChevronsDown, ChevronsUp } from '@lucide/svelte';
+	import { mode } from 'mode-watcher';
 	import { type Category, type SelectedItems, getPartImagePath } from './types';
 
 	let {
@@ -124,6 +125,13 @@
 										src={imageSrc}
 										alt={`${category.name} Preview ${index + 1}`}
 										class="h-full w-full scale-50 object-contain"
+										style={$mode === 'dark'
+											? radioGroupValueForDisplay === itemValueForComparison
+												? 'filter: invert(1); opacity: 1;'
+												: 'filter: invert(1); opacity: 0.65;'
+											: radioGroupValueForDisplay === itemValueForComparison
+												? 'opacity: 1;'
+												: 'opacity: 0.65;'}
 										loading="lazy"
 									/>
 								{:else}
