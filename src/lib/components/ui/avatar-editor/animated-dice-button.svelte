@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, type ButtonProps, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { type ButtonProps, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { Dice1, Dice2, Dice3, Dice4, Dice5, Dice6 } from '@lucide/svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import { Spring } from 'svelte/motion';
