@@ -67,7 +67,11 @@
 				<div class="flex w-full grow flex-col items-center justify-end gap-6 lg:gap-0">
 					<div class="flex h-full flex-col items-center justify-center gap-2">
 						<Avatar.Root class="size-36 {avatarStore.bgClass}">
-							<Avatar.Image src={avatarStore.svgDataUrl} />
+							<Avatar.Image
+								src={avatarStore.svgDataUrl}
+								alt="Avatar for {avatarStore.config.username} with {avatarStore.config
+									.colorName} background"
+							/>
 							<Avatar.Fallback />
 						</Avatar.Root>
 						<p class="h-4 text-lg font-medium">{avatarStore.config.username}</p>

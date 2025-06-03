@@ -115,7 +115,7 @@
 							aria-label={`Select ${category.name} ${index + 1}`}
 							class="size-14 p-0 transition-transform duration-75 ease-in-out active:scale-95"
 							onclick={() => onItemSelect(category.id, index)}
-							aria-pressed={radioGroupValueForDisplay === itemValueForComparison}
+							aria-checked={radioGroupValueForDisplay === itemValueForComparison}
 						>
 							<div
 								class={`flex h-full w-full transform items-center justify-center transition-transform duration-5 ease-in-out ${radioGroupValueForDisplay !== itemValueForComparison ? 'hover:scale-110' : ''} active:scale-100 active:duration-0`}

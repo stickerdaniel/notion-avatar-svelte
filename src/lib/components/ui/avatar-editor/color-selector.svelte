@@ -33,7 +33,7 @@
 				AVATAR_COLOR_STYLES[color as ColorName].selected
 			)}
 			onclick={() => onColorSelect(color)}
-			aria-pressed={selectedValue === color}
+			aria-checked={selectedValue === color}
 		>
 			{#if selectedValue === color}<Check color="" />{/if}
 		</RadioToggleGroup.Item>
