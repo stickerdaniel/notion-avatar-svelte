@@ -49,22 +49,44 @@ export const DEFAULT_CATEGORIES: Category[] = [
 	{ id: 'beard', name: 'Beard', maxItems: 17 }
 ];
 
+// Eagerly load all assets using import.meta.glob
+const previewAssets = import.meta.glob('./assets/preview/**/*.svg', {
+	query: '?url',
+	import: 'default',
+	eager: true
+}) as Record<string, string>;
+const partAssets = import.meta.glob('./assets/part/**/*.svg', {
+	query: '?url',
+	import: 'default',
+	eager: true
+}) as Record<string, string>;
+
 /**
  * Gets the path to a preview image for a category item
- * Note: These paths will be resolved by Vite's asset processing
+ * Note: Uses import.meta.glob for proper Vite asset processing and SSR compatibility
  */
 export function getPreviewImagePath(category: string, index: number): string {
-	// Use relative path to the colocated assets
-	return new URL(`./assets/preview/${category}/${index}.svg`, import.meta.url).href;
+	const key = `./assets/preview/${category}/${index}.svg`;
+	const url = previewAssets[key];
+	if (!url) {
+		console.warn(`Preview asset not found: ${key}`);
+		return '';
+	}
+	return url;
 }
 
 /**
  * Gets the path to a part image for the avatar preview
- * Note: These paths will be resolved by Vite's asset processing
+ * Note: Uses import.meta.glob for proper Vite asset processing and SSR compatibility
  */
 export function getPartImagePath(category: string, index: number): string {
-	// Use relative path to the colocated assets
-	return new URL(`./assets/part/${category}/${category}-${index}.svg`, import.meta.url).href;
+	const key = `./assets/part/${category}/${category}-${index}.svg`;
+	const url = partAssets[key];
+	if (!url) {
+		console.warn(`Part asset not found: ${key}`);
+		return '';
+	}
+	return url;
 }
 
 /**
