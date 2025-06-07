@@ -132,32 +132,6 @@ bun run dev
 bun run dev -- --open
 ```
 
-The application will be available at `http://localhost:5173/`.
-
-## Architecture Overview
-
-### State Management
-
-The application uses a modern state management approach with Svelte 5 Runes and the Runed library:
-
-```typescript
-// Class-based store with Svelte 5 Runes
-export class AvatarStoreClass implements IAvatar {
-	// Reactive state with $state rune
-	configJSON = $state<string>('');
-
-	// Undo/Redo History tracking with Runed
-	private _history: StateHistory<string>;
-}
-```
-
-Key aspects of the state management:
-
-- **Single Source of Truth**: The `configJSON` string is the core state that drives everything
-- **Derived Values**: Computed properties using `$derived` reactively update when dependencies change
-- **History Management**: The `StateHistory` class from Runed provides undo/redo functionality
-- **Context API**: The store is made available app-wide using Runed's `Context` system
-
 ## Customization
 
 ### Theming
