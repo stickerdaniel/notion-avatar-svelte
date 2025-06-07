@@ -183,12 +183,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Acknowledgements
-
-- Inspired by [Mayandev/notion-avatar](https://github.com/Mayandev/notion-avatar)
-- Built with [Svelte 5](https://svelte.dev/)
-- UI components from [next.shadcn-svelte.com](https://next.shadcn-svelte.com/)
-- State management with [Runed](https://runed.dev/)
+Inspired by [Mayandev/notion-avatar](https://github.com/Mayandev/notion-avatar)
 
 ---
 
