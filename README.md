@@ -5,7 +5,7 @@
 [![State Management: Runed](https://img.shields.io/badge/State-Runed-f64a00?style=flat)](https://runed.dev/)
 [![Available on JSrepo](https://img.shields.io/badge/JSrepo-@stickerdaniel%2Fnotion--avatar--svelte-f7dd1e?style=flat)](https://jsrepo.com/@stickerdaniel/notion-avatar-svelte)
 
-A customizable Notion-style avatar editor built with Svelte 5, featuring a clean, responsive UI and modern state management.
+A customizable Notion-style avatar editor built with Svelte 5
 
 ![CleanShot 2025-05-13 at 02 15 03@2x](https://github.com/user-attachments/assets/6ef9f94b-8801-4997-8ba9-e3ac6f59030d)
 
