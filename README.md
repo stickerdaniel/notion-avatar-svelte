@@ -7,7 +7,7 @@
 
 A customizable Notion-style avatar editor built with Svelte 5
 
-![CleanShot 2025-05-13 at 02 15 03@2x](https://github.com/user-attachments/assets/6ef9f94b-8801-4997-8ba9-e3ac6f59030d)
+![CleanShot 2025-06-07 at 14 18 44@2x](https://github.com/user-attachments/assets/1a49979c-6053-4f45-9862-afbc128ceaba)
 
 https://avatar.daniel.sticker.name/
 
