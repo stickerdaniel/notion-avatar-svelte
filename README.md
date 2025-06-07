@@ -9,14 +9,12 @@ A customizable Notion-style avatar editor built with Svelte 5, featuring a clean
 
 ![CleanShot 2025-05-13 at 02 15 03@2x](https://github.com/user-attachments/assets/6ef9f94b-8801-4997-8ba9-e3ac6f59030d)
 
-**Try it:** https://avatar.daniel.sticker.name/
+https://avatar.daniel.sticker.name/
 
-- **Undo/Redo Support**: Full history tracking with [Runed](https://runed.dev/) StateHistory
-- **Intuitive Avatar Editor**: Customize faces, hair, accessories, and more
+- **Undo/Redo Support**: History tracking with [Runed](https://runed.dev/) StateHistory
 - **State Management**: Built with Svelte 5 Runes and [Runed](https://runed.dev/)
 - **Import/Export**: Save and load avatar configurations as JSON
-- **Mobile-Friendly**: Responsive design works on all screen sizes
-- **Accessible UI**: Built with [shadcn-svelte](https://next.shadcn-svelte.com/) components for accessibility
+- **Accessible UI**: Built with [shadcn-svelte](https://next.shadcn-svelte.com/) components
 
 ## Quick Start with jsrepo
 
