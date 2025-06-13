@@ -90,6 +90,7 @@
 											buttonVariants({ variant: 'secondary', size: 'icon' }),
 											'transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95'
 										)}
+										data-umami-event="avatar-undo"
 									>
 										<Undo />
 									</Tooltip.Trigger>
@@ -106,6 +107,7 @@
 											buttonVariants({ variant: 'secondary', size: 'icon' }),
 											'transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95'
 										)}
+										data-umami-event="avatar-redo"
 									>
 										<Redo />
 									</Tooltip.Trigger>
@@ -147,17 +149,26 @@
 				Download
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content>
-				<DropdownMenu.Item onclick={avatarStore.downloadAvatarWithoutOutline}>
+				<DropdownMenu.Item
+					onclick={avatarStore.downloadAvatarWithoutOutline}
+					data-umami-event="avatar-download-transparent"
+				>
 					Transparent Background
 				</DropdownMenu.Item>
-				<DropdownMenu.Item onclick={avatarStore.downloadAvatarWithOutline}>
+				<DropdownMenu.Item
+					onclick={avatarStore.downloadAvatarWithOutline}
+					data-umami-event="avatar-download-outlined"
+				>
 					Transparent with Outline
 				</DropdownMenu.Item>
-				<DropdownMenu.Item onclick={avatarStore.downloadAvatarWithBackground}>
+				<DropdownMenu.Item
+					onclick={avatarStore.downloadAvatarWithBackground}
+					data-umami-event="avatar-download-background"
+				>
 					Colored Background
 				</DropdownMenu.Item>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
-		<Button onclick={avatarStore.saveAvatar}>Save</Button>
+		<Button onclick={avatarStore.saveAvatar} data-umami-event="avatar-save">Save</Button>
 	</Card.Footer>
 </Card.Root>

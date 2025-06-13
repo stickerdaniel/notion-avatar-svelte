@@ -88,6 +88,7 @@
 				'transform transition-transform duration-75 ease-in-out hover:scale-105 active:scale-95',
 				className
 			)}
+			data-umami-event="avatar-randomize"
 		>
 			<div
 				class="flex h-full w-full items-center justify-center"

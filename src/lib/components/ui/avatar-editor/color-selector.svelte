@@ -34,6 +34,7 @@
 			)}
 			onclick={() => onColorSelect(color)}
 			aria-checked={selectedValue === color}
+			data-umami-event="color-selected-{color}"
 		>
 			{#if selectedValue === color}<Check color="" />{/if}
 		</RadioToggleGroup.Item>

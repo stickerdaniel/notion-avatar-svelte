@@ -16,6 +16,9 @@
 	import { Code } from '$lib/components/ui/code';
 	import { ThemeSelector } from '$lib/components/ui/theme-selector';
 
+	// Umami tracking
+	import { trackEvent } from '@lukulent/svelte-umami';
+
 	const avatarStore = avatarContext.get();
 
 	// Download avatar config as JSON file
@@ -42,6 +45,12 @@
 			URL.revokeObjectURL(url);
 		}, 0);
 
+		// Track download with full config data
+		trackEvent?.('config-downloaded', {
+			filename: `${sanitizedUsername}-notion-avatar-config.json`,
+			config: configObj // Log the full JSON configuration
+		});
+
 		// Show success toast
 		toast.success('Avatar configuration downloaded', {
 			description: `${sanitizedUsername}-notion-avatar-config.json`
@@ -65,9 +74,17 @@
 			reader.onload = (event) => {
 				try {
 					const content = event.target?.result as string;
+					const uploadedConfig = JSON.parse(content);
 
 					// Pass the JSON string to the store's importConfig method to validate and parse
 					avatarStore.importConfig(content);
+
+					// Track upload with full config data
+					trackEvent?.('config-uploaded', {
+						filename: file.name,
+						config: uploadedConfig, // Log the full JSON configuration
+						success: 'true'
+					});
 
 					// Show success toast
 					toast.success('Avatar configuration loaded', {
@@ -78,6 +95,13 @@
 					if (error instanceof AvatarConfigValidationError || error instanceof Error) {
 						errorMessage = error.message;
 					}
+
+					// Track failed upload
+					trackEvent?.('config-uploaded', {
+						filename: file.name,
+						success: 'false',
+						error: errorMessage
+					});
 
 					toast.error('Invalid avatar configuration', {
 						description: errorMessage

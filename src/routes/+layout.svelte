@@ -15,6 +15,9 @@
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
 	injectAnalytics({ mode: dev ? 'development' : 'production' });
 
+	// Umami Analytics (optional - uses environment variables)
+	import { UmamiAnalyticsEnv } from '@lukulent/svelte-umami';
+
 	let { children } = $props();
 
 	// Instantiate and set the AvatarStore in the context
@@ -24,5 +27,6 @@
 
 <ModeWatcher />
 <Toaster />
+<UmamiAnalyticsEnv />
 
 {@render children()}

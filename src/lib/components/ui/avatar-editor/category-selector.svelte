@@ -59,6 +59,7 @@
 			size="icon"
 			aria-label="Scroll Up"
 			onclick={() => scrollTabs('up')}
+			data-umami-event="category-scroll-up"
 		>
 			<div
 				class="flex h-full w-full transform items-center justify-center transition-transform duration-150 ease-in-out hover:scale-125"
@@ -84,6 +85,7 @@
 			size="icon"
 			aria-label="Scroll Down"
 			onclick={() => scrollTabs('down')}
+			data-umami-event="category-scroll-down"
 		>
 			<div
 				class="flex h-full w-full transform items-center justify-center transition-transform duration-150 ease-in-out hover:scale-125"
@@ -116,6 +118,7 @@
 							class="size-14 p-0 transition-transform duration-75 ease-in-out active:scale-95"
 							onclick={() => onItemSelect(category.id, index)}
 							aria-checked={radioGroupValueForDisplay === itemValueForComparison}
+							data-umami-event="part-selected-{category.id}-{index}"
 						>
 							<div
 								class={`flex h-full w-full transform items-center justify-center transition-transform duration-5 ease-in-out ${radioGroupValueForDisplay !== itemValueForComparison ? 'hover:scale-110' : ''} active:scale-100 active:duration-0`}

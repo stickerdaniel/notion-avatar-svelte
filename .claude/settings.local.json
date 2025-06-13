@@ -1,0 +1,6 @@
+{
+	"permissions": {
+		"allow": ["Bash(bun run:*)", "Bash(timeout:*)"],
+		"deny": []
+	}
+}
