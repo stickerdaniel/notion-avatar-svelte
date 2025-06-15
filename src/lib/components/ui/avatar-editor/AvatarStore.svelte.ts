@@ -471,35 +471,42 @@ export class AvatarStoreClass implements IAvatar {
 		if (typeof window === 'undefined') return;
 
 		try {
-			// Convert data URL to blob to avoid browser security restrictions
-			const response = fetch(svgDataUrl);
-			response
-				.then((res) => res.blob())
-				.then((blob) => {
-					const url = URL.createObjectURL(blob);
+			// Manually decode data URL to blob - more reliable than fetch()
+			// Data URL format: data:image/svg+xml;base64,<base64-content>
+			const [header, base64Data] = svgDataUrl.split(',');
+			if (!base64Data) {
+				throw new Error('Invalid data URL format');
+			}
 
-					// Create an anchor element and trigger download
-					const a = document.createElement('a');
-					a.href = url;
-					a.download = `${filename}.svg`;
+			// Decode base64 to binary string, then to Uint8Array
+			const binaryString = atob(base64Data);
+			const bytes = new Uint8Array(binaryString.length);
+			for (let i = 0; i < binaryString.length; i++) {
+				bytes[i] = binaryString.charCodeAt(i);
+			}
 
-					// Add Umami analytics tracking data attributes
-					a.setAttribute('data-umami-event', 'avatar-download');
-					a.setAttribute('data-umami-event-type', downloadType);
-					a.setAttribute('data-umami-event-config', JSON.stringify(this.config));
+			// Create blob with proper MIME type
+			const blob = new Blob([bytes], { type: 'image/svg+xml' });
+			const url = URL.createObjectURL(blob);
 
-					document.body.appendChild(a);
-					a.click();
+			// Create an anchor element and trigger download
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `${filename}.svg`;
 
-					// Clean up after a short delay to ensure download starts
-					setTimeout(() => {
-						document.body.removeChild(a);
-						URL.revokeObjectURL(url);
-					}, 100);
-				})
-				.catch((error) => {
-					console.error('Failed to download SVG:', error);
-				});
+			// Add Umami analytics tracking data attributes
+			a.setAttribute('data-umami-event', 'avatar-download');
+			a.setAttribute('data-umami-event-type', downloadType);
+			a.setAttribute('data-umami-event-config', JSON.stringify(this.config));
+
+			document.body.appendChild(a);
+			a.click();
+
+			// Clean up after a short delay to ensure download starts
+			setTimeout(() => {
+				document.body.removeChild(a);
+				URL.revokeObjectURL(url);
+			}, 100);
 		} catch (error) {
 			console.error('Failed to download SVG:', error);
 		}
