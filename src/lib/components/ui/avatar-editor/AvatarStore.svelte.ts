@@ -401,7 +401,11 @@ export class AvatarStoreClass implements IAvatar {
 
 		try {
 			const svgDataUrl = await generateSvgWithoutOutlineDataUrl(layers);
-			this._downloadSvg(svgDataUrl, `avatar-${this.config.username || 'unnamed'}-no-outline`);
+			this._downloadSvg(
+				svgDataUrl,
+				`avatar-${this.config.username || 'unnamed'}-no-outline`,
+				'no-outline'
+			);
 		} catch (error) {
 			console.error('Failed to download avatar:', error);
 		}
@@ -419,7 +423,11 @@ export class AvatarStoreClass implements IAvatar {
 
 		try {
 			const svgDataUrl = await generateSvgWithOutlineDataUrl(layers);
-			this._downloadSvg(svgDataUrl, `avatar-${this.config.username || 'unnamed'}-with-outline`);
+			this._downloadSvg(
+				svgDataUrl,
+				`avatar-${this.config.username || 'unnamed'}-with-outline`,
+				'with-outline'
+			);
 		} catch (error) {
 			console.error('Failed to download avatar with outline:', error);
 		}
@@ -443,7 +451,11 @@ export class AvatarStoreClass implements IAvatar {
 			const backgroundColor = TAILWIND_CLASS_TO_HEX_MAP[tailwindClass] || '#FFFFFF';
 
 			const svgDataUrl = await generateSvgWithColoredBackgroundDataUrl(layers, backgroundColor);
-			this._downloadSvg(svgDataUrl, `avatar-${this.config.username || 'unnamed'}-with-bg`);
+			this._downloadSvg(
+				svgDataUrl,
+				`avatar-${this.config.username || 'unnamed'}-with-bg`,
+				'with-background'
+			);
 		} catch (error) {
 			console.error('Failed to download avatar with background:', error);
 		}
@@ -453,14 +465,21 @@ export class AvatarStoreClass implements IAvatar {
 	 * Helper method to trigger the browser download of an SVG file
 	 * @param svgDataUrl The SVG data URL
 	 * @param filename The name of the file without extension
+	 * @param downloadType The type of download for analytics tracking
 	 */
-	private _downloadSvg(svgDataUrl: string, filename: string): void {
+	private _downloadSvg(svgDataUrl: string, filename: string, downloadType: string): void {
 		if (typeof window === 'undefined') return;
 
 		// Create an anchor element and trigger download
 		const a = document.createElement('a');
 		a.href = svgDataUrl;
 		a.download = `${filename}.svg`;
+
+		// Add Umami analytics tracking data attributes
+		a.setAttribute('data-umami-event', 'avatar-download');
+		a.setAttribute('data-umami-event-type', downloadType);
+		a.setAttribute('data-umami-event-config', JSON.stringify(this.config));
+
 		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
