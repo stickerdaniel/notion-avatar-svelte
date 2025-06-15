@@ -491,11 +491,11 @@ export class AvatarStoreClass implements IAvatar {
 					document.body.appendChild(a);
 					a.click();
 
-					// Clean up
+					// Clean up after a short delay to ensure download starts
 					setTimeout(() => {
 						document.body.removeChild(a);
 						URL.revokeObjectURL(url);
-					}, 0);
+					}, 100);
 				})
 				.catch((error) => {
 					console.error('Failed to download SVG:', error);
