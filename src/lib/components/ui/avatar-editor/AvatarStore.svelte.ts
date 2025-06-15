@@ -164,7 +164,7 @@ export class AvatarStoreClass implements IAvatar {
 	svgDataUrl = $state('');
 	bgClass = $derived(
 		AVATAR_COLOR_STYLES[this.config.colorName as ColorName]?.base ||
-			AVATAR_COLOR_STYLES[COLORS[0]].base
+		AVATAR_COLOR_STYLES[COLORS[0]].base
 	);
 
 	constructor() {
@@ -471,28 +471,21 @@ export class AvatarStoreClass implements IAvatar {
 		if (typeof window === 'undefined') return;
 
 		try {
-			// Manually decode data URL to blob - more reliable than fetch()
-			// Data URL format: data:image/svg+xml;base64,<base64-content>
+			// Convert data URL to blob - same pattern as JSON download
 			const [header, base64Data] = svgDataUrl.split(',');
-			if (!base64Data) {
-				throw new Error('Invalid data URL format');
-			}
-
-			// Decode base64 to binary string, then to Uint8Array
 			const binaryString = atob(base64Data);
 			const bytes = new Uint8Array(binaryString.length);
 			for (let i = 0; i < binaryString.length; i++) {
 				bytes[i] = binaryString.charCodeAt(i);
 			}
 
-			// Create blob with proper MIME type
 			const blob = new Blob([bytes], { type: 'image/svg+xml' });
 			const url = URL.createObjectURL(blob);
 
-			// Create an anchor element and trigger download
 			const a = document.createElement('a');
 			a.href = url;
 			a.download = `${filename}.svg`;
+			a.setAttribute('aria-label', `Download ${filename}.svg`);
 
 			// Add Umami analytics tracking data attributes
 			a.setAttribute('data-umami-event', 'avatar-download');
@@ -502,11 +495,11 @@ export class AvatarStoreClass implements IAvatar {
 			document.body.appendChild(a);
 			a.click();
 
-			// Clean up after a short delay to ensure download starts
+			// Clean up - exact same pattern as working JSON download
 			setTimeout(() => {
 				document.body.removeChild(a);
 				URL.revokeObjectURL(url);
-			}, 100);
+			}, 0);
 		} catch (error) {
 			console.error('Failed to download SVG:', error);
 		}
