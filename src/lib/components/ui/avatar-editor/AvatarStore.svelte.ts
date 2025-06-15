@@ -470,18 +470,38 @@ export class AvatarStoreClass implements IAvatar {
 	private _downloadSvg(svgDataUrl: string, filename: string, downloadType: string): void {
 		if (typeof window === 'undefined') return;
 
-		// Create an anchor element and trigger download
-		const a = document.createElement('a');
-		a.href = svgDataUrl;
-		a.download = `${filename}.svg`;
+		try {
+			// Convert data URL to blob to avoid browser security restrictions
+			const response = fetch(svgDataUrl);
+			response
+				.then((res) => res.blob())
+				.then((blob) => {
+					const url = URL.createObjectURL(blob);
 
-		// Add Umami analytics tracking data attributes
-		a.setAttribute('data-umami-event', 'avatar-download');
-		a.setAttribute('data-umami-event-type', downloadType);
-		a.setAttribute('data-umami-event-config', JSON.stringify(this.config));
+					// Create an anchor element and trigger download
+					const a = document.createElement('a');
+					a.href = url;
+					a.download = `${filename}.svg`;
 
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
+					// Add Umami analytics tracking data attributes
+					a.setAttribute('data-umami-event', 'avatar-download');
+					a.setAttribute('data-umami-event-type', downloadType);
+					a.setAttribute('data-umami-event-config', JSON.stringify(this.config));
+
+					document.body.appendChild(a);
+					a.click();
+
+					// Clean up
+					setTimeout(() => {
+						document.body.removeChild(a);
+						URL.revokeObjectURL(url);
+					}, 0);
+				})
+				.catch((error) => {
+					console.error('Failed to download SVG:', error);
+				});
+		} catch (error) {
+			console.error('Failed to download SVG:', error);
+		}
 	}
 }
