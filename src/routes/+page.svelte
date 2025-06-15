@@ -46,7 +46,7 @@
 		}, 0);
 
 		// Track download with full config data
-		trackEvent?.('config-downloaded', {
+		trackEvent?.('config-download', {
 			filename: `${sanitizedUsername}-notion-avatar-config.json`,
 			config: configObj // Log the full JSON configuration
 		});

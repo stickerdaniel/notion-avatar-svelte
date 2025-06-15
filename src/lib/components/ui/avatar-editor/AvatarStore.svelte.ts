@@ -472,7 +472,7 @@ export class AvatarStoreClass implements IAvatar {
 
 		try {
 			// Convert data URL to blob
-			const [header, base64Data] = svgDataUrl.split(',');
+			const [, base64Data] = svgDataUrl.split(',');
 			const binaryString = atob(base64Data);
 			const bytes = new Uint8Array(binaryString.length);
 			for (let i = 0; i < binaryString.length; i++) {
@@ -488,10 +488,36 @@ export class AvatarStoreClass implements IAvatar {
 			a.style.display = 'none';
 			a.target = '_blank'; // Force download behavior
 
+			// Prepare detailed tracking data
+			const trackingData = {
+				type: downloadType,
+				username: this.config.username,
+				colorName: this.config.colorName,
+				version: this.config.version,
+				'config.items.face': this.config.items.face ?? -1,
+				'config.items.nose': this.config.items.nose ?? -1,
+				'config.items.mouth': this.config.items.mouth ?? -1,
+				'config.items.eyes': this.config.items.eyes ?? -1,
+				'config.items.eyebrows': this.config.items.eyebrows ?? -1,
+				'config.items.glasses': this.config.items.glasses ?? -1,
+				'config.items.hair': this.config.items.hair ?? -1,
+				'config.items.accessories': this.config.items.accessories ?? -1,
+				'config.items.details': this.config.items.details ?? -1,
+				'config.items.beard': this.config.items.beard ?? -1,
+				config: JSON.stringify(this.config) // Convert to string for compatibility
+			};
+
 			// Add Umami analytics tracking data attributes
 			a.setAttribute('data-umami-event', 'avatar-download');
 			a.setAttribute('data-umami-event-type', downloadType);
 			a.setAttribute('data-umami-event-config', JSON.stringify(this.config));
+			// Add individual properties for detailed tracking
+			Object.entries(trackingData).forEach(([key, value]) => {
+				if (key !== 'config') {
+					// Don't duplicate the full config
+					a.setAttribute(`data-umami-event-${key.replace(/\./g, '-')}`, String(value));
+				}
+			});
 
 			document.body.appendChild(a);
 			a.click();
