@@ -485,6 +485,8 @@ export class AvatarStoreClass implements IAvatar {
 			const a = document.createElement('a');
 			a.href = url;
 			a.download = `${filename}.svg`;
+			a.style.display = 'none';
+			a.target = '_blank'; // Force download behavior
 
 			// Add Umami analytics tracking data attributes
 			a.setAttribute('data-umami-event', 'avatar-download');
