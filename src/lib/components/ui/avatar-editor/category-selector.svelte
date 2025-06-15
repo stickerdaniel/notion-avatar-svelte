@@ -100,7 +100,7 @@
 		{@const currentCategoryItemIndex = currentSelectedItems[category.id] ?? 0}
 		{@const radioGroupValueForDisplay = category.id + currentCategoryItemIndex.toString()}
 		<Tabs.Content value={category.id} class="mt-0 h-fit lg:w-[12.2rem]">
-			<ScrollArea class="h-106 w-full rounded-md border">
+			<ScrollArea class="h-104 w-full rounded-md border">
 				<RadioToggleGroup.Root
 					variant="outline"
 					value={radioGroupValueForDisplay}
