@@ -164,7 +164,7 @@ export class AvatarStoreClass implements IAvatar {
 	svgDataUrl = $state('');
 	bgClass = $derived(
 		AVATAR_COLOR_STYLES[this.config.colorName as ColorName]?.base ||
-		AVATAR_COLOR_STYLES[COLORS[0]].base
+			AVATAR_COLOR_STYLES[COLORS[0]].base
 	);
 
 	constructor() {
@@ -471,7 +471,7 @@ export class AvatarStoreClass implements IAvatar {
 		if (typeof window === 'undefined') return;
 
 		try {
-			// Convert data URL to blob - same pattern as JSON download
+			// Convert data URL to blob - force download approach for Vercel compatibility
 			const [header, base64Data] = svgDataUrl.split(',');
 			const binaryString = atob(base64Data);
 			const bytes = new Uint8Array(binaryString.length);
@@ -483,9 +483,14 @@ export class AvatarStoreClass implements IAvatar {
 			const url = URL.createObjectURL(blob);
 
 			const a = document.createElement('a');
+			a.style.display = 'none'; // Hide the link completely
 			a.href = url;
 			a.download = `${filename}.svg`;
 			a.setAttribute('aria-label', `Download ${filename}.svg`);
+
+			// Force download behavior
+			a.setAttribute('target', '_blank');
+			a.setAttribute('rel', 'noopener noreferrer');
 
 			// Add Umami analytics tracking data attributes
 			a.setAttribute('data-umami-event', 'avatar-download');
@@ -493,13 +498,22 @@ export class AvatarStoreClass implements IAvatar {
 			a.setAttribute('data-umami-event-config', JSON.stringify(this.config));
 
 			document.body.appendChild(a);
-			a.click();
 
-			// Clean up - exact same pattern as working JSON download
+			// Use dispatchEvent for more reliable clicking
+			const clickEvent = new MouseEvent('click', {
+				view: window,
+				bubbles: true,
+				cancelable: true
+			});
+			a.dispatchEvent(clickEvent);
+
+			// Clean up with longer delay for Vercel
 			setTimeout(() => {
-				document.body.removeChild(a);
+				if (document.body.contains(a)) {
+					document.body.removeChild(a);
+				}
 				URL.revokeObjectURL(url);
-			}, 0);
+			}, 1000);
 		} catch (error) {
 			console.error('Failed to download SVG:', error);
 		}
