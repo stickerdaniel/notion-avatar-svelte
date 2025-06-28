@@ -113,7 +113,7 @@ Or download and extract the zip file.
 bun install
 ```
 
-### Let's run the development server
+### Run the development server
 
 The project includes tasks for common operations. They work for VSCode and all forked editors like Cursor.
 
