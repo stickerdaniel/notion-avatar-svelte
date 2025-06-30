@@ -26,7 +26,6 @@ The easiest way to add the Notion Avatar Editor to your Svelte 5 project:
 ### Prerequisites
 
 - Svelte 5 project
-- [jsrepo](https://jsrepo.com/) CLI
 - [bun](https://bun.sh/) (recommended, this guide uses [bun](https://bun.sh/) but you can use npm or pnpm if you prefer)
 
 ### Installation
