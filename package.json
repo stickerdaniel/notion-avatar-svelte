@@ -38,7 +38,7 @@
 		"mode-watcher": "0.5.1",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
-		"prettier-plugin-tailwindcss": "^0.6.12",
+		"prettier-plugin-tailwindcss": "^0.7.0",
 		"shiki": "^3.4.2",
 		"svelte": "^5.33.11",
 		"svelte-check": "^4.0.0",
