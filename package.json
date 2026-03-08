@@ -55,7 +55,7 @@
 		"@lukulent/svelte-umami": "^0.0.4",
 		"@vercel/analytics": "^1.5.0",
 		"@vercel/speed-insights": "^1.2.0",
-		"runed": "^0.26.0",
+		"runed": "^0.37.0",
 		"tailwind-merge": "^3.3.0",
 		"tailwind-variants": "^1.0.0"
 	},
