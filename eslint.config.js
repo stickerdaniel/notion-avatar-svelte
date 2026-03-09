@@ -48,6 +48,9 @@ export default ts.config(
 		rules: {
 			'@typescript-eslint/no-unused-vars': 'warn',
 			'svelte/no-at-html-tags': 'warn',
+			'svelte/no-navigation-without-resolve': 'off',
+			'svelte/no-useless-mustaches': 'off',
+			'svelte/prefer-svelte-reactivity': 'off',
 			'svelte/valid-compile': 'warn' // TODO: remove this rule, investigate why it's throwing errors and find a real solution
 		}
 	}
