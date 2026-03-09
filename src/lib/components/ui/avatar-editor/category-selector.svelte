@@ -128,7 +128,7 @@
 										src={imageSrc}
 										alt={`${category.name} Preview ${index + 1}`}
 										class="h-full w-full scale-50 object-contain"
-										style={$mode === 'dark'
+										style={mode.current === 'dark'
 											? radioGroupValueForDisplay === itemValueForComparison
 												? 'filter: invert(1); opacity: 1;'
 												: 'filter: invert(1); opacity: 0.65;'
