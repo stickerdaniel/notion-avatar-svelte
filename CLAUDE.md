@@ -19,19 +19,16 @@ This is a Notion-style avatar editor built with **Svelte 5**, **SvelteKit**, **s
 ### Core Architecture Components
 
 1. **AvatarStoreClass** (`src/lib/components/ui/avatar-editor/AvatarStore.svelte.ts`)
-
    - Central state management using Svelte 5 runes
    - Uses Runed's `PersistedState` for localStorage persistence
    - Uses Runed's `StateHistory` for undo/redo functionality
    - Manages avatar configuration, randomization, and SVG generation
 
 2. **Avatar Context** (`src/lib/components/ui/avatar-editor/avatarContext.ts`)
-
    - Runed Context for sharing AvatarStoreClass across components
    - Set in `+layout.svelte`, accessible in child components via `avatarContext.get()`
 
 3. **Asset Management**
-
    - SVG assets organized in `src/lib/components/ui/avatar-editor/assets/`
    - Two directories: `part/` (for composing final avatar) and `preview/` (for UI thumbnails)
    - Uses Vite's `import.meta.glob` for efficient asset loading

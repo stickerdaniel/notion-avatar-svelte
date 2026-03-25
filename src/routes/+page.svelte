@@ -16,8 +16,15 @@
 	import { Code } from '$lib/components/ui/code';
 	import { ThemeSelector } from '$lib/components/ui/theme-selector';
 
-	// Umami tracking
-	import { trackEvent } from '@lukulent/svelte-umami';
+	// Umami tracking - dynamically imported to avoid SSR issues
+	// (svelte-umami accesses localStorage at module load time, which breaks on Node.js 22+)
+	import { browser } from '$app/environment';
+	let trackEvent: typeof import('@lukulent/svelte-umami').trackEvent | undefined;
+	if (browser) {
+		import('@lukulent/svelte-umami').then((mod) => {
+			trackEvent = mod.trackEvent;
+		});
+	}
 
 	const avatarStore = avatarContext.get();
 

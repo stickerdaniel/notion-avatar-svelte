@@ -11,12 +11,20 @@
 	// Vercel Speed Insights for performance monitoring and analytics
 	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
 	injectSpeedInsights();
-	import { dev } from '$app/environment';
+	import { dev, browser } from '$app/environment';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
 	injectAnalytics({ mode: dev ? 'development' : 'production' });
 
-	// Umami Analytics (optional - uses environment variables)
-	import { UmamiAnalyticsEnv } from '@lukulent/svelte-umami';
+	// Umami Analytics - dynamically imported to avoid SSR issues
+	// (svelte-umami accesses localStorage at module load time, which breaks on Node.js 22+)
+	let UmamiAnalyticsEnv:
+		| (typeof import('@lukulent/svelte-umami'))['UmamiAnalyticsEnv']
+		| undefined = $state(undefined);
+	if (browser) {
+		import('@lukulent/svelte-umami').then((mod) => {
+			UmamiAnalyticsEnv = mod.UmamiAnalyticsEnv;
+		});
+	}
 
 	let { children } = $props();
 
@@ -27,6 +35,8 @@
 
 <ModeWatcher />
 <Toaster />
-<UmamiAnalyticsEnv />
+{#if UmamiAnalyticsEnv}
+	<UmamiAnalyticsEnv />
+{/if}
 
 {@render children()}
