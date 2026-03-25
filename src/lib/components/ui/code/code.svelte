@@ -2,7 +2,6 @@
 	import { cn } from '$lib/utils/utils';
 	import { tv, type VariantProps } from 'tailwind-variants';
 	import { highlighter, type SupportedLanguage } from './shiki';
-	import DOMPurify from 'isomorphic-dompurify';
 	import { onMount } from 'svelte';
 	import type { HighlighterCore } from 'shiki';
 	import { CopyButton } from '../copy-button';
@@ -65,41 +64,46 @@
 	}: Props = $props();
 
 	let hl = $state<HighlighterCore>();
+	let sanitize: ((html: string) => string) | undefined = $state();
 
-	const highlighted = $derived(
-		DOMPurify.sanitize(
-			hl?.codeToHtml(code, {
-				lang: lang,
-				themes: {
-					light: 'github-light-default',
-					dark: 'github-dark-default'
-				},
-				transformers: [
-					{
-						pre: (el) => {
-							el.properties.style = '';
+	const rawHighlighted = $derived(
+		hl?.codeToHtml(code, {
+			lang: lang,
+			themes: {
+				light: 'github-light-default',
+				dark: 'github-dark-default'
+			},
+			transformers: [
+				{
+					pre: (el) => {
+						el.properties.style = '';
 
-							if (!hideLines) {
-								el.properties.class += ' line-numbers';
-							}
-
-							return el;
-						},
-						line: (node, line) => {
-							if (within(line, highlight)) {
-								node.properties.class = node.properties.class + ' line--highlighted';
-							}
-
-							return node;
+						if (!hideLines) {
+							el.properties.class += ' line-numbers';
 						}
+
+						return el;
+					},
+					line: (node, line) => {
+						if (within(line, highlight)) {
+							node.properties.class = node.properties.class + ' line--highlighted';
+						}
+
+						return node;
 					}
-				]
-			}) ?? code
-		)
+				}
+			]
+		}) ?? code
 	);
 
-	onMount(() => {
-		highlighter.then((highlighter) => (hl = highlighter));
+	const highlighted = $derived(
+		sanitize ? sanitize(rawHighlighted ?? code) : (rawHighlighted ?? code)
+	);
+
+	onMount(async () => {
+		const [highlighterMod, DOMPurify] = await Promise.all([highlighter, import('dompurify')]);
+		hl = highlighterMod;
+		sanitize = (html: string) => DOMPurify.default.sanitize(html);
 	});
 </script>
 
