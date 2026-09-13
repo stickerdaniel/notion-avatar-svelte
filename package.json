@@ -29,7 +29,7 @@
 		"@types/dompurify": "3.2.0",
 		"bits-ui": "2.18.1",
 		"clsx": "2.1.1",
-		"dompurify": "3.4.11",
+		"dompurify": "3.4.13",
 		"eslint": "10.5.0",
 		"eslint-config-prettier": "10.1.8",
 		"eslint-plugin-svelte": "3.19.0",
