@@ -1,2 +1,2 @@
-// Every page is static HTML, served as Cloudflare Workers static assets
+// Every page is static HTML, served by Cloudflare Pages
 export const prerender = true;
