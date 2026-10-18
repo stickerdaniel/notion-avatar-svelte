@@ -132,6 +132,15 @@ bun run dev
 bun run dev -- --open
 ```
 
+### Deploy
+
+The site is fully prerendered and deploys to Cloudflare Workers as static assets, configured in `wrangler.jsonc`:
+
+```bash
+bunx wrangler login
+bun run deploy
+```
+
 ## Customization
 
 ### Theming
