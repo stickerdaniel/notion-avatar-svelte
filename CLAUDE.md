@@ -49,9 +49,7 @@ This is a Notion-style avatar editor built with **Svelte 5**, **SvelteKit**, **s
 
 The project is structured for distribution via JSRepo:
 
-- Main avatar editor at `ui/avatar-editor`
-- Individual UI components in `ui/` subdirectories
-- Utilities and hooks in respective directories
+- Items are defined in `jsrepo.config.ts`; `avatar-editor` and `radio-toggle-group` are public, the UI components and `utils` they import ship as dependency-only items
 
 ### Adding New Avatar Parts
 

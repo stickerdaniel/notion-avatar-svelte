@@ -18,6 +18,7 @@
 	"devDependencies": {
 		"@eslint/compat": "2.1.1",
 		"@eslint/js": "10.0.1",
+		"@jsrepo/transform-prettier": "8.0.1",
 		"@shikijs/langs": "4.5.0",
 		"@shikijs/themes": "4.5.0",
 		"@sveltejs/adapter-vercel": "7.0.1",

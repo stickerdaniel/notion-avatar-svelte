@@ -26,6 +26,7 @@ The easiest way to add the Notion Avatar Editor to your Svelte 5 project:
 ### Prerequisites
 
 - Svelte 5 project
+- A `$lib` alias pointing at `src/lib`. SvelteKit 3 no longer creates it, so add `alias: { $lib: 'src/lib' }` to the `sveltekit()` options in `vite.config.ts`
 - [bun](https://bun.sh/) (recommended, this guide uses [bun](https://bun.sh/) but you can use npm or pnpm if you prefer)
 
 ### Installation
@@ -38,7 +39,7 @@ bun add -g jsrepo
 bunx shadcn-svelte@next init
 
 # Add the avatar editor component
-jsrepo add @stickerdaniel/notion-avatar-svelte/ui/avatar-editor
+jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor
 ```
 
 ### Usage
