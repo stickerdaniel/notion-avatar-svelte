@@ -1,0 +1,10 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "notion-avatar-svelte",
+	"compatibility_date": "2026-10-18",
+	// Static assets only, no Worker script; unknown paths get build/404.html with status 404
+	"assets": {
+		"directory": "./build",
+		"not_found_handling": "404-page"
+	}
+}
