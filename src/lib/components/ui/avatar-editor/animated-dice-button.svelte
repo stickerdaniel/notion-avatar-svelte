@@ -3,7 +3,6 @@
 	import { Dice1, Dice2, Dice3, Dice4, Dice5, Dice6 } from '@lucide/svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import { Spring } from 'svelte/motion';
-	import { browser } from '$app/environment';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { cn } from '$lib/utils/utils.js';
 
@@ -92,7 +91,7 @@
 		>
 			<div
 				class="flex h-full w-full items-center justify-center"
-				style={browser && mounted
+				style={mounted
 					? `transform: scale(${diceTransform.current.scale}) rotate(${diceTransform.current.rotate}deg); transform-origin: center;`
 					: ''}
 			>
