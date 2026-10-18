@@ -2,7 +2,7 @@
 	"mcpServers": {
 		"jsrepo": {
 			"command": "bunx",
-			"args": ["jsrepo", "mcp"]
+			"args": ["@jsrepo/mcp"]
 		}
 	}
 }

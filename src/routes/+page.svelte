@@ -227,7 +227,7 @@
 					lang="bash"
 					class="!mt-0 mt-2 w-full shadow"
 					hideLines
-					code={`jsrepo add @stickerdaniel/notion-avatar-svelte/ui/avatar-editor`}
+					code={`jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor`}
 				/>
 			</section>
 
