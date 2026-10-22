@@ -162,6 +162,8 @@ export class AvatarStoreClass implements IAvatar {
 	// --- Derived State Values ---
 	private _avatarLayers = $derived(this._generateLayersFromItems(this.config.items));
 	svgDataUrl = $state('');
+	// Counts avatar render passes; only the newest one may set svgDataUrl
+	private _renderGeneration = 0;
 	bgClass = $derived(
 		AVATAR_COLOR_STYLES[this.config.colorName as ColorName]?.base ||
 			AVATAR_COLOR_STYLES[COLORS[0]].base
@@ -193,15 +195,22 @@ export class AvatarStoreClass implements IAvatar {
 			}
 		);
 
+		// Every pass starts a new generation, so a slower earlier render can never overwrite a later
+		// one. A failed render keeps the last good image.
 		$effect(() => {
 			const layers = this._avatarLayers;
+			const generation = ++this._renderGeneration;
 			if (layers.length === 0) {
 				this.svgDataUrl = '';
 				return;
 			}
-			(async () => {
-				this.svgDataUrl = await generateSvgDataUrl(layers);
-			})();
+			generateSvgDataUrl(layers)
+				.then((svgDataUrl) => {
+					if (generation === this._renderGeneration) this.svgDataUrl = svgDataUrl;
+				})
+				.catch((error: unknown) => {
+					console.error('Failed to render avatar:', error);
+				});
 		});
 	}
 
@@ -295,17 +304,17 @@ export class AvatarStoreClass implements IAvatar {
 	};
 
 	/**
-	 * Generate layer paths from a set of selected items
+	 * Generate layer paths from a set of selected items. Unknown assets resolve to '' and are
+	 * dropped, since fetching '' would load the page itself.
 	 */
 	private _generateLayersFromItems(items: SelectedItems | null): string[] {
 		if (!items) return [];
-		return LAYER_ORDER.map((categoryId) => {
+		return LAYER_ORDER.flatMap((categoryId) => {
 			const selectedIndex = items[categoryId];
-			if (selectedIndex !== null && selectedIndex >= 0) {
-				return getPreviewImagePath(categoryId, selectedIndex);
-			}
-			return null;
-		}).filter((path): path is string => path !== null);
+			if (selectedIndex === null || selectedIndex < 0) return [];
+			const path = getPreviewImagePath(categoryId, selectedIndex);
+			return path ? [path] : [];
+		});
 	}
 
 	/**

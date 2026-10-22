@@ -6,12 +6,17 @@ export interface SvgGenerationOptions {
 	backgroundColor?: string | null;
 }
 
+// An SVG document: optional XML declaration, comments and doctype, then a root <svg> element
+const SVG_DOCUMENT =
+	/^\s*(?:<\?xml[\s\S]*?\?>\s*)?(?:<!--[\s\S]*?-->\s*)*(?:<!DOCTYPE[^>]*>\s*)?<svg\b[^>]*>([\s\S]*)<\/svg>\s*$/i;
+
 /**
  * Core function that generates SVG based on provided options.
  * @param layers An array of string paths to individual SVG layer files.
  * @param options Configuration options for SVG generation
  * @param flipped Whether the avatar should be horizontally flipped
- * @returns A promise that resolves to the SVG data URL string.
+ * @returns A promise that resolves to the SVG data URL string. It rejects when a layer fails to
+ * load or is not an SVG document, so callers never receive a partial avatar.
  */
 async function generateSvgCore(
 	layers: string[],
@@ -38,31 +43,35 @@ async function generateSvgCore(
   `
 		: '';
 
-	try {
-		const groupElements = await Promise.all(
-			layers.map(async (path, index) => {
-				const partMatch = path.match(/([^/]+)\/[^/]+\.svg$/);
-				const partType = partMatch ? partMatch[1] : `part-${index}`;
+	const groupElements = await Promise.all(
+		layers.map(async (path, index) => {
+			const partMatch = path.match(/([^/]+)\/[^/]+\.svg$/);
+			const partType = partMatch ? partMatch[1] : `part-${index}`;
 
-				const response = await fetch(path);
-				const svgText = await response.text();
+			const response = await fetch(path);
+			if (!response.ok) {
+				throw new Error(`Avatar layer ${partType} failed to load: HTTP ${response.status}`);
+			}
+			const svgText = await response.text();
 
-				// Extract the SVG content from the SVG text (remove the <svg> and </svg> tags)
-				const contentMatch = svgText.match(/<svg[^>]*>([\s\S]*)<\/svg>/i);
-				// If the SVG content is not found, return the original SVG text
-				const svgContent = contentMatch ? contentMatch[1] : svgText;
+			// The document root must be <svg> (after an optional prolog), so an HTML page that merely
+			// contains SVG markup is rejected. Keep only the drawing inside that root element.
+			const contentMatch = svgText.match(SVG_DOCUMENT);
+			if (!contentMatch) {
+				throw new Error(`Avatar layer ${partType} is not an SVG document`);
+			}
 
-				return `
+			return `
           <g id="${avatarId}-${partType}" fill="#ffffff" 
              ${flipped ? 'transform="scale(-1,1) translate(-1080, 0)"' : ''}>
-            ${svgContent}
+            ${contentMatch[1]}
           </g>
         `;
-			})
-		);
+		})
+	);
 
-		// Build SVG structure based on options
-		const svgContent = `
+	// Build SVG structure based on options
+	const svgContent = `
       <svg viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
         ${svgFilter ? `<defs>${svgFilter}</defs>` : ''}
         ${backgroundColor ? `<rect width="1080" height="1080" fill="${backgroundColor}" />` : ''}
@@ -72,11 +81,7 @@ async function generateSvgCore(
       </svg>
     `;
 
-		return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`;
-	} catch (error) {
-		console.error('Error generating avatar SVG:', error);
-		return ''; // Return an empty string or a default placeholder SVG data URL on error
-	}
+	return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`;
 }
 
 /**
@@ -84,7 +89,7 @@ async function generateSvgCore(
  * Includes outline filter but no background.
  * @param layers An array of string paths to individual SVG layer files.
  * @param flipped Whether the avatar should be horizontally flipped (currently unused).
- * @returns A promise that resolves to the SVG data URL string.
+ * @returns A promise that resolves to the SVG data URL string and rejects if a layer fails.
  */
 export async function generateSvgDataUrl(
 	layers: string[],
@@ -98,7 +103,7 @@ export async function generateSvgDataUrl(
  * Transparent background, no outline.
  * @param layers An array of string paths to individual SVG layer files.
  * @param flipped Whether the avatar should be horizontally flipped (currently unused).
- * @returns A promise that resolves to the SVG data URL string.
+ * @returns A promise that resolves to the SVG data URL string and rejects if a layer fails.
  */
 export async function generateSvgWithoutOutlineDataUrl(
 	layers: string[],
@@ -111,7 +116,7 @@ export async function generateSvgWithoutOutlineDataUrl(
  * Generates a complete avatar SVG with transparent background but includes outline filter.
  * @param layers An array of string paths to individual SVG layer files.
  * @param flipped Whether the avatar should be horizontally flipped (currently unused).
- * @returns A promise that resolves to the SVG data URL string.
+ * @returns A promise that resolves to the SVG data URL string and rejects if a layer fails.
  */
 export async function generateSvgWithOutlineDataUrl(
 	layers: string[],
@@ -126,7 +131,7 @@ export async function generateSvgWithOutlineDataUrl(
  * @param layers An array of string paths to individual SVG layer files.
  * @param backgroundColor The background color to use (hex format).
  * @param flipped Whether the avatar should be horizontally flipped (currently unused).
- * @returns A promise that resolves to the SVG data URL string.
+ * @returns A promise that resolves to the SVG data URL string and rejects if a layer fails.
  */
 export async function generateSvgWithColoredBackgroundDataUrl(
 	layers: string[],

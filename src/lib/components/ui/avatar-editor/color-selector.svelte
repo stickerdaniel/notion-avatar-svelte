@@ -12,12 +12,18 @@
 		selectedValue: ColorName | undefined;
 		onColorSelect: (color: ColorName) => void;
 	} = $props();
+
+	// bits-ui reports plain strings; only known colours reach the store
+	function handleValueChange(value: string) {
+		const color = COLORS.find((candidate) => candidate === value);
+		if (color) onColorSelect(color);
+	}
 </script>
 
 <RadioToggleGroup.Root
 	value={selectedValue}
+	onValueChange={handleValueChange}
 	class="flex flex-row items-center -space-x-3"
-	role="radiogroup"
 	aria-label="Color Selector"
 >
 	{#each COLORS as color (color)}
@@ -32,8 +38,6 @@
 				AVATAR_COLOR_STYLES[color as ColorName].hover,
 				AVATAR_COLOR_STYLES[color as ColorName].selected
 			)}
-			onclick={() => onColorSelect(color)}
-			aria-checked={selectedValue === color}
 			data-umami-event="color-selected-{color}"
 		>
 			{#if selectedValue === color}<Check color="" />{/if}
