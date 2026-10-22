@@ -7,7 +7,10 @@
 
 A customizable Notion-style avatar editor built with Svelte 5
 
-![CleanShot 2025-06-07 at 14 18 44@2x](https://github.com/user-attachments/assets/1a49979c-6053-4f45-9862-afbc128ceaba)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/55d409b2-42f0-4a4d-b221-4935db36f013">
+  <img src="https://github.com/user-attachments/assets/87f2c43c-e07a-4870-8641-1d86765101a5" alt="Notion Avatar Editor with an orange avatar and the hair category open" width="100%">
+</picture>
 
 https://avatar.daniel.sticker.name/
 
@@ -90,57 +93,6 @@ You can access the avatar context in any component:
 </Avatar.Root>
 ```
 
-## Manual Installation
-
-### Prerequisites
-
-- [Bun](https://bun.sh/)
-- Git
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/stickerdaniel/notion-avatar-svelte
-cd notion-avatar-svelte
-```
-
-Or download and extract the zip file.
-
-### Install Dependencies
-
-```bash
-# Install dependencies
-bun install
-```
-
-### Run the development server
-
-The project includes tasks for common operations. They work for VSCode and all forked editors like Cursor.
-
-1. Press `Cmd+Shift+B` (macOS) or `Ctrl+Shift+B` (Windows/Linux) to run the default build task
-2. Select "bun dev (run dev server)" from the task list
-
-Or, open the Command Palette (`Cmd+Shift+P` or `Ctrl+Shift+P`) and type "Run Task", then select "bun dev (run dev server)".
-
-### Command Line
-
-```bash
-# Start the development server
-bun run dev
-
-# Or start the server and open in a browser
-bun run dev -- --open
-```
-
-### Deploy
-
-The site is fully prerendered and deploys to Cloudflare Pages, configured in `wrangler.jsonc`:
-
-```bash
-bunx wrangler login
-bun run deploy
-```
-
 ## Customization
 
 ### Theming
@@ -154,13 +106,13 @@ The project uses Tailwind CSS with customizable themes via shadcn-svelte:
 
 To add new avatar parts:
 
-1. Add SVG files to `src/lib/components/ui/avatar-editor/assets/parts/[category]/[category]-[index].svg`
+1. Add SVG files to `src/lib/components/ui/avatar-editor/assets/part/[category]/[category]-[index].svg`
 2. Add preview images to `src/lib/components/ui/avatar-editor/assets/preview/[category]/[index].svg`
 3. Update the `DEFAULT_CATEGORIES` array in `src/lib/components/ui/avatar-editor/types.ts`
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup.
 
 ## License
 
