@@ -14,18 +14,14 @@ import {
 	generateSvgWithOutlineDataUrl,
 	generateSvgWithColoredBackgroundDataUrl
 } from './avatar-svg-utils';
+import { AvatarConfigValidationError, parseAvatarConfig } from './config';
 import { StateHistory, PersistedState } from 'runed';
+
+// Re-exported so existing imports from this module keep working
+export { AvatarConfigValidationError };
 
 // localStorage key
 const AVATAR_CONFIG_STORAGE_KEY = 'notionAvatarConfig';
-
-// Custom error class for avatar configuration validation errors
-export class AvatarConfigValidationError extends Error {
-	constructor(message: string) {
-		super(message);
-		this.name = 'AvatarConfigValidationError';
-	}
-}
 
 export const AVATAR_COLOR_STYLES: Record<
 	ColorName,
@@ -95,7 +91,7 @@ const TAILWIND_CLASS_TO_HEX_MAP: Record<string, string> = {
 
 // Interface for the Avatar store
 export interface IAvatar {
-	// Live editing state - parsed from configJSON (which is PersistedState.current)
+	// Live editing state - parsed from configJSON
 	readonly config: AvatarConfiguration;
 
 	// Derived from live state
@@ -127,19 +123,23 @@ export class AvatarStoreClass implements IAvatar {
 	// --- The single source of truth: config as JSON string, now managed by PersistedState ---
 	private _configPersistedState: PersistedState<string>;
 
-	// Getter to maintain the configJSON property for StateHistory and internal logic
+	// Random config created once per store. It seeds empty storage and stands in for an unreadable one.
+	private readonly _fallbackConfigJSON: string;
+	// True while storage holds a config the editor cannot read. Storage stays untouched until the next write.
+	private _usingFallback = $state(false);
+
+	// The effective config JSON that every reader sees: the stored one, or the fallback while it is unreadable
 	get configJSON(): string {
-		const current = this._configPersistedState.current;
-		// If current is somehow not a string (possible during initialization or hydration),
-		// ensure we return a string for consistent behavior
-		return typeof current === 'string' ? current : JSON.stringify(current);
+		if (this._usingFallback) return this._fallbackConfigJSON;
+		return this._readStoredJSON() ?? this._fallbackConfigJSON;
 	}
 	// Setter to allow StateHistory and other methods to update the persisted state
 	set configJSON(value: string) {
 		this._configPersistedState.current = value;
+		this._usingFallback = false;
 	}
 
-	// Parsed version of the JSON string (derived from PersistedState's current value)
+	// Parsed version of configJSON
 	config = $derived<AvatarConfiguration>(this._parseConfigJSON());
 
 	// --- Eventing State ---
@@ -168,13 +168,23 @@ export class AvatarStoreClass implements IAvatar {
 	);
 
 	constructor() {
-		const initialRandomConfig = this._generateInitialRandomConfig();
-		const initialRandomConfigJSON = JSON.stringify(initialRandomConfig);
+		this._fallbackConfigJSON = JSON.stringify(this._generateInitialRandomConfig());
 
 		this._configPersistedState = new PersistedState<string>(
 			AVATAR_CONFIG_STORAGE_KEY,
-			initialRandomConfigJSON
+			this._fallbackConfigJSON
 		);
+
+		// Checked once, before history starts, so the session never rewrites storage on its own
+		try {
+			parseAvatarConfig(JSON.parse(this._readStoredJSON() ?? ''));
+		} catch (error) {
+			console.error(
+				'Stored avatar config is invalid, using a random one until the next edit:',
+				error
+			);
+			this._usingFallback = true;
+		}
 
 		this._history = new StateHistory<string>(
 			() => this.configJSON,
@@ -245,60 +255,33 @@ export class AvatarStoreClass implements IAvatar {
 	}
 
 	/**
-	 * Parse the JSON string to an AvatarConfiguration object
+	 * The stored config as JSON, or undefined when Runed cannot parse the storage entry
+	 */
+	private _readStoredJSON(): string | undefined {
+		const stored: unknown = this._configPersistedState.current;
+		if (stored === undefined) return undefined;
+		return typeof stored === 'string' ? stored : JSON.stringify(stored);
+	}
+
+	/**
+	 * Parse the JSON string to a new AvatarConfiguration object
 	 */
 	private _parseConfigJSON(): AvatarConfiguration {
 		try {
-			// Use the getter for configJSON which reads from PersistedState
-			const currentJson = this.configJSON;
-			if (!currentJson) {
-				// This case should ideally be handled by PersistedState's initial value
-				return this._generateInitialRandomConfig();
-			}
-			return this.validateAndParseConfig(JSON.parse(currentJson));
+			return this.validateAndParseConfig(JSON.parse(this.configJSON));
 		} catch (error) {
 			console.error('Error parsing config JSON:', error);
-			// Fallback to default if parsing PersistedState's content fails
-			return this._generateInitialRandomConfig();
+			// Storage became unreadable after startup, for example through another tab
+			return parseAvatarConfig(JSON.parse(this._fallbackConfigJSON));
 		}
 	}
 
 	/**
-	 * Validate and parse a config object into a valid AvatarConfiguration
+	 * Validate and parse a config object into a new, valid AvatarConfiguration
 	 * @throws AvatarConfigValidationError if validation fails
 	 */
 	validateAndParseConfig(config: unknown): AvatarConfiguration {
-		// Check if it has the basic required properties
-		if (!config || typeof config !== 'object') {
-			throw new AvatarConfigValidationError('Config must be an object');
-		}
-
-		// Safe type assertion after basic validation
-		const avatarConfig = config as Partial<AvatarConfiguration>;
-
-		if (typeof avatarConfig.version !== 'number') {
-			throw new AvatarConfigValidationError('Config must have a numeric version');
-		}
-		if (typeof avatarConfig.username !== 'string') {
-			throw new AvatarConfigValidationError('Config must have a string username');
-		}
-		if (typeof avatarConfig.lastModified !== 'string') {
-			throw new AvatarConfigValidationError('Config must have a lastModified date string');
-		}
-		if (!avatarConfig.items || typeof avatarConfig.items !== 'object') {
-			throw new AvatarConfigValidationError('Config must have an items object');
-		}
-		if (typeof avatarConfig.colorName !== 'string') {
-			throw new AvatarConfigValidationError('Config must have a colorName string');
-		}
-
-		// Validate colorName is in available colors, or default it
-		if (!COLORS.includes(avatarConfig.colorName as ColorName)) {
-			avatarConfig.colorName = COLORS[0];
-		}
-
-		// At this point we've validated all required fields
-		return avatarConfig as AvatarConfiguration;
+		return parseAvatarConfig(config);
 	}
 
 	/**
