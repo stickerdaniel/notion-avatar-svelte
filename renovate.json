@@ -2,6 +2,7 @@
 	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
 	"extends": ["config:best-practices"],
 	"schedule": ["before 6am on Monday"],
+	"automergeStrategy": "squash",
 	"vulnerabilityAlerts": {
 		"enabled": true,
 		"labels": ["security"],
@@ -9,10 +10,11 @@
 	},
 	"packageRules": [
 		{
-			"description": "Group all non-major updates together",
+			"description": "Group all non-major updates together and merge them once checks pass",
 			"matchUpdateTypes": ["minor", "patch", "pin", "digest"],
 			"groupName": "all non-major dependencies",
-			"groupSlug": "all-minor-patch"
+			"groupSlug": "all-minor-patch",
+			"automerge": true
 		},
 		{
 			"description": "Group all major updates together",
