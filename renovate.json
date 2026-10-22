@@ -3,9 +3,6 @@
 	"extends": ["config:best-practices"],
 	"schedule": ["before 6am on Monday"],
 	"automergeStrategy": "squash",
-	"lockFileMaintenance": {
-		"automerge": true
-	},
 	"vulnerabilityAlerts": {
 		"enabled": true,
 		"labels": ["security"],
