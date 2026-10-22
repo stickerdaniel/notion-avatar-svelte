@@ -32,6 +32,8 @@ jobs:
       - run: bun run check
       - run: bun run lint
       - run: bun run build
+      - run: bunx playwright install --with-deps chromium
+      - run: bun run test
 
       # Only pushes to main reach this step; PR runs, including forks, never see the secrets.
       - name: Deploy to Cloudflare Pages
