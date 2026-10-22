@@ -7,7 +7,10 @@
 
 A customizable Notion-style avatar editor built with Svelte 5
 
-![CleanShot 2025-06-07 at 14 18 44@2x](https://github.com/user-attachments/assets/1a49979c-6053-4f45-9862-afbc128ceaba)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/1865814b-e849-4436-922e-28388eb10731">
+  <img src="https://github.com/user-attachments/assets/b847bfea-7baa-4872-9dad-7dca13eb09a2" alt="Notion Avatar Editor with the hair category open" width="100%">
+</picture>
 
 https://avatar.daniel.sticker.name/
 
