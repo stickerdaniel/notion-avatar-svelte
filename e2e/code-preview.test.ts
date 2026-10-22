@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { uploadConfig } from './avatar';
 import { seedConfig, seededConfig } from './storage';
 
 declare global {
@@ -28,18 +29,6 @@ async function holdSanitizer(page: Page) {
 	});
 
 	return { release, wasHeld: () => held };
-}
-
-async function uploadConfig(page: Page, config: object): Promise<void> {
-	const fileChooser = page.waitForEvent('filechooser');
-	await page.getByRole('button', { name: 'Upload avatar configuration from JSON file' }).click();
-	await (
-		await fileChooser
-	).setFiles({
-		name: 'avatar.json',
-		mimeType: 'application/json',
-		buffer: Buffer.from(JSON.stringify(config))
-	});
 }
 
 // Hydration keeps the prerendered preview, so the config changes after load to reach the unsanitised state.
