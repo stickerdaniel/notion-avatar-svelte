@@ -24,6 +24,10 @@ vite.config.ts.timestamp-*
 
 registry.json
 
+# Playwright
+test-results/
+playwright-report/
+
 # Local agent and scratch files
 .claude/settings.local.json
 .claude/worktrees/
