@@ -51,7 +51,7 @@
 		"typescript": "6.0.3",
 		"typescript-eslint": "8.71.2",
 		"vite": "8.3.4",
-		"wrangler": "4.151.1"
+		"wrangler": "4.151.2"
 	},
 	"dependencies": {
 		"@lucide/svelte": "^1.59.0",
