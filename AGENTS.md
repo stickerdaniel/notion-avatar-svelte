@@ -20,4 +20,7 @@ Notion-style avatar editor, also published as the jsrepo registry `@stickerdanie
 
 ## Pull requests
 
-- End every PR body with `Generated with <model> for <job> in <tool> via <host>.` CI requires that line, including the period. For example, `Generated with Claude Opus 5.5 for implementation in Claude Code via T3 Code.` For several models, write `Generated with <model 1> for <job 1> and <model 2> for <job 2> in <tool> via <host>.` Every model needs a job. Commas or `/` list several jobs for one model.
+- End PR bodies with `<Job> with <model> (<effort>) in <tool> via <host>.`
+  Repeat `<job> with <model> (<effort>)` joined by `and` for each model that did a job.
+  Example: `Implemented with Claude Opus 5.5 (xhigh) and reviewed with GPT-6 Pro (max) in Claude Code via T3 Code.`
+  Effort is the run's reasoning setting, or `effort unknown` if nothing states it. Humans are `Human`. Ask for other unknown values.
