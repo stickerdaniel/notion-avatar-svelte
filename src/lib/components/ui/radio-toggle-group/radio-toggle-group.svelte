@@ -23,9 +23,14 @@
 		...restProps
 	}: RadioGroupPrimitive.RootProps & ToggleVariants = $props();
 
+	// Getters keep items in sync when `variant` or `size` change
 	setRadioToggleGroupCtx({
-		variant,
-		size
+		get variant() {
+			return variant;
+		},
+		get size() {
+			return size;
+		}
 	});
 </script>
 

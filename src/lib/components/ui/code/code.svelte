@@ -66,38 +66,38 @@
 	let hl = $state<HighlighterCore>();
 	let sanitize: ((html: string) => string) | undefined = $state();
 
-	const rawHighlighted = $derived(
-		hl?.codeToHtml(code, {
-			lang: lang,
-			themes: {
-				light: 'github-light-default',
-				dark: 'github-dark-default'
-			},
-			transformers: [
-				{
-					pre: (el) => {
-						el.properties.style = '';
-
-						if (!hideLines) {
-							el.properties.class += ' line-numbers';
-						}
-
-						return el;
-					},
-					line: (node, line) => {
-						if (within(line, highlight)) {
-							node.properties.class = node.properties.class + ' line--highlighted';
-						}
-
-						return node;
-					}
-				}
-			]
-		}) ?? code
-	);
-
+	// Sanitised Shiki markup, or undefined until both the highlighter and DOMPurify have loaded
 	const highlighted = $derived(
-		sanitize ? sanitize(rawHighlighted ?? code) : (rawHighlighted ?? code)
+		hl &&
+			sanitize?.(
+				hl.codeToHtml(code, {
+					lang: lang,
+					themes: {
+						light: 'github-light-default',
+						dark: 'github-dark-default'
+					},
+					transformers: [
+						{
+							pre: (el) => {
+								el.properties.style = '';
+
+								if (!hideLines) {
+									el.properties.class += ' line-numbers';
+								}
+
+								return el;
+							},
+							line: (node, line) => {
+								if (within(line, highlight)) {
+									node.properties.class = node.properties.class + ' line--highlighted';
+								}
+
+								return node;
+							}
+						}
+					]
+				})
+			)
 	);
 
 	onMount(async () => {
@@ -108,7 +108,17 @@
 </script>
 
 <div class={cn(style({ variant }), className)}>
-	{@html highlighted}
+	{#if highlighted}
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -- Shiki escapes the code and DOMPurify sanitises its output -->
+		{@html highlighted}
+	{:else}
+		<!-- Plain text in Shiki's structure, so user text never reaches {@html} and the layout does not jump -->
+		<pre class={cn('shiki', !hideLines && 'line-numbers')}><code
+				>{#each code.split('\n') as line, index (index)}{#if index > 0}{'\n'}{/if}<span class="line"
+						>{line}</span
+					>{/each}</code
+			></pre>
+	{/if}
 	{#if !hideCopy}
 		<div
 			class={cn(
