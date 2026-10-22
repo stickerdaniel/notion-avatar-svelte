@@ -30,7 +30,7 @@ This is a Notion-style avatar editor built with **Svelte 5**, **SvelteKit**, **s
 
 3. **Asset Management**
    - SVG assets organized in `src/lib/components/ui/avatar-editor/assets/`
-   - Two directories: `part/` (for composing final avatar) and `preview/` (for UI thumbnails)
+   - Two directories: `part/` (for UI thumbnails) and `preview/` (for composing final avatar)
    - Uses Vite's `import.meta.glob` for efficient asset loading
 
 4. **Layer Rendering System**
@@ -53,8 +53,8 @@ The project is structured for distribution via JSRepo:
 
 ### Adding New Avatar Parts
 
-1. Add SVG files to `assets/part/[category]/[category]-[index].svg`
-2. Add preview images to `assets/preview/[category]/[index].svg`
+1. Add thumbnails to `assets/part/[category]/[category]-[index].svg`
+2. Add avatar layers to `assets/preview/[category]/[index].svg`
 3. Update `maxItems` in `DEFAULT_CATEGORIES` array in `types.ts`
 
 ### State Persistence
