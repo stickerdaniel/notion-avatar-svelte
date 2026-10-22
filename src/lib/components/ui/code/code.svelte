@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { cn } from '$lib/utils/utils';
 	import { tv, type VariantProps } from 'tailwind-variants';
-	import { highlighter, type SupportedLanguage } from './shiki';
+	import type { SupportedLanguage } from './shiki';
 	import { onMount } from 'svelte';
 	import type { HighlighterCore } from 'shiki';
 	import { CopyButton } from '../copy-button';
@@ -100,8 +100,12 @@
 			)
 	);
 
+	// Shiki loads on mount, so its engine stays out of the page's initial JS
 	onMount(async () => {
-		const [highlighterMod, DOMPurify] = await Promise.all([highlighter, import('dompurify')]);
+		const [highlighterMod, DOMPurify] = await Promise.all([
+			import('./shiki').then((shiki) => shiki.highlighter),
+			import('dompurify')
+		]);
 		hl = highlighterMod;
 		sanitize = (html: string) => DOMPurify.default.sanitize(html);
 	});

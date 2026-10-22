@@ -4,7 +4,6 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ChevronsDown, ChevronsUp } from '@lucide/svelte';
-	import { mode } from 'mode-watcher';
 	import { untrack } from 'svelte';
 	import { type Category, type SelectedItems, getPartImagePath } from './types';
 
@@ -26,19 +25,6 @@
 			activeTab = categories[0].id;
 		}
 	});
-
-	// Track loaded images to prevent showing broken placeholders
-	let loadedImages = $state<Set<string>>(new Set());
-
-	function handleImageLoad(imageSrc: string) {
-		loadedImages.add(imageSrc);
-		loadedImages = new Set(loadedImages); // Trigger reactivity
-	}
-
-	function handleImageError(imageSrc: string) {
-		// Don't add to loaded set if there's an error
-		console.warn('Failed to load image:', imageSrc);
-	}
 
 	function scrollTabs(direction: 'up' | 'down') {
 		const categoryIds = categories.map((category) => category.id);
@@ -116,7 +102,6 @@
 					{#each Array(category.maxItems) as _, index (index)}
 						{@const imageSrc = getPartImagePath(category.id, index)}
 						{@const itemValue = String(index)}
-						{@const isImageLoaded = loadedImages.has(imageSrc)}
 						<RadioToggleGroup.Item
 							value={itemValue}
 							aria-label={`Select ${category.name} ${index + 1}`}
@@ -126,33 +111,16 @@
 							<div
 								class={`flex h-full w-full transform items-center justify-center transition-transform duration-5 ease-in-out ${selectedValue !== itemValue ? 'hover:scale-110' : ''} active:scale-100 active:duration-0`}
 							>
-								{#if isImageLoaded}
-									<img
-										src={imageSrc}
-										alt={`${category.name} Preview ${index + 1}`}
-										class="h-full w-full scale-50 object-contain"
-										style={mode.current === 'dark'
-											? selectedValue === itemValue
-												? 'filter: invert(1); opacity: 1;'
-												: 'filter: invert(1); opacity: 0.65;'
-											: selectedValue === itemValue
-												? 'opacity: 1;'
-												: 'opacity: 0.65;'}
-										loading="lazy"
-									/>
-								{:else}
-									<!-- Hidden image to trigger loading -->
-									<img
-										src={imageSrc}
-										alt=""
-										class="pointer-events-none absolute opacity-0"
-										loading="lazy"
-										onload={() => handleImageLoad(imageSrc)}
-										onerror={() => handleImageError(imageSrc)}
-									/>
-									<!-- Empty placeholder while loading -->
-									<div class="h-full w-full"></div>
-								{/if}
+								<img
+									src={imageSrc}
+									alt={`${category.name} Preview ${index + 1}`}
+									class={[
+										'h-full w-full scale-50 object-contain dark:invert',
+										selectedValue !== itemValue && 'opacity-65'
+									]}
+									loading="lazy"
+									decoding="async"
+								/>
 							</div>
 						</RadioToggleGroup.Item>
 					{/each}

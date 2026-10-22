@@ -29,7 +29,7 @@ const previewDir = new URL(
 	import.meta.url
 );
 
-// The <title> of a layer's SVG. Layers are mostly inlined as data: URLs, so the wrapper recognises
+// The <title> of a layer's SVG. Layer URLs carry a content hash, so the wrapper recognises
 // a layer by this marker in the response body rather than by its URL.
 function layerTitle(category: string, index: number): string {
 	const read = (file: string) => readFileSync(new URL(file, previewDir), 'utf8');

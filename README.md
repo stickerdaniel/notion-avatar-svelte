@@ -106,8 +106,8 @@ The project uses Tailwind CSS with customizable themes via shadcn-svelte:
 
 To add new avatar parts:
 
-1. Add SVG files to `src/lib/components/ui/avatar-editor/assets/part/[category]/[category]-[index].svg`
-2. Add preview images to `src/lib/components/ui/avatar-editor/assets/preview/[category]/[index].svg`
+1. Add the selector thumbnail to `src/lib/components/ui/avatar-editor/assets/part/[category]/[category]-[index].svg`
+2. Add the layer composed into the avatar to `src/lib/components/ui/avatar-editor/assets/preview/[category]/[index].svg`
 3. Update the `DEFAULT_CATEGORIES` array in `src/lib/components/ui/avatar-editor/types.ts`
 
 ## Contributing

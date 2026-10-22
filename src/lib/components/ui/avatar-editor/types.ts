@@ -49,20 +49,22 @@ export const DEFAULT_CATEGORIES: Category[] = [
 	{ id: 'beard', name: 'Beard', maxItems: 17 }
 ];
 
-// Eagerly load all assets using import.meta.glob
+// Resolve every asset to a URL up front. `no-inline` keeps the SVGs out of the JS as data URLs,
+// so they are fetched only when a thumbnail scrolls into view or a layer is composed.
+// preview/ holds the layers composed into the avatar, part/ the selector thumbnails.
 const previewAssets = import.meta.glob('./assets/preview/**/*.svg', {
-	query: '?url',
+	query: '?url&no-inline',
 	import: 'default',
 	eager: true
 }) as Record<string, string>;
 const partAssets = import.meta.glob('./assets/part/**/*.svg', {
-	query: '?url',
+	query: '?url&no-inline',
 	import: 'default',
 	eager: true
 }) as Record<string, string>;
 
 /**
- * Gets the path to a preview image for a category item
+ * Gets the URL of the layer a category item adds to the composed avatar
  * Note: Uses import.meta.glob for proper Vite asset processing and SSR compatibility
  */
 export function getPreviewImagePath(category: string, index: number): string {
@@ -76,7 +78,7 @@ export function getPreviewImagePath(category: string, index: number): string {
 }
 
 /**
- * Gets the path to a part image for the avatar preview
+ * Gets the URL of the thumbnail the category selector shows for an item
  * Note: Uses import.meta.glob for proper Vite asset processing and SSR compatibility
  */
 export function getPartImagePath(category: string, index: number): string {
