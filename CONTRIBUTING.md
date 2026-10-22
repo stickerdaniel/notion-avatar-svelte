@@ -45,7 +45,7 @@ bun run test
 
 ## Deploy
 
-The site is fully prerendered and deploys to Cloudflare Pages, configured in `wrangler.jsonc`. Pushes to `main` run the [CI workflow](.github/workflows/ci.yml), which deploys the newest `main` commit to production once its checks pass. To deploy manually:
+The site is fully prerendered and deploys to Cloudflare Pages, configured in `wrangler.jsonc`. Pushes to `main` run the [CI workflow](.github/workflows/ci.yml), which deploys the newest `main` commit to production once its checks pass. `static/_headers` sets long-lived caching for hashed assets and denies framing on Cloudflare Pages. To deploy manually:
 
 ```bash
 bunx wrangler login

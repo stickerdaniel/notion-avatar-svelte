@@ -1,0 +1,10 @@
+# Cloudflare Pages response headers: https://developers.cloudflare.com/pages/configuration/headers/
+
+# Vite fingerprints everything under _app/immutable, so a cached copy never goes stale
+/_app/immutable/*
+	Cache-Control: public, max-age=31536000, immutable
+
+# frame-ancestors only works as a header; SvelteKit strips it from meta CSP
+/*
+	X-Frame-Options: DENY
+	Content-Security-Policy: frame-ancestors 'none'
