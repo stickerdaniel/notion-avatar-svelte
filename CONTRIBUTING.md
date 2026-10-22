@@ -31,7 +31,7 @@ In VS Code and its forks like Cursor, press `Cmd+Shift+B` (macOS) or `Ctrl+Shift
 
 ## Deploy
 
-The site is fully prerendered and deploys to Cloudflare Pages, configured in `wrangler.jsonc`:
+The site is fully prerendered and deploys to Cloudflare Pages, configured in `wrangler.jsonc`. Every push to `main` deploys to production through the [CI workflow](.github/workflows/ci.yml). To deploy manually:
 
 ```bash
 bunx wrangler login

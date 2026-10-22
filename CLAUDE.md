@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bun run dev` - Start development server
 - `bun run build` - Build for production
 - `bun run preview` - Preview production build
-- `bun run deploy` - Build and deploy the static site to Cloudflare Pages
+- `bun run deploy` - Build and deploy the static site to Cloudflare Pages by hand; CI (`.github/workflows/ci.yml`) already deploys every push to `main`
 - `bun run check` - Run Svelte type checking
 - `bun run lint` - Run linting and formatting checks
 - `bun run pre-commit` - Run format, lint, and type check (use before committing)
