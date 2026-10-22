@@ -30,13 +30,17 @@ export async function readAvatarSvg(page: Page): Promise<string> {
 	return base64 ? normalizeMarkup(Buffer.from(base64, 'base64').toString('utf8')) : '';
 }
 
-export async function uploadConfig(page: Page, config: object): Promise<void> {
+export async function uploadConfig(
+	page: Page,
+	config: object,
+	name = 'avatar.json'
+): Promise<void> {
 	const fileChooser = page.waitForEvent('filechooser');
 	await page.getByRole('button', { name: 'Upload avatar configuration from JSON file' }).click();
 	await (
 		await fileChooser
 	).setFiles({
-		name: 'avatar.json',
+		name,
 		mimeType: 'application/json',
 		buffer: Buffer.from(JSON.stringify(config))
 	});

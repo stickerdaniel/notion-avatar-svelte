@@ -8,18 +8,8 @@
 	import { avatarContext } from '$lib/components/ui/avatar-editor/avatarContext';
 	import { AvatarStoreClass } from '$lib/components/ui/avatar-editor/AvatarStore.svelte';
 
-	import { browser } from '$app/env';
-
-	// Umami Analytics - dynamically imported to avoid SSR issues
-	// (svelte-umami accesses localStorage at module load time, which breaks on Node.js 22+).
-	// Its PUBLIC_UMAMI_* env vars are declared in src/env.ts.
-	let UmamiAnalyticsEnv:
-		(typeof import('@lukulent/svelte-umami'))['UmamiAnalyticsEnv'] | undefined = $state(undefined);
-	if (browser) {
-		import('@lukulent/svelte-umami').then((mod) => {
-			UmamiAnalyticsEnv = mod.UmamiAnalyticsEnv;
-		});
-	}
+	// Umami analytics, declared in src/env.ts; the script loads only when both are set.
+	import { PUBLIC_UMAMI_SRC, PUBLIC_UMAMI_WEBSITE_ID } from '$app/env/public';
 
 	let { children } = $props();
 
@@ -28,10 +18,13 @@
 	avatarContext.set(new AvatarStoreClass());
 </script>
 
+<svelte:head>
+	{#if PUBLIC_UMAMI_SRC && PUBLIC_UMAMI_WEBSITE_ID}
+		<script defer src={PUBLIC_UMAMI_SRC} data-website-id={PUBLIC_UMAMI_WEBSITE_ID}></script>
+	{/if}
+</svelte:head>
+
 <ModeWatcher />
 <Toaster />
-{#if UmamiAnalyticsEnv}
-	<UmamiAnalyticsEnv />
-{/if}
 
 {@render children()}

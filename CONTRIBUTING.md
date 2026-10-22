@@ -52,6 +52,8 @@ bunx wrangler login
 bun run deploy
 ```
 
+Umami analytics is optional. To enable it, set `PUBLIC_UMAMI_SRC` and `PUBLIC_UMAMI_WEBSITE_ID` (see `.env.example`) when building; without both, the build has no analytics script. CI builds without them.
+
 ## Before You Commit
 
 ```bash
