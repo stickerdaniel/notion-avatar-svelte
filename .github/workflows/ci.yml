@@ -32,7 +32,9 @@ jobs:
       - run: bun run check
       - run: bun run lint
       - run: bun run build
-      - run: bunx playwright install --with-deps chromium
+      # No --with-deps: ubuntu-latest already ships Chrome's libraries, and its apt
+      # mirror can stall past the job timeout. A missing library fails the test launch.
+      - run: bunx playwright install --only-shell chromium
       - run: bun run test
 
       # Only pushes to main reach this step; PR runs, including forks, never see the secrets.
