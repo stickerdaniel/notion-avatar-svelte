@@ -11,7 +11,7 @@ export default defineConfig({
 			preprocess: vitePreprocess(),
 			// Fully prerendered; 404.html renders unknown paths client-side
 			adapter: adapter({ fallback: '404.html' }),
-			// Keeps `$lib` imports working so components published via jsrepo stay unchanged
+			// Deprecated in SvelteKit 3 for `#lib` subpath imports, but jsrepo-shipped files import `$lib/...` and consumers configure `$lib`, so migrating is a coordinated breaking change
 			alias: { $lib: 'src/lib' }
 		})
 	],

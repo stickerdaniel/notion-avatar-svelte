@@ -5,6 +5,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ChevronsDown, ChevronsUp } from '@lucide/svelte';
 	import { mode } from 'mode-watcher';
+	import { untrack } from 'svelte';
 	import { type Category, type SelectedItems, getPartImagePath } from './types';
 
 	let {
@@ -19,9 +20,12 @@
 		onItemSelect: (categoryId: string, itemIndex: number) => void;
 	} = $props();
 
-	if (!activeTab && categories.length > 0) {
-		activeTab = categories[0].id;
-	}
+	// Open the first category once on creation; the tabs own `activeTab` afterwards
+	untrack(() => {
+		if (!activeTab && categories.length > 0) {
+			activeTab = categories[0].id;
+		}
+	});
 
 	// Track loaded images to prevent showing broken placeholders
 	let loadedImages = $state<Set<string>>(new Set());

@@ -1,28 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
-
-const STORAGE_KEY = 'notionAvatarConfig';
-
-const seededConfig = {
-	version: 1,
-	username: 'Ada',
-	colorName: 'blue',
-	lastModified: '2026-01-01T00:00:00.000Z',
-	items: {
-		face: 0,
-		nose: 0,
-		mouth: 0,
-		eyes: 0,
-		eyebrows: 0,
-		glasses: 0,
-		hair: 0,
-		accessories: 0,
-		details: 0,
-		beard: 0
-	}
-};
-
-type StoredConfig = typeof seededConfig;
+import { STORAGE_KEY, seedConfig, seededConfig, type StoredConfig } from './storage';
 
 // Ignores the whitespace and quote style differences that asset inlining may introduce.
 function normalizeMarkup(markup: string): string {
@@ -59,14 +37,8 @@ async function readAvatarSvg(page: Page): Promise<string> {
 	return base64 ? normalizeMarkup(Buffer.from(base64, 'base64').toString('utf8')) : '';
 }
 
-// Init scripts run on every navigation, so seed only once and let reloads keep the stored state.
 test.beforeEach(async ({ page }) => {
-	await page.addInitScript(
-		([key, value]) => {
-			if (localStorage.getItem(key) === null) localStorage.setItem(key, value);
-		},
-		[STORAGE_KEY, JSON.stringify(JSON.stringify(seededConfig))] as const
-	);
+	await seedConfig(page, seededConfig);
 });
 
 test('selecting a hair style updates the stored config and avatar, undo restores both', async ({

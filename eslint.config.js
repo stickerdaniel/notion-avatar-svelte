@@ -1,6 +1,7 @@
 import prettier from 'eslint-config-prettier';
 import js from '@eslint/js';
 import { includeIgnoreFile } from '@eslint/compat';
+import { defineConfig } from 'eslint/config';
 import svelte from 'eslint-plugin-svelte';
 import globals from 'globals';
 import { fileURLToPath } from 'node:url';
@@ -8,10 +9,10 @@ import ts from 'typescript-eslint';
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
-export default ts.config(
+export default defineConfig(
 	includeIgnoreFile(gitignorePath),
 	js.configs.recommended,
-	...ts.configs.recommended,
+	ts.configs.recommended,
 	svelte.configs['flat/recommended'],
 	prettier,
 	svelte.configs['flat/prettier'],
@@ -48,8 +49,7 @@ export default ts.config(
 			'svelte/no-at-html-tags': 'warn',
 			'svelte/no-navigation-without-resolve': 'off',
 			'svelte/no-useless-mustaches': 'off',
-			'svelte/prefer-svelte-reactivity': 'off',
-			'svelte/valid-compile': 'warn' // TODO: remove this rule, investigate why it's throwing errors and find a real solution
+			'svelte/prefer-svelte-reactivity': 'off'
 		}
 	}
 );
