@@ -8,6 +8,13 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	interface Window {
+		// Set by the Umami script, which +layout.svelte loads only when it is configured.
+		umami?: {
+			track(event: string, data?: Record<string, string | number | boolean>): void;
+		};
+	}
 }
 
 export {};

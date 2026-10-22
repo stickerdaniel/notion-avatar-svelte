@@ -16,16 +16,6 @@
 	import { Code } from '$lib/components/ui/code';
 	import { ThemeSelector } from '$lib/components/ui/theme-selector';
 
-	// Umami tracking - dynamically imported to avoid SSR issues
-	// (svelte-umami accesses localStorage at module load time, which breaks on Node.js 22+)
-	import { browser } from '$app/env';
-	let trackEvent: typeof import('@lukulent/svelte-umami').trackEvent | undefined;
-	if (browser) {
-		import('@lukulent/svelte-umami').then((mod) => {
-			trackEvent = mod.trackEvent;
-		});
-	}
-
 	const avatarStore = avatarContext.get();
 
 	// Download avatar config as JSON file
@@ -52,11 +42,8 @@
 			URL.revokeObjectURL(url);
 		}, 0);
 
-		// Track download with full config data
-		trackEvent?.('config-download', {
-			filename: `${sanitizedUsername}-notion-avatar-config.json`,
-			config: configObj // Log the full JSON configuration
-		});
+		// Analytics get the event alone; the filename and config carry the username
+		window.umami?.track('config-download');
 
 		// Show success toast
 		toast.success('Avatar configuration downloaded', {
@@ -81,17 +68,11 @@
 			reader.onload = (event) => {
 				try {
 					const content = event.target?.result as string;
-					const uploadedConfig = JSON.parse(content);
 
 					// Pass the JSON string to the store's importConfig method to validate and parse
 					avatarStore.importConfig(content);
 
-					// Track upload with full config data
-					trackEvent?.('config-uploaded', {
-						filename: file.name,
-						config: uploadedConfig, // Log the full JSON configuration
-						success: 'true'
-					});
+					window.umami?.track('config-uploaded', { success: true });
 
 					// Show success toast
 					toast.success('Avatar configuration loaded', {
@@ -103,12 +84,8 @@
 						errorMessage = error.message;
 					}
 
-					// Track failed upload
-					trackEvent?.('config-uploaded', {
-						filename: file.name,
-						success: 'false',
-						error: errorMessage
-					});
+					// No error text: validation messages can quote values from the uploaded file
+					window.umami?.track('config-uploaded', { success: false });
 
 					toast.error('Invalid avatar configuration', {
 						description: errorMessage
