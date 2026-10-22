@@ -101,31 +101,30 @@
 
 	<!-- Tab content -->
 	{#each categories as category (category.id)}
-		{@const currentCategoryItemIndex = currentSelectedItems[category.id] ?? 0}
-		{@const radioGroupValueForDisplay = category.id + currentCategoryItemIndex.toString()}
+		{@const selectedIndex = currentSelectedItems[category.id]}
+		<!-- A null item selects no radio; bits-ui treats '' as an empty group -->
+		{@const selectedValue = selectedIndex === null ? '' : String(selectedIndex)}
 		<Tabs.Content value={category.id} class="mt-0 h-fit lg:w-[12.2rem]">
 			<ScrollArea class="h-104 w-full rounded-md border">
 				<RadioToggleGroup.Root
 					variant="outline"
-					value={radioGroupValueForDisplay}
+					value={selectedValue}
+					onValueChange={(value) => onItemSelect(category.id, Number(value))}
 					class="flex flex-wrap justify-start gap-1 p-2"
-					role="radiogroup"
 					aria-label={`${category.name} items`}
 				>
 					{#each Array(category.maxItems) as _, index (index)}
 						{@const imageSrc = getPartImagePath(category.id, index)}
-						{@const itemValueForComparison = category.id + index.toString()}
+						{@const itemValue = String(index)}
 						{@const isImageLoaded = loadedImages.has(imageSrc)}
 						<RadioToggleGroup.Item
-							value={itemValueForComparison}
+							value={itemValue}
 							aria-label={`Select ${category.name} ${index + 1}`}
 							class="size-14 p-0 transition-transform duration-75 ease-in-out active:scale-95"
-							onclick={() => onItemSelect(category.id, index)}
-							aria-checked={radioGroupValueForDisplay === itemValueForComparison}
 							data-umami-event="part-selected-{category.id}-{index}"
 						>
 							<div
-								class={`flex h-full w-full transform items-center justify-center transition-transform duration-5 ease-in-out ${radioGroupValueForDisplay !== itemValueForComparison ? 'hover:scale-110' : ''} active:scale-100 active:duration-0`}
+								class={`flex h-full w-full transform items-center justify-center transition-transform duration-5 ease-in-out ${selectedValue !== itemValue ? 'hover:scale-110' : ''} active:scale-100 active:duration-0`}
 							>
 								{#if isImageLoaded}
 									<img
@@ -133,10 +132,10 @@
 										alt={`${category.name} Preview ${index + 1}`}
 										class="h-full w-full scale-50 object-contain"
 										style={mode.current === 'dark'
-											? radioGroupValueForDisplay === itemValueForComparison
+											? selectedValue === itemValue
 												? 'filter: invert(1); opacity: 1;'
 												: 'filter: invert(1); opacity: 0.65;'
-											: radioGroupValueForDisplay === itemValueForComparison
+											: selectedValue === itemValue
 												? 'opacity: 1;'
 												: 'opacity: 0.65;'}
 										loading="lazy"

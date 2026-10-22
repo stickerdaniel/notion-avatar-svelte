@@ -20,10 +20,11 @@ export function layerMarkup(category: string, index: number): string {
 }
 
 // The composed avatar SVG in the editor, or '' while none is rendered.
+// The image is hidden until it loads and stays hidden without layers, so hidden images count.
 export async function readAvatarSvg(page: Page): Promise<string> {
 	const src = await page
 		.getByRole('region', { name: 'Avatar Editor' })
-		.getByRole('img', { name: /^Avatar for / })
+		.getByRole('img', { name: /^Avatar for /, includeHidden: true })
 		.getAttribute('src');
 	const base64 = src?.match(/^data:image\/svg\+xml;base64,(.+)$/)?.[1];
 	return base64 ? normalizeMarkup(Buffer.from(base64, 'base64').toString('utf8')) : '';
