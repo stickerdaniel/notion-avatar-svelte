@@ -1,7 +1,7 @@
 # Notion Avatar Svelte
 
 [![Built with Svelte](https://img.shields.io/badge/Built%20With-Svelte-d43106?style=flat&logo=svelte)](https://svelte.dev/)
-[![UI Components: shadcn-svelte](https://img.shields.io/badge/UI-shadcn--svelte-black?style=flat)](https://next.shadcn-svelte.com/)
+[![UI Components: shadcn-svelte](https://img.shields.io/badge/UI-shadcn--svelte-black?style=flat)](https://shadcn-svelte.com/)
 [![State Management: Runed](https://img.shields.io/badge/State-Runed-f64a00?style=flat)](https://runed.dev/)
 [![Available on JSrepo](https://img.shields.io/badge/JSrepo-@stickerdaniel%2Fnotion--avatar--svelte-f7dd1e?style=flat)](https://jsrepo.com/@stickerdaniel/notion-avatar-svelte)
 
@@ -20,7 +20,7 @@ https://avatar.daniel.sticker.name/
 
 **Import/Export**: Save and load avatar configurations as JSON
 
-**Accessible UI**: Built with [shadcn-svelte](https://next.shadcn-svelte.com/) components
+**Accessible UI**: Built with [shadcn-svelte](https://shadcn-svelte.com/) components
 
 ## Quick Start with jsrepo
 
@@ -39,7 +39,7 @@ The easiest way to add the Notion Avatar Editor to your Svelte 5 project:
 bun add -g jsrepo
 
 # Initialize shadcn-svelte in your project (if not already done)
-bunx shadcn-svelte@next init
+bunx shadcn-svelte@latest init
 
 # Add the avatar editor component
 jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor
@@ -99,7 +99,7 @@ You can access the avatar context in any component:
 
 The project uses Tailwind CSS with customizable themes via shadcn-svelte:
 
-1. Visit [shadcn-svelte themes](https://next.shadcn-svelte.com/themes) to explore and customize the color palette
+1. Visit [shadcn-svelte themes](https://shadcn-svelte.com/themes) to explore and customize the color palette
 2. Edit the `src/app.css` file to apply your custom theme variables
 
 ### Adding New Avatar Parts
@@ -112,7 +112,7 @@ To add new avatar parts:
 
 ## Contributing
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup.
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup, scripts and tests.
 
 ## License
 
