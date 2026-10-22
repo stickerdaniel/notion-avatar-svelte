@@ -27,7 +27,7 @@ bun run dev
 bun run dev -- --open
 ```
 
-In VS Code and its forks like Cursor, press `Cmd+Shift+B` (macOS) or `Ctrl+Shift+B` (Windows/Linux) to run the default build task, which starts the server and opens it in a browser.
+In VS Code, press `Cmd+Shift+B` (macOS) or `Ctrl+Shift+B` (Windows/Linux) to run the default build task, which starts the server and opens it in a browser.
 
 ## Deploy
 
@@ -41,6 +41,7 @@ bun run deploy
 ## Before You Commit
 
 ```bash
-# Format, lint, and type check
-bun run pre-commit
+bun run format
+bun run lint
+bun run check
 ```

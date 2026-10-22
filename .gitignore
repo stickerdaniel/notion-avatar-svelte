@@ -23,3 +23,8 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 registry.json
+
+# Local agent and scratch files
+.claude/settings.local.json
+.claude/worktrees/
+scratch/

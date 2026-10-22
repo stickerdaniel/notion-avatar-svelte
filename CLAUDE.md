@@ -10,7 +10,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bun run deploy` - Build and deploy the static site to Cloudflare Pages by hand; on pushes to `main`, CI (`.github/workflows/ci.yml`) deploys the newest commit once its checks pass
 - `bun run check` - Run Svelte type checking
 - `bun run lint` - Run linting and formatting checks
-- `bun run pre-commit` - Run format, lint, and type check (use before committing)
 - `bun run release:registry` - Publish to JSRepo registry
 
 ## Architecture Overview

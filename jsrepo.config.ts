@@ -72,19 +72,6 @@ export default defineConfig({
 				type: 'utils',
 				add: 'when-needed',
 				files: [{ path: 'src/lib/utils/utils.ts' }]
-			},
-			{
-				name: 'cursor-rules',
-				title: 'Notion Avatar Svelte Cursor Rules',
-				type: 'config',
-				add: 'optionally-on-init',
-				dependencyResolution: 'manual',
-				files: [
-					{
-						path: 'rules/notion-avatar-svelte.mdc',
-						target: './.cursor/rules/notion-avatar-svelte.mdc'
-					}
-				]
 			}
 		]
 	},
