@@ -18,21 +18,6 @@
 			}
 		},
 		{
-			"label": "bun lint-staged",
-			"type": "shell",
-			"command": "bun",
-			"args": ["lint-staged"],
-			"group": {
-				"kind": "test",
-				"isDefault": true
-			},
-			"problemMatcher": ["$eslint-compact", "$tsc"],
-			"detail": "Format, lint, and type check staged files via lint-staged",
-			"presentation": {
-				"clear": true
-			}
-		},
-		{
 			"label": "bun run release:registry",
 			"type": "shell",
 			"command": "bun",
