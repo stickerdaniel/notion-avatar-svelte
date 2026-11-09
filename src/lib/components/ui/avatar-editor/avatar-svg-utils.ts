@@ -2,7 +2,10 @@
  * Options for generating SVG avatars
  */
 export interface SvgGenerationOptions {
-	/** Draws a white outline OUTLINE_WIDTH units wide around the whole avatar. */
+	/**
+	 * Draws a white outline OUTLINE_WIDTH units wide around the whole avatar. The outline parses
+	 * the layers with DOMParser, so generators that include it run in the browser only.
+	 */
 	includeOutlineFilter?: boolean;
 	backgroundColor?: string | null;
 }
