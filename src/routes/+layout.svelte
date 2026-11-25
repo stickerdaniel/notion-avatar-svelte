@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
-	import { ModeWatcher } from 'mode-watcher';
 	import { Toaster } from '$lib/components/ui/sonner';
+	import { theme } from '$lib/theme.svelte';
 
 	import { avatarContext } from '$lib/components/ui/avatar-editor/avatarContext';
 	import { AvatarStoreClass } from '$lib/components/ui/avatar-editor/AvatarStore.svelte';
@@ -11,6 +11,7 @@
 	let { children } = $props();
 
 	avatarContext.set(new AvatarStoreClass());
+	theme.watch();
 </script>
 
 <svelte:head>
@@ -19,7 +20,6 @@
 	{/if}
 </svelte:head>
 
-<ModeWatcher />
 <Toaster />
 
 {@render children()}

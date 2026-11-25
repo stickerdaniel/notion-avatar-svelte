@@ -28,6 +28,16 @@
 			content="Create Notion-style avatars with ease. Use in your own Svelte project as you like!"
 		/>
 		<meta name="twitter:image" content="%sveltekit.assets%/og.png" />
+		<script>
+			{
+				const mode = localStorage.getItem('mode-watcher-mode');
+				const dark =
+					mode === 'dark' ||
+					(mode !== 'light' && !matchMedia('(prefers-color-scheme: light)').matches);
+				document.documentElement.classList.toggle('dark', dark);
+				document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+			}
+		</script>
 		%sveltekit.head%
 	</head>
 
