@@ -47,7 +47,7 @@ export default defineConfig({
 			actions: '$lib/actions',
 			utils: '$lib/utils'
 		},
-		excludeDeps: ['svelte', '@sveltejs/kit'],
+		excludeDeps: ['svelte', '@sveltejs/kit', 'tailwind-variants'],
 		outputs: [repository()],
 		items: [
 			{
