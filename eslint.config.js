@@ -35,7 +35,9 @@ export default defineConfig(
 						create: (context) => ({
 							Program: () => {
 								const { sourceCode } = context;
-								if (!(sourceCode instanceof SourceCode)) return;
+								if (!(sourceCode instanceof SourceCode)) {
+									throw new TypeError('local/no-comments needs an ESLint SourceCode');
+								}
 								for (const comment of sourceCode.getAllComments()) {
 									if (!directive.test(comment.value.trim())) {
 										context.report({ loc: sourceCode.getLoc(comment), messageId: 'comment' });
