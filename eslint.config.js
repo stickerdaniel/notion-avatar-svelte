@@ -10,8 +10,7 @@ import ts from 'typescript-eslint';
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
-const directive =
-	/^(eslint[\s-]|globals?\s|exported\s|@ts-(expect-error|ignore|nocheck|check)\b|\/\s*<reference\s)/;
+const typescriptDirective = /^(@ts-(expect-error|ignore|nocheck|check)\b|\/\s*<reference\s)/;
 
 export default defineConfig(
 	includeIgnoreFile(gitignorePath),
@@ -38,8 +37,12 @@ export default defineConfig(
 								if (!(sourceCode instanceof SourceCode)) {
 									throw new TypeError('local/no-comments needs an ESLint SourceCode');
 								}
+								const eslintDirectives = new Set(sourceCode.getInlineConfigNodes());
 								for (const comment of sourceCode.getAllComments()) {
-									if (!directive.test(comment.value.trim())) {
+									if (
+										!eslintDirectives.has(comment) &&
+										!typescriptDirective.test(comment.value.trim())
+									) {
 										context.report({ loc: sourceCode.getLoc(comment), messageId: 'comment' });
 									}
 								}
