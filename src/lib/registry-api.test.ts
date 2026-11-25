@@ -2,8 +2,7 @@ import type { RadioGroup as RadioGroupPrimitive } from 'bits-ui';
 import type { Context } from 'runed';
 import type { Component } from 'svelte';
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import type { ButtonProps } from '$lib/components/ui/button/index.js';
-import type { ToggleVariants } from '$lib/components/ui/toggle/index.js';
+import type * as EditorIndexTypes from '$lib/components/ui/avatar-editor/index';
 import type AnimatedDiceButton from '$lib/components/ui/avatar-editor/animated-dice-button.svelte';
 import type AvatarEditor from '$lib/components/ui/avatar-editor/avatar-editor.svelte';
 import type CategorySelector from '$lib/components/ui/avatar-editor/category-selector.svelte';
@@ -54,6 +53,12 @@ type ComponentApi<C> =
 		? { props: Props; bindings: Bindings }
 		: never;
 
+type ButtonVariant = 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+
+type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
+
+type ToggleShape = { variant?: 'default' | 'outline'; size?: 'default' | 'sm' | 'lg' };
+
 type Colour = 'rose' | 'pink' | 'purple' | 'blue' | 'teal' | 'green' | 'yellow' | 'orange';
 
 type Items = { [key: string]: number | null };
@@ -93,6 +98,14 @@ describe('registry consumer API', () => {
 			'getPreviewImagePath'
 		]);
 
+		expectTypeOf<EditorIndexTypes.AvatarConfiguration>().toEqualTypeOf<Config>();
+		expectTypeOf<EditorIndexTypes.Category>().toEqualTypeOf<CategoryShape>();
+		expectTypeOf<EditorIndexTypes.SelectedItems>().toEqualTypeOf<Items>();
+		expectTypeOf<EditorIndexTypes.ColorName>().toEqualTypeOf<Colour>();
+		expectTypeOf<EditorIndexTypes.SvgGenerationOptions>().toEqualTypeOf<{
+			includeOutlineFilter?: boolean;
+			backgroundColor?: string | null;
+		}>();
 		expectTypeOf<ComponentApi<typeof AvatarEditor>>().toEqualTypeOf<{
 			props: Record<string, never>;
 			bindings: '';
@@ -100,8 +113,8 @@ describe('registry consumer API', () => {
 		expectTypeOf<ComponentApi<typeof AnimatedDiceButton>>().toEqualTypeOf<{
 			props: {
 				class?: string;
-				variant?: ButtonProps['variant'];
-				size?: ButtonProps['size'];
+				variant?: ButtonVariant;
+				size?: ButtonSize;
 				tooltipText?: string;
 				onDicethrow?: () => void;
 				disabled?: boolean;
@@ -135,11 +148,11 @@ describe('registry consumer API', () => {
 		]);
 
 		expectTypeOf<ComponentApi<typeof RadioToggleGroup>>().toEqualTypeOf<{
-			props: RadioGroupPrimitive.RootProps & ToggleVariants;
+			props: RadioGroupPrimitive.RootProps & ToggleShape;
 			bindings: 'ref' | 'value';
 		}>();
 		expectTypeOf<ComponentApi<typeof RadioToggleGroupItem>>().toEqualTypeOf<{
-			props: RadioGroupPrimitive.ItemProps & ToggleVariants;
+			props: RadioGroupPrimitive.ItemProps & ToggleShape;
 			bindings: 'ref' | 'value';
 		}>();
 	});
@@ -268,8 +281,8 @@ describe('registry consumer API', () => {
 			'setRadioToggleGroupCtx'
 		]);
 
-		expectTypeOf<typeof setRadioToggleGroupCtx>().toEqualTypeOf<(props: ToggleVariants) => void>();
-		expectTypeOf<typeof getRadioToggleGroupCtx>().toEqualTypeOf<() => ToggleVariants>();
+		expectTypeOf<typeof setRadioToggleGroupCtx>().toEqualTypeOf<(props: ToggleShape) => void>();
+		expectTypeOf<typeof getRadioToggleGroupCtx>().toEqualTypeOf<() => ToggleShape>();
 	});
 
 	it('avatar-editor.svelte', () => {
