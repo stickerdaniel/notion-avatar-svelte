@@ -33,9 +33,9 @@
 				'ring-background transform rounded-full ring-2 transition-transform duration-75 ease-in-out',
 				'z-0 active:scale-95',
 				selectedValue === color ? '' : 'hover:scale-105 ',
-				AVATAR_COLOR_STYLES[color as ColorName].base,
-				AVATAR_COLOR_STYLES[color as ColorName].hover,
-				AVATAR_COLOR_STYLES[color as ColorName].selected
+				AVATAR_COLOR_STYLES[color].base,
+				AVATAR_COLOR_STYLES[color].hover,
+				AVATAR_COLOR_STYLES[color].selected
 			)}
 			data-umami-event="color-selected-{color}"
 		>

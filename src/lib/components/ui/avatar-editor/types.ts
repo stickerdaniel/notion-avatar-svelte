@@ -33,16 +33,16 @@ export const DEFAULT_CATEGORIES: Category[] = [
 	{ id: 'beard', name: 'Beard', maxItems: 17 }
 ];
 
-const previewAssets = import.meta.glob('./assets/preview/**/*.svg', {
+const previewAssets = import.meta.glob<string>('./assets/preview/**/*.svg', {
 	query: '?url&no-inline',
 	import: 'default',
 	eager: true
-}) as Record<string, string>;
-const partAssets = import.meta.glob('./assets/part/**/*.svg', {
+});
+const partAssets = import.meta.glob<string>('./assets/part/**/*.svg', {
 	query: '?url&no-inline',
 	import: 'default',
 	eager: true
-}) as Record<string, string>;
+});
 
 export function getPreviewImagePath(category: string, index: number): string {
 	const key = `./assets/preview/${category}/${index}.svg`;

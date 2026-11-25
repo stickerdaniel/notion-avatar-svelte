@@ -89,7 +89,10 @@ async function generateSvgCore(
       </svg>
     `;
 
-	return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`;
+	const utf8 = Array.from(new TextEncoder().encode(svgContent), (byte) =>
+		String.fromCharCode(byte)
+	);
+	return `data:image/svg+xml;base64,${btoa(utf8.join(''))}`;
 }
 
 export async function generateSvgDataUrl(
