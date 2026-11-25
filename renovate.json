@@ -31,6 +31,11 @@
 			"description": "clsx is feature-complete and a dependency of Svelte itself",
 			"matchPackageNames": ["clsx"],
 			"abandonmentThreshold": null
+		},
+		{
+			"description": "Hold tailwind-variants below 4 on the site: version 4 ships its own merge engine beside tailwind-merge and adds 9.3 kB gzip to the initial JS",
+			"matchPackageNames": ["tailwind-variants"],
+			"allowedVersions": "<4"
 		}
 	]
 }

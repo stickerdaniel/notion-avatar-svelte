@@ -60,6 +60,6 @@
 		"@lucide/svelte": "^1.59.0",
 		"runed": "^0.38.0",
 		"tailwind-merge": "^3.3.0",
-		"tailwind-variants": "^4.0.0"
+		"tailwind-variants": "^3.3.1"
 	}
 }
