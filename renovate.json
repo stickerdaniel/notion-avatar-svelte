@@ -21,6 +21,16 @@
 			"matchUpdateTypes": ["major"],
 			"groupName": "all major dependencies",
 			"groupSlug": "all-major"
+		},
+		{
+			"description": "Hold TypeScript below 7 until svelte-check, typescript-eslint and @sveltejs/kit list TypeScript 7 in their peer ranges",
+			"matchPackageNames": ["typescript"],
+			"allowedVersions": "<7"
+		},
+		{
+			"description": "clsx is feature-complete and a dependency of Svelte itself",
+			"matchPackageNames": ["clsx"],
+			"abandonmentThreshold": null
 		}
 	]
 }
