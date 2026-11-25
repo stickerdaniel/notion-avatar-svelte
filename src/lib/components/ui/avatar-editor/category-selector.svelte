@@ -64,8 +64,9 @@
 				<Tabs.Trigger
 					value={category.id}
 					class={`transform transition-transform duration-75 ease-in-out active:scale-95 ${category.id !== activeTab ? 'hover:scale-105' : ''}`}
-					>{category.name}</Tabs.Trigger
 				>
+					{category.name}
+				</Tabs.Trigger>
 			{/each}
 		</Tabs.List>
 

@@ -140,8 +140,8 @@
 					/>
 				</div>
 			</div>
-		</div></Card.Content
-	>
+		</div>
+	</Card.Content>
 	<Card.Footer class="flex justify-end space-x-2 p-4 sm:p-6">
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger class={cn(buttonVariants({ variant: 'ghost' }), 'gap-2')}>
