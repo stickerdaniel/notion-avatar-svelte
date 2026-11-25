@@ -26,6 +26,18 @@ export async function readAvatarSvg(page: Page): Promise<string> {
 	return base64 ? normalizeMarkup(Buffer.from(base64, 'base64').toString('utf8')) : '';
 }
 
+export async function downloadAvatar(
+	page: Page,
+	variant: string
+): Promise<{ filename: string; svg: string }> {
+	const download = page.waitForEvent('download');
+	await page.getByRole('button', { name: 'Download', exact: true }).click();
+	await page.getByRole('menuitem', { name: variant }).click();
+	const file = await download;
+	const svg = normalizeMarkup(readFileSync(await file.path(), 'utf8'));
+	return { filename: file.suggestedFilename(), svg };
+}
+
 export async function uploadConfig(
 	page: Page,
 	config: object,
