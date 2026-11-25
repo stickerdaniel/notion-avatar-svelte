@@ -15,7 +15,6 @@ test.beforeEach(async ({ page }) => {
 const selectHair = (page: Page, index: number) =>
 	page.getByRole('radio', { name: `Select Hair ${index + 1}`, exact: true }).click();
 
-// Waits until the app fetched the layer and holds it, or received the synthesized answer.
 async function expectIntercepted(layer: LayerControl, served: number): Promise<void> {
 	await expect.poll(layer.stats).toEqual({ intercepted: 1, served });
 }
@@ -59,7 +58,6 @@ const brokenLayers = [
 
 test('a layer the server answers with 404 keeps the previous avatar', async ({ page }) => {
 	const before = await readAvatarSvg(page);
-	// Asset names carry a content hash, so the route recognises the layer file by its bytes
 	const layerFile = readFileSync(
 		new URL('../src/lib/components/ui/avatar-editor/assets/preview/hair/1.svg', import.meta.url),
 		'utf8'

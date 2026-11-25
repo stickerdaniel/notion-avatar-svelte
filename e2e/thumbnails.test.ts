@@ -28,7 +28,6 @@ test('every hair thumbnail loads once it scrolls into view', async ({ page }) =>
 	}
 });
 
-// The browser stays in light colour scheme, so the dark case shows thumbnails follow the app's theme
 for (const { theme, filter } of [
 	{ theme: 'Light', filter: 'none' },
 	{ theme: 'Dark', filter: 'invert(1)' }

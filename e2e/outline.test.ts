@@ -2,7 +2,6 @@ import { expect, test, type Page } from '@playwright/test';
 import { layerMarkup, readAvatarSvg } from './avatar';
 import { encodeConfig, seedRawConfig, seededConfig } from './storage';
 
-// The avatar's pixel at (x, y) of its 1080 × 1080 viewBox, drawn at full size, as [r, g, b, a].
 async function avatarPixel(page: Page, x: number, y: number): Promise<number[]> {
 	const src = await page
 		.getByRole('region', { name: 'Avatar Editor' })
@@ -22,7 +21,6 @@ async function avatarPixel(page: Page, x: number, y: number): Promise<number[]> 
 }
 
 test('the avatar has a white outline 20 units wide', async ({ page }) => {
-	// Face 0 alone: on the line y = 619, its black 24-unit stroke ends at x = 784.
 	const items = Object.fromEntries(Object.keys(seededConfig.items).map((id) => [id, null]));
 	await seedRawConfig(page, encodeConfig({ ...seededConfig, items: { ...items, face: 0 } }));
 	await page.goto('/');

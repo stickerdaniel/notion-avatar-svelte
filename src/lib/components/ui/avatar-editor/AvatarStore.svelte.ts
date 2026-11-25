@@ -17,10 +17,8 @@ import {
 import { AvatarConfigValidationError, parseAvatarConfig } from './config';
 import { StateHistory, PersistedState } from 'runed';
 
-// Re-exported so existing imports from this module keep working
 export { AvatarConfigValidationError };
 
-// localStorage key
 const AVATAR_CONFIG_STORAGE_KEY = 'notionAvatarConfig';
 
 export const AVATAR_COLOR_STYLES: Record<
@@ -77,7 +75,6 @@ export const AVATAR_COLOR_STYLES: Record<
 	}
 };
 
-// Map Tailwind base classes from AVATAR_COLOR_STYLES to HEX codes for svg download generation
 const TAILWIND_CLASS_TO_HEX_MAP: Record<string, string> = {
 	'bg-rose-400': '#FB7185',
 	'bg-pink-400': '#F472B6',
@@ -89,24 +86,18 @@ const TAILWIND_CLASS_TO_HEX_MAP: Record<string, string> = {
 	'bg-orange-300': '#FDBA74'
 };
 
-// Interface for the Avatar store
 export interface IAvatar {
-	// Live editing state - parsed from configJSON
 	readonly config: AvatarConfiguration;
 
-	// Derived from live state
 	readonly svgDataUrl: string;
 	readonly bgClass: string;
 
-	// Eventing
 	readonly lastSaveTimestamp: number | null;
 	readonly lastSaveData: AvatarConfiguration | null;
 
-	// History state
 	readonly canUndo: boolean;
 	readonly canRedo: boolean;
 
-	// Actions for modifying state
 	updateConfig: (updater: (config: AvatarConfiguration) => void) => void;
 	generateRandomAvatar: (clearSaveData?: boolean) => void;
 	saveAvatar: () => void;
@@ -120,49 +111,37 @@ export interface IAvatar {
 }
 
 export class AvatarStoreClass implements IAvatar {
-	// --- The single source of truth: config as JSON string, now managed by PersistedState ---
 	private _configPersistedState: PersistedState<string>;
 
-	// Random config created once per store. It seeds empty storage and stands in for an unreadable one.
 	private readonly _fallbackConfigJSON: string;
-	// True while storage holds a config the editor cannot read. Storage stays untouched until the next write.
 	private _usingFallback = $state(false);
 
-	// The effective config JSON that every reader sees: the stored one, or the fallback while it is unreadable
 	get configJSON(): string {
 		if (this._usingFallback) return this._fallbackConfigJSON;
 		return this._readStoredJSON() ?? this._fallbackConfigJSON;
 	}
-	// Setter to allow StateHistory and other methods to update the persisted state
 	set configJSON(value: string) {
 		this._configPersistedState.current = value;
 		this._usingFallback = false;
 	}
 
-	// Parsed version of configJSON
 	config = $derived<AvatarConfiguration>(this._parseConfigJSON());
 
-	// --- Eventing State ---
 	lastSaveTimestamp = $state<number | null>(null);
 	lastSaveData = $state<AvatarConfiguration | null>(null);
 
-	// --- Categories (static) ---
 	readonly categories: Category[] = DEFAULT_CATEGORIES;
 
-	// --- History Tracking ---
 	private _history: StateHistory<string> = null!;
 
-	// Initialize properties with computed getters that depend on _history
 	private _getCanUndo = () => this._history?.canUndo ?? false;
 	private _getCanRedo = () => this._history?.canRedo ?? false;
 
 	canUndo = $derived(this._getCanUndo());
 	canRedo = $derived(this._getCanRedo());
 
-	// --- Derived State Values ---
 	private _avatarLayers = $derived(this._generateLayersFromItems(this.config.items));
 	svgDataUrl = $state('');
-	// Counts avatar render passes; only the newest one may set svgDataUrl
 	private _renderGeneration = 0;
 	bgClass = $derived(
 		AVATAR_COLOR_STYLES[this.config.colorName as ColorName]?.base ||
@@ -177,7 +156,6 @@ export class AvatarStoreClass implements IAvatar {
 			this._fallbackConfigJSON
 		);
 
-		// Checked once, before history starts, so the session never rewrites storage on its own
 		try {
 			parseAvatarConfig(JSON.parse(this._readStoredJSON() ?? ''));
 		} catch (error) {
@@ -195,8 +173,6 @@ export class AvatarStoreClass implements IAvatar {
 			}
 		);
 
-		// Every pass starts a new generation, so a slower earlier render can never overwrite a later
-		// one. A failed render keeps the last good image.
 		$effect(() => {
 			const layers = this._avatarLayers;
 			const generation = ++this._renderGeneration;
@@ -214,10 +190,6 @@ export class AvatarStoreClass implements IAvatar {
 		});
 	}
 
-	/**
-	 * Generates a random set of avatar items and a color name.
-	 * This is the core randomization logic used by both initial generation and user-triggered randomization.
-	 */
 	private _getRandomItemsAndColor(): { items: SelectedItems; colorName: ColorName } {
 		const items: SelectedItems = {};
 		const INCLUDE_GLASSES_PROBABILITY = 0.4;
@@ -228,7 +200,7 @@ export class AvatarStoreClass implements IAvatar {
 				case 'beard':
 				case 'accessories':
 				case 'details':
-					selectedItemIndex = 0; // Default to none for these categories
+					selectedItemIndex = 0;
 					break;
 				case 'glasses':
 					if (Math.random() < INCLUDE_GLASSES_PROBABILITY && category.maxItems > 1) {
@@ -248,65 +220,43 @@ export class AvatarStoreClass implements IAvatar {
 		return { items, colorName };
 	}
 
-	/**
-	 * Creates a new, fully randomized AvatarConfiguration object.
-	 * This is used for the initial state if nothing is in localStorage.
-	 */
 	private _generateInitialRandomConfig(): AvatarConfiguration {
 		const { items, colorName } = this._getRandomItemsAndColor();
 		return {
 			version: 1,
-			username: '', // Initial random avatars can have an empty username
+			username: '',
 			items,
 			colorName,
 			lastModified: new Date().toISOString()
 		};
 	}
 
-	/**
-	 * The stored config as JSON, or undefined when Runed cannot parse the storage entry
-	 */
 	private _readStoredJSON(): string | undefined {
 		const stored: unknown = this._configPersistedState.current;
 		if (stored === undefined) return undefined;
 		return typeof stored === 'string' ? stored : JSON.stringify(stored);
 	}
 
-	/**
-	 * Parse the JSON string to a new AvatarConfiguration object
-	 */
 	private _parseConfigJSON(): AvatarConfiguration {
 		try {
 			return this.validateAndParseConfig(JSON.parse(this.configJSON));
 		} catch (error) {
 			console.error('Error parsing config JSON:', error);
-			// Storage became unreadable after startup, for example through another tab
 			return parseAvatarConfig(JSON.parse(this._fallbackConfigJSON));
 		}
 	}
 
-	/**
-	 * Validate and parse a config object into a new, valid AvatarConfiguration
-	 * @throws AvatarConfigValidationError if validation fails
-	 */
 	validateAndParseConfig(config: unknown): AvatarConfiguration {
 		return parseAvatarConfig(config);
 	}
 
-	/**
-	 * Update the configuration with a callback function
-	 */
 	updateConfig = (updater: (config: AvatarConfiguration) => void): void => {
 		const currentParsedConfig = this._parseConfigJSON();
 		updater(currentParsedConfig);
-		currentParsedConfig.lastModified = new Date().toISOString(); // Centralized timestamp update
-		this.configJSON = JSON.stringify(currentParsedConfig); // Updates PersistedState via setter, StateHistory logs this
+		currentParsedConfig.lastModified = new Date().toISOString();
+		this.configJSON = JSON.stringify(currentParsedConfig);
 	};
 
-	/**
-	 * Generate layer paths from a set of selected items. Unknown assets resolve to '' and are
-	 * dropped, since fetching '' would load the page itself.
-	 */
 	private _generateLayersFromItems(items: SelectedItems | null): string[] {
 		if (!items) return [];
 		return LAYER_ORDER.flatMap((categoryId) => {
@@ -317,73 +267,48 @@ export class AvatarStoreClass implements IAvatar {
 		});
 	}
 
-	/**
-	 * Generate random avatar configuration (affects live editing state only)
-	 */
 	generateRandomAvatar = () => {
 		const { items, colorName } = this._getRandomItemsAndColor();
 		this.updateConfig((config) => {
 			config.items = items;
 			config.colorName = colorName;
-			// username is not changed here, only items and color
 		});
 	};
 
-	/**
-	 * Save the current live editing state to localStorage and update saved state
-	 */
 	saveAvatar = () => {
-		const previewConfig = this._parseConfigJSON(); // This is the live editing state from PersistedState
+		const previewConfig = this._parseConfigJSON();
 		const configToSave = {
 			...previewConfig,
-			lastModified: new Date().toISOString() // re-stamp on save
+			lastModified: new Date().toISOString()
 		};
 
-		// PersistedState handles saving to localStorage automatically when its '.current' is set.		// We just need to ensure our internal representation of "saved" data for eventing is updated.
-		this.configJSON = JSON.stringify(configToSave); // This updates PersistedState & triggers StateHistory.
+		this.configJSON = JSON.stringify(configToSave);
 
-		this.lastSaveData = configToSave; // Update for eventing/UI feedback
-		this.lastSaveTimestamp = Date.now(); // Update for eventing/UI feedback
+		this.lastSaveData = configToSave;
+		this.lastSaveTimestamp = Date.now();
 	};
 
-	/**
-	 * Undo the last change to the avatar
-	 */
 	undo = () => {
-		this._history.undo(); // StateHistory setter changes configJSON, which is logged by StateHistory
+		this._history.undo();
 	};
 
-	/**
-	 * Redo a previously undone change
-	 */
 	redo = () => {
-		this._history.redo(); // StateHistory setter changes configJSON, which is logged by StateHistory
+		this._history.redo();
 	};
 
-	/**
-	 * Import an avatar configuration from an external source into the live editing state.
-	 * @throws AvatarConfigValidationError if the config is invalid or JSON is malformed
-	 */
 	importConfig = (configJsonString: string): void => {
 		let parsedConfig: unknown;
 		try {
 			parsedConfig = JSON.parse(configJsonString);
 		} catch {
-			// If JSON parsing fails, throw a specific error
 			throw new AvatarConfigValidationError('Invalid JSON format');
 		}
 
-		// Will throw AvatarConfigValidationError if validation fails
 		const validConfig = this.validateAndParseConfig(parsedConfig);
 
-		// Update ONLY the live editing state (configJSON drives previewConfig)
-		// History will automatically track this change to configJSON (which updates PersistedState).
 		this.configJSON = JSON.stringify(validConfig);
 	};
 
-	/**
-	 * Downloads the avatar SVG without an outline (completely transparent background)
-	 */
 	downloadAvatarWithoutOutline = async () => {
 		const layers = this._avatarLayers;
 		if (layers.length === 0) {
@@ -403,9 +328,6 @@ export class AvatarStoreClass implements IAvatar {
 		}
 	};
 
-	/**
-	 * Downloads the avatar SVG with outline but transparent background
-	 */
 	downloadAvatarWithOutline = async () => {
 		const layers = this._avatarLayers;
 		if (layers.length === 0) {
@@ -425,9 +347,6 @@ export class AvatarStoreClass implements IAvatar {
 		}
 	};
 
-	/**
-	 * Downloads the avatar SVG with the current background color
-	 */
 	downloadAvatarWithBackground = async () => {
 		const layers = this._avatarLayers;
 		if (layers.length === 0) {
@@ -436,7 +355,6 @@ export class AvatarStoreClass implements IAvatar {
 		}
 
 		try {
-			// Get the hex color for the current color name
 			const colorName = this.config.colorName as ColorName;
 			const tailwindClass =
 				AVATAR_COLOR_STYLES[colorName]?.base || AVATAR_COLOR_STYLES[COLORS[0]].base;
@@ -453,17 +371,10 @@ export class AvatarStoreClass implements IAvatar {
 		}
 	};
 
-	/**
-	 * Helper method to trigger the browser download of an SVG file
-	 * @param svgDataUrl The SVG data URL
-	 * @param filename The name of the file without extension
-	 * @param downloadType The type of download for analytics tracking
-	 */
 	private _downloadSvg(svgDataUrl: string, filename: string, downloadType: string): void {
 		if (typeof window === 'undefined') return;
 
 		try {
-			// Convert data URL to blob
 			const [, base64Data] = svgDataUrl.split(',');
 			const binaryString = atob(base64Data);
 			const bytes = new Uint8Array(binaryString.length);
@@ -478,10 +389,8 @@ export class AvatarStoreClass implements IAvatar {
 			a.href = url;
 			a.download = `${filename}.svg`;
 			a.style.display = 'none';
-			a.target = '_blank'; // Force download behavior
+			a.target = '_blank';
 
-			// Umami analytics data attributes: only the variant and colour, never the username,
-			// filename or config
 			a.setAttribute('data-umami-event', 'avatar-download');
 			a.setAttribute('data-umami-event-type', downloadType);
 			a.setAttribute('data-umami-event-color', this.config.colorName);
@@ -489,7 +398,6 @@ export class AvatarStoreClass implements IAvatar {
 			document.body.appendChild(a);
 			a.click();
 
-			// Clean up - longer delay needed for download to start
 			setTimeout(() => {
 				if (document.body.contains(a)) {
 					document.body.removeChild(a);

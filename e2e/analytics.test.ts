@@ -10,8 +10,6 @@ declare global {
 	}
 }
 
-// Records what Umami would send: `window.umami.track` calls, and the data-umami-* attributes of
-// clicked elements, which Umami's script reads in a capturing document click listener.
 async function recordAnalytics(page: Page): Promise<void> {
 	await page.addInitScript(() => {
 		const events: AnalyticsEvent[] = [];
@@ -51,7 +49,6 @@ test('analytics events carry no username, filename or config', async ({ page }) 
 	await downloadConfig(page);
 	await uploadConfig(page, config, 'ada-secret.json');
 	await expect(page.getByText('Avatar configuration loaded')).toBeVisible();
-	// The validation error quotes the bad value, so it must stay out of the failure event.
 	await uploadConfig(page, { ...config, items: { ...config.items, hair: username } }, 'bad.json');
 	await expect(page.getByText('Invalid avatar configuration')).toBeVisible();
 	for (const variant of [
@@ -62,7 +59,6 @@ test('analytics events carry no username, filename or config', async ({ page }) 
 		await downloadAvatar(page, variant);
 	}
 
-	// Exact payloads, so any extra field, such as the username or a filename, fails the test.
 	const events = await page.evaluate(() => window.analyticsEvents);
 	expect(events).toEqual([
 		{ event: 'config-download', data: {} },

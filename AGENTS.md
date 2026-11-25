@@ -15,6 +15,16 @@ Notion-style avatar editor, also published as the jsrepo registry `@stickerdanie
 
 - `assets/part/` holds the selector thumbnails and `assets/preview/` the layers composed into the avatar. The folder names stay as they are.
 - `AvatarStoreClass` keeps the config as a JSON string in Runed `PersistedState`, which JSON-encodes it again. The `notionAvatarConfig` localStorage entry is therefore double-encoded.
+- `types.ts` imports the SVG assets with `?url&no-inline`, so they stay out of the JS and load only when a thumbnail scrolls into view or a layer is composed.
+- `parseAvatarConfig` copies its input with a JSON round trip, which keeps unknown fields and accepts Svelte state proxies, which `structuredClone` rejects.
+- The outline consists of white vector copies of the layer shapes, not an SVG filter, so it stays sharp at every pixel density, WebKit included.
+- The three generators that draw the outline parse the layers with `DOMParser`, so they run in the browser only.
+- `animated-dice-button.svelte` starts on face 1 and picks a random face only on click, so its prerendered markup matches hydration.
+
+## Demo site
+
+- `code.svelte` imports Shiki and DOMPurify in `onMount`, so neither enters the page's initial JS.
+- The `border-color` rule in `app.css` keeps Tailwind 3's `gray-200` default border. Removing it needs an explicit border colour on every element that relies on the default.
 
 ## End-to-end tests
 

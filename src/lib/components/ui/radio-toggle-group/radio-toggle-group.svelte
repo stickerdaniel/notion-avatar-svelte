@@ -23,7 +23,6 @@
 		...restProps
 	}: RadioGroupPrimitive.RootProps & ToggleVariants = $props();
 
-	// Getters keep items in sync when `variant` or `size` change
 	setRadioToggleGroupCtx({
 		get variant() {
 			return variant;
@@ -34,10 +33,6 @@
 	});
 </script>
 
-<!--
-Discriminated Unions + Destructing (required for bindable) do not
-get along, so we shut typescript up by casting `value` to `never`.
--->
 <RadioGroupPrimitive.Root
 	bind:value={value as never}
 	bind:ref

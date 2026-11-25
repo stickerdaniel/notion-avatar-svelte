@@ -1,9 +1,3 @@
-// src/lib/components/ui/avatar-editor/types.ts
-/**
- * Avatar editor type definitions
- */
-
-// Color Definitions
 export const COLORS = [
 	'rose',
 	'pink',
@@ -16,26 +10,16 @@ export const COLORS = [
 ] as const;
 export type ColorName = (typeof COLORS)[number];
 
-/**
- * Represents a category of customizable avatar parts
- */
 export type Category = {
 	id: string;
 	name: string;
 	maxItems: number;
 };
 
-/**
- * Selected items configuration for the avatar
- * Keys are category IDs, values are the selected item index (or null if none selected)
- */
 export type SelectedItems = {
 	[key: string]: number | null;
 };
 
-/**
- * Default categories for the avatar editor
- */
 export const DEFAULT_CATEGORIES: Category[] = [
 	{ id: 'face', name: 'Face', maxItems: 16 },
 	{ id: 'nose', name: 'Nose', maxItems: 14 },
@@ -49,9 +33,6 @@ export const DEFAULT_CATEGORIES: Category[] = [
 	{ id: 'beard', name: 'Beard', maxItems: 17 }
 ];
 
-// Resolve every asset to a URL up front. `no-inline` keeps the SVGs out of the JS as data URLs,
-// so they are fetched only when a thumbnail scrolls into view or a layer is composed.
-// preview/ holds the layers composed into the avatar, part/ the selector thumbnails.
 const previewAssets = import.meta.glob('./assets/preview/**/*.svg', {
 	query: '?url&no-inline',
 	import: 'default',
@@ -63,10 +44,6 @@ const partAssets = import.meta.glob('./assets/part/**/*.svg', {
 	eager: true
 }) as Record<string, string>;
 
-/**
- * Gets the URL of the layer a category item adds to the composed avatar
- * Note: Uses import.meta.glob for proper Vite asset processing and SSR compatibility
- */
 export function getPreviewImagePath(category: string, index: number): string {
 	const key = `./assets/preview/${category}/${index}.svg`;
 	const url = previewAssets[key];
@@ -77,10 +54,6 @@ export function getPreviewImagePath(category: string, index: number): string {
 	return url;
 }
 
-/**
- * Gets the URL of the thumbnail the category selector shows for an item
- * Note: Uses import.meta.glob for proper Vite asset processing and SSR compatibility
- */
 export function getPartImagePath(category: string, index: number): string {
 	const key = `./assets/part/${category}/${category}-${index}.svg`;
 	const url = partAssets[key];
@@ -91,24 +64,21 @@ export function getPartImagePath(category: string, index: number): string {
 	return url;
 }
 
-/**
- * The order in which to render avatar layers (bottom to top)
- */
 export const LAYER_ORDER: string[] = [
 	'face',
-	'details', // e.g., freckles
+	'details',
 	'mouth',
 	'nose',
 	'eyes',
 	'eyebrows',
 	'beard',
 	'hair',
-	'accessories', // e.g., earrings
+	'accessories',
 	'glasses'
 ];
 
 export interface AvatarConfiguration {
-	version: number; // For potential future migrations
+	version: number;
 	username: string;
 	items: SelectedItems;
 	colorName: ColorName;

@@ -6,7 +6,6 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { cn } from '$lib/utils/utils.js';
 
-	// Props for the button, allowing customization from the parent
 	let {
 		class: className = '',
 		variant = 'default' as ButtonProps['variant'],
@@ -23,10 +22,8 @@
 		disabled?: boolean;
 	} = $props();
 
-	// State for the dice number - start with a consistent value to avoid hydration mismatch
 	let diceNumber = $state(1);
 
-	// Spring store for dice animation - only initialize on client to prevent hydration mismatch
 	const diceTransform = new Spring<{ scale: number; rotate: number }>(
 		{ scale: 1, rotate: 0 },
 		{
@@ -41,7 +38,6 @@
 
 	onMount(() => {
 		mounted = true;
-		// Initialize targetBaseRotation based on the spring's initial state
 		targetBaseRotation = Math.floor(diceTransform.current.rotate / 360) * 360;
 	});
 

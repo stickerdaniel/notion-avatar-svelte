@@ -1,4 +1,3 @@
-// Lives outside avatar-editor/ because jsrepo ships that whole folder to consumers.
 import { describe, expect, it, vi } from 'vitest';
 import {
 	DEFAULT_CATEGORIES,

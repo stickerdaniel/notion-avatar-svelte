@@ -1,4 +1,3 @@
-// Lives outside avatar-editor/ because jsrepo ships that whole folder to consumers.
 import { describe, expect, it } from 'vitest';
 import {
 	AvatarConfigValidationError,

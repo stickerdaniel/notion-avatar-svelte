@@ -1,17 +1,8 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* mode-watcher sets the theme as a class on <html>, so `dark:` follows it instead of the OS setting */
 @custom-variant dark (&:is(.dark *));
 
-/*
- The default border color has changed to `currentcolor` in Tailwind CSS v4,
- so we've added these compatibility styles to make sure everything still
- looks the same as it did with Tailwind CSS v3.
- 
- If we ever want to remove these styles, we need to add an explicit border
- color utility to any element that depends on these defaults.
-*/
 @layer base {
 	*,
 	::after,
@@ -92,13 +83,11 @@
 }
 
 @theme inline {
-	/* Radius (for rounded-*) */
 	--radius-sm: calc(var(--radius) - 4px);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
 	--radius-xl: calc(var(--radius) + 4px);
 
-	/* Colors */
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
 	--color-muted: var(--muted);
@@ -134,7 +123,6 @@
 		@apply border-border;
 
 		::-moz-selection {
-			/* Code for Firefox */
 			background: hsl(53, 98%, 77%) !important;
 		}
 
@@ -142,7 +130,6 @@
 			background: hsl(50, 98%, 64%) !important;
 		}
 
-		/* no selection on images */
 		img {
 			user-select: none;
 		}
