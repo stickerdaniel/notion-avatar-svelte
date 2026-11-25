@@ -20,6 +20,9 @@ Notion-style avatar editor, also published as the jsrepo registry `@stickerdanie
 - The outline consists of white vector copies of the layer shapes, not an SVG filter, so it stays sharp at every pixel density, WebKit included.
 - The three generators that draw the outline parse the layers with `DOMParser`, so they run in the browser only.
 - `animated-dice-button.svelte` starts on face 1 and picks a random face only on click, so its prerendered markup matches hydration.
+- `generateRandomAvatar` changes only the items and the colour; the username stays.
+- The no-outline and outlined downloads keep a transparent background. The background download adds the outline and a rect in the selected colour.
+- `radio-toggle-group.svelte` passes `variant` and `size` to its items through context getters, so items follow later changes of the group's props.
 
 ## Demo site
 
