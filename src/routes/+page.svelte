@@ -259,15 +259,16 @@
 					<Card.Root>
 						<Card.Header>
 							<Card.Title>avatarStore.configJSON</Card.Title>
-							<Card.Description
-								>Core avatar configuration stored as serialized JSON. This data powers the editor
+							<Card.Description>
+								Core avatar configuration stored as serialized JSON. This data powers the editor
 								interface, live previews, and version history. Managed through <a
 									href="https://www.runed.dev/docs/utilities/persisted-state"
 									target="_blank"
 									rel="noopener noreferrer"
 									aria-label="PersistedState documentation - opens in new tab"
-									>PersistedState<span class="sr-only"> (opens in new tab)</span></a
-								> and synced with localStorage.
+								>
+									PersistedState<span class="sr-only"> (opens in new tab)</span>
+								</a> and synced with localStorage.
 							</Card.Description>
 						</Card.Header>
 						<Card.Content>
