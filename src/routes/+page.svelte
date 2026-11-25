@@ -52,9 +52,9 @@
 
 		input.onchange = (e) => {
 			const target = e.target as HTMLInputElement;
-			if (!target.files?.length) return;
+			const file = target.files?.[0];
+			if (!file) return;
 
-			const file = target.files[0];
 			const reader = new FileReader();
 
 			reader.onload = (event) => {
@@ -186,7 +186,7 @@
 					lang="bash"
 					class="!mt-0 mt-2 w-full shadow"
 					hideLines
-					code={`jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor`}
+					code="jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor"
 				/>
 			</section>
 

@@ -95,7 +95,7 @@ export default defineConfig(
 			'@typescript-eslint/no-unused-vars': 'warn',
 			'svelte/no-at-html-tags': 'warn',
 			'svelte/no-navigation-without-resolve': 'off',
-			'svelte/no-useless-mustaches': 'off',
+			'svelte/no-useless-mustaches': ['error', { ignoreStringEscape: true }],
 			'svelte/prefer-svelte-reactivity': 'off'
 		}
 	}

@@ -72,7 +72,9 @@ test('a layer the server answers with 404 keeps the previous avatar', async ({ p
 
 	await selectHair(page, 1);
 	await expect.poll(() => intercepted).toHaveLength(1);
-	expect(new URL(intercepted[0]).pathname).toMatch(/^\/_app\/immutable\/assets\/.+\.svg$/);
+	expect(intercepted.map((url) => new URL(url).pathname)).toEqual([
+		expect.stringMatching(/^\/_app\/immutable\/assets\/.+\.svg$/)
+	]);
 	await settle(page);
 
 	expect(await readAvatarSvg(page)).toBe(before);

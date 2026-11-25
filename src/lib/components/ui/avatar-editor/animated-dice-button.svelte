@@ -22,7 +22,10 @@
 		disabled?: boolean;
 	} = $props();
 
-	let diceNumber = $state(1);
+	const diceIcons = [Dice1, Dice2, Dice3, Dice4, Dice5, Dice6];
+
+	let diceIndex = $state(0);
+	const DiceIcon = $derived(diceIcons[diceIndex]);
 
 	const diceTransform = new Spring<{ scale: number; rotate: number }>(
 		{ scale: 1, rotate: 0 },
@@ -44,7 +47,7 @@
 	async function handleDiceClick() {
 		if (disabled) return;
 		onDicethrow?.();
-		const newDiceNumber = Math.floor(Math.random() * 6) + 1;
+		const newDiceIndex = Math.floor(Math.random() * diceIcons.length);
 
 		if (diceAnimationTimeoutId) {
 			clearTimeout(diceAnimationTimeoutId);
@@ -55,7 +58,7 @@
 		diceTransform.set({ scale: 1.25, rotate: peakRotation });
 
 		diceAnimationTimeoutId = setTimeout(() => {
-			diceNumber = newDiceNumber;
+			diceIndex = newDiceIndex;
 
 			const finalRotation = targetBaseRotation + 360;
 			diceTransform.set({ scale: 1, rotate: finalRotation });
@@ -91,13 +94,7 @@
 					? `transform: scale(${diceTransform.current.scale}) rotate(${diceTransform.current.rotate}deg); transform-origin: center;`
 					: ''}
 			>
-				{#if diceNumber === 1}<Dice1 />
-				{:else if diceNumber === 2}<Dice2 />
-				{:else if diceNumber === 3}<Dice3 />
-				{:else if diceNumber === 4}<Dice4 />
-				{:else if diceNumber === 5}<Dice5 />
-				{:else if diceNumber === 6}<Dice6 />
-				{/if}
+				<DiceIcon />
 			</div>
 		</Tooltip.Trigger>
 		<Tooltip.Content>
