@@ -36,6 +36,11 @@
 			"description": "Hold tailwind-variants below 4 on the site: version 4 ships its own merge engine beside tailwind-merge and adds 9.3 kB gzip to the initial JS",
 			"matchPackageNames": ["tailwind-variants"],
 			"allowedVersions": "<4"
+		},
+		{
+			"description": "Keep the ranges jsrepo publishes for bits-ui and clsx, so consumers on a matching version keep it",
+			"matchPackageNames": ["bits-ui", "clsx"],
+			"rangeStrategy": "update-lockfile"
 		}
 	]
 }

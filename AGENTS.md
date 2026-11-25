@@ -8,6 +8,7 @@ Notion-style avatar editor, also published as the jsrepo registry `@stickerdanie
 - Tests live outside those folders (`src/lib/*.test.ts`, `e2e/`), so they stay out of consumer projects.
 - Shipped files import `$lib/...`, and consumers configure `$lib` themselves. The `$lib` alias in `vite.config.ts` stays despite its SvelteKit 3 deprecation; moving to `#lib` would break every consumer at once.
 - Shipped files call `tailwind-variants` only as `tv({ base, variants, defaultVariants })` and import only `VariantProps`, so they work with 3.x and 4.x. The registry lists it in `excludeDeps`; consumers get it from `shadcn-svelte init`.
+- jsrepo leaves a consumer's package alone only when its range satisfies the published one, so `bits-ui`, `clsx` and `runed` keep ranges, not exact pins. `runed` accepts 0.37 for SvelteKit 2 projects.
 - Bump `registry.version` in `jsrepo.config.ts` before `bun run release:registry`. Version 0.2.0 is already published.
 
 ## Avatar editor
