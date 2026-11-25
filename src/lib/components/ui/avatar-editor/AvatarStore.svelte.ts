@@ -75,15 +75,15 @@ export const AVATAR_COLOR_STYLES: Record<
 	}
 };
 
-const COLOR_HEX: Record<ColorName, string> = {
-	rose: '#FB7185',
-	pink: '#F472B6',
-	purple: '#C084FC',
-	blue: '#60A5FA',
-	teal: '#2DD4BF',
-	green: '#4ADE80',
-	yellow: '#FDE047',
-	orange: '#FDBA74'
+const BASE_CLASS_HEX: Record<string, string> = {
+	'bg-rose-400': '#FB7185',
+	'bg-pink-400': '#F472B6',
+	'bg-purple-400': '#C084FC',
+	'bg-blue-400': '#60A5FA',
+	'bg-teal-400': '#2DD4BF',
+	'bg-green-400': '#4ADE80',
+	'bg-yellow-300': '#FDE047',
+	'bg-orange-300': '#FDBA74'
 };
 
 export interface IAvatar {
@@ -311,7 +311,7 @@ export class AvatarStoreClass implements IAvatar {
 
 	downloadAvatarWithBackground = () =>
 		this._downloadAvatar('with-bg', 'with-background', (layers) =>
-			generateSvgWithColoredBackgroundDataUrl(layers, COLOR_HEX[this.config.colorName])
+			generateSvgWithColoredBackgroundDataUrl(layers, BASE_CLASS_HEX[this.bgClass] ?? '#FFFFFF')
 		);
 
 	private async _downloadAvatar(
