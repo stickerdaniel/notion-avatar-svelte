@@ -27,8 +27,6 @@ bun run dev
 bun run dev -- --open
 ```
 
-In VS Code, press `Cmd+Shift+B` (macOS) or `Ctrl+Shift+B` (Windows/Linux) to run the default build task, which starts the server and opens it in a browser.
-
 ## Scripts
 
 Run each with `bun run <script>`.
@@ -57,14 +55,14 @@ PLAYWRIGHT_PORT=4180 bun run test:e2e
 
 ## Deploy
 
-The site is fully prerendered and deploys to Cloudflare Pages, configured in `wrangler.jsonc`. Pushes to `main` run the [CI workflow](.github/workflows/ci.yml), which deploys the newest `main` commit to production once its checks pass. `static/_headers` sets long-lived caching for hashed assets and denies framing on Cloudflare Pages. To deploy manually:
+The site is fully prerendered and deploys to Cloudflare Pages, configured in `wrangler.jsonc`. Pushes to `main` run the [CI workflow](workflows/ci.yml), which deploys the newest `main` commit to production once its checks pass. `static/_headers` sets long-lived caching for hashed assets and denies framing on Cloudflare Pages. To deploy manually:
 
 ```bash
 bunx wrangler login
 bun run deploy
 ```
 
-Umami analytics is optional. To enable it, set `PUBLIC_UMAMI_SRC` and `PUBLIC_UMAMI_WEBSITE_ID` (see `.env.example`) when building; without both, the build has no analytics script. CI builds without them.
+Umami analytics is optional. To enable it, set `PUBLIC_UMAMI_SRC` and `PUBLIC_UMAMI_WEBSITE_ID` (declared in `src/env.ts`) when building; without both, the build has no analytics script. CI builds without them.
 
 ## Before You Commit
 

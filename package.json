@@ -61,5 +61,23 @@
 		"runed": "^0.37.0 || ^0.38.0",
 		"tailwind-merge": "^3.3.0",
 		"tailwind-variants": "^3.3.1"
+	},
+	"prettier": {
+		"useTabs": true,
+		"singleQuote": true,
+		"trailingComma": "none",
+		"printWidth": 100,
+		"plugins": [
+			"prettier-plugin-svelte",
+			"prettier-plugin-tailwindcss"
+		],
+		"overrides": [
+			{
+				"files": "*.svelte",
+				"options": {
+					"parser": "svelte"
+				}
+			}
+		]
 	}
 }

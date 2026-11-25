@@ -112,7 +112,7 @@ To add new avatar parts:
 
 ## Contributing
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup, scripts and tests.
+Contributions are welcome! See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for local setup, scripts and tests.
 
 ## License
 
