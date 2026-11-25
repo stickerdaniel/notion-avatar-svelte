@@ -55,7 +55,7 @@ PLAYWRIGHT_PORT=4180 bun run test:e2e
 
 ## Deploy
 
-The site is fully prerendered and deploys to Cloudflare Pages, configured in `wrangler.jsonc`. Pushes to `main` run the [CI workflow](workflows/ci.yml), which deploys the newest `main` commit to production once its checks pass. `static/_headers` sets long-lived caching for hashed assets and denies framing on Cloudflare Pages. To deploy manually:
+The site is fully prerendered and deploys to the Cloudflare Pages project `notion-avatar-svelte`. Pushes to `main` run the [CI workflow](workflows/ci.yml), which deploys the newest `main` commit to production once its checks pass. `static/_headers` sets long-lived caching for hashed assets and denies framing on Cloudflare Pages. To deploy manually:
 
 ```bash
 bunx wrangler login

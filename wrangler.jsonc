@@ -1,7 +1,0 @@
-{
-	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "notion-avatar-svelte",
-	"compatibility_date": "2026-10-18",
-	// Cloudflare Pages project; it serves build/404.html with status 404 for unknown paths
-	"pages_build_output_dir": "./build"
-}
