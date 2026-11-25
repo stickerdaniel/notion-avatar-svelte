@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Notion-style avatar editor, also published as the jsrepo registry `@stickerdaniel/notion-avatar-svelte`. Scripts, tests and the pre-commit checks are in `package.json` and `CONTRIBUTING.md`.
+Notion-style avatar editor, also published as the jsrepo registry `@stickerdaniel/notion-avatar-svelte`. Scripts, tests and the pre-commit checks are in `package.json` and `.github/CONTRIBUTING.md`.
 
 ## Registry contract
 
