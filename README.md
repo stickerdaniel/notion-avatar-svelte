@@ -24,15 +24,12 @@ https://avatar.daniel.sticker.name/
 
 ## Quick Start with jsrepo
 
-The easiest way to add the Notion Avatar Editor to your Svelte 5 project:
-
 ### Prerequisites
 
-- Svelte 5 project
-- A `$lib` alias pointing at `src/lib`. SvelteKit 3 no longer creates it, so add `alias: { $lib: 'src/lib' }` to the `sveltekit()` options in `vite.config.ts`
-- `tailwind-variants` 3 or 4. `shadcn-svelte init` installs it; in a project without it, run `bun add -D tailwind-variants`
-- SvelteKit 3. In a SvelteKit 2 project, run `bun add runed@^0.37.1` before `jsrepo add`
-- [bun](https://bun.sh/) (recommended, this guide uses [bun](https://bun.sh/) but you can use npm or pnpm if you prefer)
+- A Svelte 5 project on SvelteKit 3. On SvelteKit 2, run `bun add runed@^0.37.1` before `jsrepo add`.
+- On SvelteKit 3, add `alias: { $lib: 'src/lib' }` to the `sveltekit()` options in `vite.config.ts`.
+- Install `tailwind-variants`: `shadcn-svelte init` does it, or run `bun add -D tailwind-variants`.
+- Use [bun](https://bun.sh/), or swap in npm or pnpm in the commands below.
 
 ### Installation
 
@@ -47,16 +44,10 @@ bunx shadcn-svelte@latest init
 jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor
 ```
 
-### Upgrading from 0.2.0
+### Upgrading
 
-Run `jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor --overwrite`. jsrepo keeps a package entry only when the same section of your `package.json` holds an exact version or a `^` range that satisfies the registry's range; otherwise it installs the registry's range. Version 0.3.0 changes these ranges:
-
-- The registry no longer installs `tailwind-variants` or `mode-watcher`. 0.2.0 asked for `tailwind-variants@^3.0.0` in `dependencies` and `mode-watcher@1.1.0` in `devDependencies`.
-- `bits-ui` (`^2.22.0`) and `clsx` (`^2.1.1`) are ranges in `devDependencies`; 0.2.0 pinned `2.19.5` and `2.1.1`.
-- `runed` accepts `^0.37.0 || ^0.38.0` in `dependencies`, so a SvelteKit 2 project with `runed@^0.37.1` there keeps 0.37.
-- The `cursor-rules` item is gone. A `notion-avatar-svelte.mdc` file that 0.2.0 added stays in your project.
-
-The editor also validates stored and imported configs in the new file `avatar-editor/config.ts`, loads avatar assets on demand, and draws a sharp outline on iOS.
+1. Run `jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor --overwrite`.
+2. Coming from 0.2.0: delete `notion-avatar-svelte.mdc`, and run `bun remove mode-watcher` if nothing else imports it.
 
 ### Usage
 
@@ -71,8 +62,6 @@ add to your `+layout.svelte`:
 
 	let { children } = $props();
 
-	// Instantiate and set the AvatarStore in the context
-	// This makes it available to all child components within this layout.
 	avatarContext.set(new AvatarStoreClass());
 </script>
 
@@ -95,7 +84,6 @@ You can access the avatar context in any component:
 <script lang="ts">
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { avatarContext } from '$lib/components/ui/avatar-editor/avatarContext';
-	// Get the shared avatar store
 	const avatar = avatarContext.get();
 </script>
 
@@ -110,14 +98,10 @@ You can access the avatar context in any component:
 
 ### Theming
 
-The project uses Tailwind CSS with customizable themes via shadcn-svelte:
-
 1. Visit [shadcn-svelte themes](https://shadcn-svelte.com/themes) to explore and customize the color palette
 2. Edit the `src/app.css` file to apply your custom theme variables
 
 ### Adding New Avatar Parts
-
-To add new avatar parts:
 
 1. Add the selector thumbnail to `src/lib/components/ui/avatar-editor/assets/part/[category]/[category]-[index].svg`
 2. Add the layer composed into the avatar to `src/lib/components/ui/avatar-editor/assets/preview/[category]/[index].svg`
