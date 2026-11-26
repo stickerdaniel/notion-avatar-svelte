@@ -26,8 +26,8 @@ https://avatar.daniel.sticker.name/
 
 ### Prerequisites
 
-- A Svelte 5 project on SvelteKit 3. On SvelteKit 2, run `bun add runed@^0.37.1` before `jsrepo add`.
-- On SvelteKit 3, add `alias: { $lib: 'src/lib' }` to the `sveltekit()` options in `vite.config.ts`.
+- A Svelte 5 project on SvelteKit 3.
+- Add `alias: { $lib: 'src/lib' }` to the `sveltekit()` options in `vite.config.ts`.
 - Install `tailwind-variants`: `shadcn-svelte init` does it, or run `bun add -D tailwind-variants`.
 - Use [bun](https://bun.sh/), or swap in npm or pnpm in the commands below.
 
@@ -46,8 +46,9 @@ jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor
 
 ### Upgrading
 
-1. Run `jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor --overwrite`.
-2. Coming from 0.2.0: delete `notion-avatar-svelte.mdc`, and run `bun remove mode-watcher` if nothing else imports it.
+1. Update to SvelteKit 3 and add the `$lib` alias (see Prerequisites).
+2. Run `jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor --overwrite`.
+3. Coming from 0.2.0: delete `notion-avatar-svelte.mdc`, and run `bun remove mode-watcher` if nothing else imports it.
 
 ### Usage
 

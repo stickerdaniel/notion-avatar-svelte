@@ -5,9 +5,9 @@
     "": {
       "name": "notion-avatar-svelte",
       "dependencies": {
-        "@lucide/svelte": "^1.59.0",
-        "runed": "^0.37.0 || ^0.38.0",
-        "tailwind-merge": "^3.3.0",
+        "@lucide/svelte": "^1.80.0",
+        "runed": "^0.38.0",
+        "tailwind-merge": "^3.7.1",
         "tailwind-variants": "^4.0.2",
       },
       "devDependencies": {

@@ -23,7 +23,7 @@
 			"groupSlug": "all-major"
 		},
 		{
-			"description": "Hold TypeScript below 7 until svelte-check, typescript-eslint and @sveltejs/kit list TypeScript 7 in their peer ranges",
+			"description": "Hold TypeScript below 7: typescript-eslint rejects it (typescript-eslint#10940), SvelteKit needs its compiler API, and svelte-check --tsgo misses parse errors (sveltejs/language-tools#3185). Remove this rule once a fresh install with typescript 7 passes check, lint and build",
 			"matchPackageNames": ["typescript"],
 			"allowedVersions": "<7"
 		},
@@ -33,9 +33,11 @@
 			"abandonmentThreshold": null
 		},
 		{
-			"description": "Keep the ranges jsrepo publishes for bits-ui and clsx, so consumers on a matching version keep it",
-			"matchPackageNames": ["bits-ui", "clsx"],
-			"rangeStrategy": "update-lockfile"
+			"description": "Registry dependencies: raise the published range to the newest version and wait for a registry.version bump in the same PR",
+			"matchPackageNames": ["runed", "@lucide/svelte", "tailwind-merge", "bits-ui", "clsx"],
+			"rangeStrategy": "bump",
+			"automerge": false,
+			"groupName": "registry dependencies"
 		}
 	]
 }
