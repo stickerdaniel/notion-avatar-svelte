@@ -2,7 +2,6 @@ import { defineConfig, type RegistryItem } from 'jsrepo';
 import { repository } from 'jsrepo/outputs';
 import prettier from '@jsrepo/transform-prettier';
 
-// shadcn-svelte components the listed items import. Installed only as their dependencies.
 const uiDependencies = [
 	'avatar',
 	'button',
@@ -17,7 +16,6 @@ const uiDependencies = [
 ];
 
 export default defineConfig({
-	// Registry published to jsrepo.com as @stickerdaniel/notion-avatar-svelte
 	registry: {
 		name: '@stickerdaniel/notion-avatar-svelte',
 		version: '0.2.0',
@@ -53,7 +51,6 @@ export default defineConfig({
 			{
 				name: 'avatar-editor',
 				type: 'ui',
-				// The whole folder, so the sources and every SVG under assets/ ship together
 				files: [{ path: 'src/lib/components/ui/avatar-editor' }]
 			},
 			{
@@ -75,7 +72,6 @@ export default defineConfig({
 			}
 		]
 	},
-	// Settings for adding items from other registries to this app
 	registries: ['@ieedan/shadcn-svelte-extras'],
 	paths: {
 		'*': './src/lib/components',

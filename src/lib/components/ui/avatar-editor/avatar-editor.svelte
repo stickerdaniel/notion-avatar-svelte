@@ -1,4 +1,3 @@
-<!-- src/lib/components/ui/avatar-editor/avatar-editor.svelte -->
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -21,13 +20,11 @@
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils/utils.js';
 
-	// Get the Avatar store instance from context
 	const avatarStore = avatarContext.get();
 
 	const categories: Category[] = DEFAULT_CATEGORIES;
-	let activeTab = $state(categories[0]?.id ?? ''); // For CategorySelector UI
+	let activeTab = $state(categories[0]?.id ?? '');
 
-	// Event handler for username input
 	function handleUsernameInput(event: Event) {
 		const newUsername = (event.currentTarget as HTMLInputElement).value;
 		avatarStore.updateConfig((config: AvatarConfiguration) => {
@@ -35,14 +32,12 @@
 		});
 	}
 
-	// Event handler for color selection
 	function handleColorSelect(color: ColorName) {
 		avatarStore.updateConfig((config: AvatarConfiguration) => {
 			config.colorName = color;
 		});
 	}
 
-	// Event handler for item selection in CategorySelector
 	function handleItemSelect(categoryId: string, itemIndex: number) {
 		avatarStore.updateConfig((config: AvatarConfiguration) => {
 			config.items[categoryId] = itemIndex;

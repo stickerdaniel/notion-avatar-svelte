@@ -1,4 +1,3 @@
-// Follows the best practices established in https://shiki.matsu.io/guide/best-performance
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 import { createHighlighterCore } from 'shiki/core';
 
@@ -11,10 +10,8 @@ const bundledLanguages = {
 	typescript: () => import('@shikijs/langs/typescript')
 };
 
-/** The languages configured for the highlighter */
 export type SupportedLanguage = keyof typeof bundledLanguages;
 
-/** A preloaded highlighter instance. */
 export const highlighter = createHighlighterCore({
 	themes: [
 		import('@shikijs/themes/github-light-default'),

@@ -1,6 +1,7 @@
 import prettier from 'eslint-config-prettier';
 import js from '@eslint/js';
 import { includeIgnoreFile } from '@eslint/compat';
+import { SourceCode } from 'eslint';
 import { defineConfig } from 'eslint/config';
 import svelte from 'eslint-plugin-svelte';
 import globals from 'globals';
@@ -8,6 +9,11 @@ import { fileURLToPath } from 'node:url';
 import ts from 'typescript-eslint';
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
+
+const typescriptDirective = /^(@ts-(expect-error|ignore|nocheck|check)\b|\/\s*<reference\s)/;
+const lineDirective = /^eslint-disable(-next)?-line(\s|$)/;
+const blockDirective =
+	/^(eslint|eslint-disable(-(next-)?line)?|eslint-enable|exported|globals?)(\s|$)/;
 
 export default defineConfig(
 	includeIgnoreFile(gitignorePath),
@@ -17,11 +23,52 @@ export default defineConfig(
 	prettier,
 	svelte.configs['flat/prettier'],
 	{
+		plugins: {
+			local: {
+				rules: {
+					'no-comments': {
+						meta: {
+							type: 'suggestion',
+							schema: [],
+							messages: {
+								comment: 'Code carries no comments; only ESLint and TypeScript directives stay.'
+							}
+						},
+						create: (context) => ({
+							Program: () => {
+								const { sourceCode } = context;
+								if (!(sourceCode instanceof SourceCode)) {
+									throw new TypeError('local/no-comments needs an ESLint SourceCode');
+								}
+								for (const comment of sourceCode.getAllComments()) {
+									if (
+										!(comment.type === 'Line' ? lineDirective : blockDirective).test(
+											comment.value.trim()
+										) &&
+										!typescriptDirective.test(comment.value.trim())
+									) {
+										context.report({ loc: sourceCode.getLoc(comment), messageId: 'comment' });
+									}
+								}
+							}
+						})
+					}
+				}
+			}
+		},
 		languageOptions: {
 			globals: { ...globals.browser, ...globals.node }
 		},
 		rules: {
 			'no-undef': 'off',
+			'local/no-comments': 'error',
+			'no-restricted-syntax': [
+				'error',
+				{
+					selector: 'SvelteHTMLComment:not([value=/^\\s*eslint-/])',
+					message: 'Markup carries no comments; only ESLint directives stay.'
+				}
+			],
 			'@typescript-eslint/no-unused-vars': [
 				'warn',
 				{

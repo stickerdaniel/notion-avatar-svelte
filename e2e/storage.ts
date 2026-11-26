@@ -23,12 +23,10 @@ export const seededConfig = {
 
 export type StoredConfig = typeof seededConfig;
 
-// Runed's PersistedState JSON-encodes the store's config string, so storage holds it twice encoded.
 export function encodeConfig(config: object): string {
 	return JSON.stringify(JSON.stringify(config));
 }
 
-// Init scripts run on every navigation, so seed only once and let reloads keep the stored state.
 export async function seedRawConfig(page: Page, raw: string): Promise<void> {
 	await page.addInitScript(
 		([key, value]) => {

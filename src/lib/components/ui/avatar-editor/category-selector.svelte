@@ -19,7 +19,6 @@
 		onItemSelect: (categoryId: string, itemIndex: number) => void;
 	} = $props();
 
-	// Open the first category once on creation; the tabs own `activeTab` afterwards
 	untrack(() => {
 		if (!activeTab && categories.length > 0) {
 			activeTab = categories[0].id;
@@ -41,7 +40,6 @@
 </script>
 
 <Tabs.Root bind:value={activeTab} class="flex items-start gap-2">
-	<!-- Tab list with scroll buttons -->
 	<div class="flex h-fit flex-col gap-2">
 		<Button
 			class="w-full transform transition-transform duration-75 ease-in-out active:scale-95"
@@ -58,7 +56,6 @@
 			</div>
 		</Button>
 
-		<!-- Tab list -->
 		<Tabs.List class="h-fit flex-col items-stretch">
 			{#each categories as category (category.id)}
 				<Tabs.Trigger
@@ -86,10 +83,8 @@
 		</Button>
 	</div>
 
-	<!-- Tab content -->
 	{#each categories as category (category.id)}
 		{@const selectedIndex = currentSelectedItems[category.id]}
-		<!-- A null item selects no radio; bits-ui treats '' as an empty group -->
 		{@const selectedValue = selectedIndex === null ? '' : String(selectedIndex)}
 		<Tabs.Content value={category.id} class="mt-0 h-fit lg:w-[12.2rem]">
 			<ScrollArea class="h-104 w-full rounded-md border">

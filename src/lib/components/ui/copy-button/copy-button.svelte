@@ -6,7 +6,6 @@
 	import type { Snippet } from 'svelte';
 	import { scale } from 'svelte/transition';
 
-	// omit href so you can't create a link
 	interface Props extends Omit<ButtonProps, 'href'> {
 		text: string;
 		icon?: Snippet<[]>;
@@ -26,7 +25,6 @@
 		...rest
 	}: Props = $props();
 
-	// this way if the user passes text then the button will be the default size
 	const buttonSize = $derived(size === 'icon' && children ? 'default' : size);
 
 	const clipboard = new UseClipboard();

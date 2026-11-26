@@ -1,7 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// Set PLAYWRIGHT_PORT to run several checkouts at once; --strictPort makes a taken port fail
-// loudly instead of testing another checkout's server.
 const port = Number(process.env.PLAYWRIGHT_PORT ?? 4173);
 const baseURL = `http://127.0.0.1:${port}`;
 

@@ -13,7 +13,6 @@
 		onColorSelect: (color: ColorName) => void;
 	} = $props();
 
-	// bits-ui reports plain strings; only known colours reach the store
 	function handleValueChange(value: string) {
 		const color = COLORS.find((candidate) => candidate === value);
 		if (color) onColorSelect(color);

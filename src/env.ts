@@ -1,8 +1,5 @@
 import { defineEnvVars } from '@sveltejs/kit/env';
 
-// Public build-time env vars that add the Umami script in +layout.svelte.
-// Both are optional; Umami stays disabled unless both are set. `static` inlines them at build
-// time, which fits the prerendered site and avoids fetching a runtime env module.
 const optional = (value: string | undefined) => value ?? '';
 
 export const variables = defineEnvVars({

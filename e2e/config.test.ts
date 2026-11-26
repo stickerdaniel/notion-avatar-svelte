@@ -18,14 +18,12 @@ import {
 
 const editor = (page: Page) => page.getByRole('region', { name: 'Avatar Editor' });
 
-// Collects uncaught page errors, so a test can assert that none happened.
 function trackPageErrors(page: Page): Error[] {
 	const errors: Error[] = [];
 	page.on('pageerror', (error) => errors.push(error));
 	return errors;
 }
 
-// Waits until the avatar shows the face and hair layers the config selects.
 async function expectAvatarOf(page: Page, config: StoredConfig): Promise<void> {
 	const face = layerMarkup('face', config.items.face);
 	const hair = layerMarkup('hair', config.items.hair);
@@ -112,7 +110,6 @@ for (const { name, raw } of corruptedStorage) {
 			expect(await readRawConfig(page)).toBe(raw);
 		}
 
-		// Pick a hair other than the random one, so the click is always an edit
 		const shown = (await readPreviewConfig(page)) as StoredConfig;
 		const hair = ((shown.items.hair ?? 0) + 1) % 59;
 		await page.getByRole('tab', { name: 'Hair' }).click();
@@ -124,7 +121,6 @@ for (const { name, raw } of corruptedStorage) {
 		expect(await readPreviewConfig(page)).toEqual(stored);
 		await expectAvatarOf(page, stored);
 
-		// Only a valid stored config survives a reload instead of a new random fallback
 		await page.reload();
 		expect(await readPreviewConfig(page)).toEqual(stored);
 		await expectAvatarOf(page, stored);

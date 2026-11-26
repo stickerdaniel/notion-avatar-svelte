@@ -66,7 +66,6 @@
 	let hl = $state<HighlighterCore>();
 	let sanitize: ((html: string) => string) | undefined = $state();
 
-	// Sanitised Shiki markup, or undefined until both the highlighter and DOMPurify have loaded
 	const highlighted = $derived(
 		hl &&
 			sanitize?.(
@@ -100,7 +99,6 @@
 			)
 	);
 
-	// Shiki loads on mount, so its engine stays out of the page's initial JS
 	onMount(async () => {
 		const [highlighterMod, DOMPurify] = await Promise.all([
 			import('./shiki').then((shiki) => shiki.highlighter),
@@ -116,7 +114,6 @@
 		<!-- eslint-disable-next-line svelte/no-at-html-tags -- Shiki escapes the code and DOMPurify sanitises its output -->
 		{@html highlighted}
 	{:else}
-		<!-- Plain text in Shiki's structure, so user text never reaches {@html} and the layout does not jump -->
 		<pre class={cn('shiki', !hideLines && 'line-numbers')}><code
 				>{#each code.split('\n') as line, index (index)}{#if index > 0}{'\n'}{/if}<span class="line"
 						>{line}</span
@@ -147,7 +144,6 @@
 		}
 	}
 
-	/* Shiki see: https://shiki.matsu.io/guide/dual-themes#class-based-dark-mode */
 	:global(html.dark .shiki, html.dark .shiki span) {
 		color: var(--shiki-dark) !important;
 		font-style: var(--shiki-dark-font-style) !important;
@@ -158,8 +154,8 @@
 	:global(pre.shiki) {
 		@apply overflow-auto rounded-lg bg-inherit py-4 text-sm;
 		max-height: min(100%, 650px);
-		-ms-overflow-style: none; /* IE and Edge */
-		scrollbar-width: none; /* Firefox */
+		-ms-overflow-style: none;
+		scrollbar-width: none;
 	}
 
 	:global(pre.shiki::-webkit-scrollbar) {

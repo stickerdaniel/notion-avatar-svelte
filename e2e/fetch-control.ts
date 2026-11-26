@@ -1,15 +1,11 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import type { Page } from '@playwright/test';
 
-// hold: answer only after release(). fail: answer the layer's own SVG with HTTP 404.
-// malformed: answer 200 without an <svg>. html: answer 200 with an HTML page that embeds an <svg>.
 type LayerAction = 'hold' | 'fail' | 'malformed' | 'html';
 
 type LayerRule = {
 	action: LayerAction;
-	// Every fetch argument whose response carried the layer, as a URL string
 	urls: string[];
-	// Responses handed back to the app, after any hold
 	served: number;
 	released: Promise<void>;
 	release: () => void;
@@ -29,8 +25,6 @@ const previewDir = new URL(
 	import.meta.url
 );
 
-// The <title> of a layer's SVG. Layer URLs carry a content hash, so the wrapper recognises
-// a layer by this marker in the response body rather than by its URL.
 function layerTitle(category: string, index: number): string {
 	const read = (file: string) => readFileSync(new URL(file, previewDir), 'utf8');
 	const title = read(`${category}/${index}.svg`).match(/<title>[^<]*<\/title>/)?.[0];
@@ -41,7 +35,6 @@ function layerTitle(category: string, index: number): string {
 	return title;
 }
 
-// Wraps window.fetch before the app loads, so tests can hold or break single avatar layers.
 export async function installFetchControl(page: Page): Promise<void> {
 	await page.addInitScript(() => {
 		const realFetch = window.fetch.bind(window);
@@ -84,12 +77,10 @@ export async function installFetchControl(page: Page): Promise<void> {
 }
 
 export type LayerControl = {
-	// How often the app fetched the layer, and how many answers it received
 	stats: () => Promise<{ intercepted: number; served: number }>;
 	release: () => Promise<void>;
 };
 
-// Applies `action` to every later fetch whose response is the given avatar layer.
 export async function controlLayer(
 	page: Page,
 	category: string,
@@ -115,7 +106,6 @@ export async function controlLayer(
 	};
 }
 
-// Lets the app finish handling the answers it already received, including two rendered frames.
 export async function settle(page: Page): Promise<void> {
 	await page.evaluate(
 		() =>

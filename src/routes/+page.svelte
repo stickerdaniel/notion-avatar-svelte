@@ -1,11 +1,9 @@
-<!-- src/routes/+page.svelte -->
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
 	import { Download, Redo, SquareArrowOutUpRight, Undo, Upload } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { AvatarConfigValidationError } from '$lib/components/ui/avatar-editor/AvatarStore.svelte';
 
-	// Import the new Avatar components and the context
 	import * as Avatar from '$lib/components/ui/avatar';
 	import * as Card from '$lib/components/ui/card';
 	import { avatarContext } from '$lib/components/ui/avatar-editor/avatarContext';
@@ -18,13 +16,11 @@
 
 	const avatarStore = avatarContext.get();
 
-	// Download avatar config as JSON file
 	const downloadConfig = () => {
 		const config = avatarStore.configJSON;
 		const blob = new Blob([config], { type: 'application/json' });
 		const url = URL.createObjectURL(blob);
 
-		// Get username from config and sanitize it for filename
 		const configObj = JSON.parse(config);
 		const username = configObj.username?.trim() || 'user';
 		const sanitizedUsername = username.replace(/[^a-z0-9]/gi, '-').toLowerCase();
@@ -36,22 +32,18 @@
 		document.body.appendChild(a);
 		a.click();
 
-		// Clean up
 		setTimeout(() => {
 			document.body.removeChild(a);
 			URL.revokeObjectURL(url);
 		}, 0);
 
-		// Analytics get the event alone; the filename and config carry the username
 		window.umami?.track('config-download');
 
-		// Show success toast
 		toast.success('Avatar configuration downloaded', {
 			description: `${sanitizedUsername}-notion-avatar-config.json`
 		});
 	};
 
-	// Upload avatar config from JSON file
 	const uploadConfig = () => {
 		const input = document.createElement('input');
 		input.type = 'file';
@@ -69,12 +61,10 @@
 				try {
 					const content = event.target?.result as string;
 
-					// Pass the JSON string to the store's importConfig method to validate and parse
 					avatarStore.importConfig(content);
 
 					window.umami?.track('config-uploaded', { success: true });
 
-					// Show success toast
 					toast.success('Avatar configuration loaded', {
 						description: file.name
 					});
@@ -84,7 +74,6 @@
 						errorMessage = error.message;
 					}
 
-					// No error text: validation messages can quote values from the uploaded file
 					window.umami?.track('config-uploaded', { success: false });
 
 					toast.error('Invalid avatar configuration', {
@@ -114,7 +103,6 @@
 				<div class="flex flex-row justify-between">
 					<nav aria-label="External links and resources" class="flex flex-col gap-2 sm:flex-row">
 						<div class="flex gap-2">
-							<!-- GitHub repo link -->
 							<Badge
 								href="https://github.com/stickerdaniel/notion-avatar-svelte"
 								variant="secondary"
@@ -124,7 +112,6 @@
 								class="flex w-fit place-items-center gap-2 rounded-md"
 							>
 								<span class="font-semibold">Star on GitHub!</span>
-								<!-- GitHub mark (Lucide v1 dropped brand icons) -->
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									viewBox="0 0 24 24"
@@ -143,7 +130,6 @@
 								</svg>
 								<span class="sr-only">(opens in new tab)</span>
 							</Badge>
-							<!-- Link to the original project below -->
 							<Badge
 								href="https://github.com/Mayandev/notion-avatar"
 								variant="secondary"
@@ -157,10 +143,8 @@
 								<span class="sr-only">(opens in new tab)</span>
 							</Badge>
 						</div>
-						<!-- Divider only if larger than sm -->
 						<Separator orientation="vertical" class="hidden md:block" aria-hidden="true" />
 						<div class="flex gap-2">
-							<!-- Link to runed -->
 							<Badge
 								href="https://runed.dev"
 								variant="secondary"
@@ -173,7 +157,6 @@
 								<SquareArrowOutUpRight class="size-3.5" aria-hidden="true" />
 								<span class="sr-only">(opens in new tab)</span>
 							</Badge>
-							<!-- link to next.shadcn-svelte 	-->
 							<Badge
 								href="https://next.shadcn-svelte.com"
 								variant="secondary"
@@ -188,7 +171,6 @@
 							</Badge>
 						</div>
 					</nav>
-					<!-- Theme Selector -->
 					<ThemeSelector variant="ghost" />
 				</div>
 			</header>
@@ -212,7 +194,6 @@
 				<section aria-labelledby="examples-heading" class="flex flex-col gap-4">
 					<h2 id="examples-heading" class="sr-only">Usage Examples</h2>
 
-					<!-- State Example -->
 					<Card.Root>
 						<Card.Header>
 							<Card.Title>State Example</Card.Title>
@@ -221,7 +202,6 @@
 							</Card.Description>
 						</Card.Header>
 						<Card.Content class="flex flex-col gap-4">
-							<!-- Avatar Preview -->
 							<div class="flex gap-2 text-left text-sm">
 								<Avatar.Root class="size-16 rounded-xl {avatarStore.bgClass}">
 									<Avatar.Image
@@ -242,7 +222,6 @@
 								</div>
 							</div>
 
-							<!-- How to access -->
 							<div class="mt-2 w-full truncate">
 								<p class="text-muted-foreground font-mono text-xs">avatarStore.svgDataUrl</p>
 								<p class="text-muted-foreground font-mono text-xs">avatarStore.bgClass</p>
@@ -255,7 +234,6 @@
 						</Card.Content>
 					</Card.Root>
 
-					<!-- JSON Debug Display -->
 					<Card.Root>
 						<Card.Header>
 							<Card.Title>avatarStore.configJSON</Card.Title>
