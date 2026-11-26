@@ -49,14 +49,14 @@ jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor
 
 ### Upgrading from 0.2.0
 
-Run `jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor --overwrite`. Version 0.3.0 changes the install:
+Run `jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor --overwrite`. jsrepo keeps a package entry only when the same section of your `package.json` holds an exact version or a `^` range that satisfies the registry's range; otherwise it installs the registry's range. Version 0.3.0 changes these ranges:
 
-- The registry no longer installs `tailwind-variants`. Your project keeps its own 3.x or 4.x version; 0.2.0 rewrote it to `^3.0.0` on every add.
-- `bits-ui` (`^2.22.0`) and `clsx` (`^2.1.1`) are ranges. A version in your project that satisfies them stays; 0.2.0 pinned exact versions.
-- `runed` accepts 0.37 and 0.38, so a SvelteKit 2 project keeps 0.37.
+- The registry no longer installs `tailwind-variants` or `mode-watcher`. 0.2.0 asked for `tailwind-variants@^3.0.0` in `dependencies` and `mode-watcher@1.1.0` in `devDependencies`.
+- `bits-ui` (`^2.22.0`) and `clsx` (`^2.1.1`) are ranges in `devDependencies`; 0.2.0 pinned `2.19.5` and `2.1.1`.
+- `runed` accepts `^0.37.0 || ^0.38.0` in `dependencies`, so a SvelteKit 2 project with `runed@^0.37.1` there keeps 0.37.
 - The `cursor-rules` item is gone. A `notion-avatar-svelte.mdc` file that 0.2.0 added stays in your project.
 
-The editor also validates stored and imported configs, loads avatar assets on demand, and draws a sharp outline on iOS.
+The editor also validates stored and imported configs in the new file `avatar-editor/config.ts`, loads avatar assets on demand, and draws a sharp outline on iOS.
 
 ### Usage
 
