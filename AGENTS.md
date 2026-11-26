@@ -12,6 +12,10 @@ Notion-style avatar editor, also published as the jsrepo registry `@stickerdanie
 - jsrepo leaves a consumer's package alone only when its range satisfies the published one, so `bits-ui`, `clsx` and `runed` keep ranges, not exact pins. `runed` accepts 0.37 for SvelteKit 2 projects.
 - Bump `registry.version` in `jsrepo.config.ts` before `bun run release:registry`. Version 0.3.0 is the latest published version.
 
+## Docs
+
+- README and docs tell users what to run or change, not how the code or jsrepo works internally.
+
 ## Avatar editor
 
 - `assets/part/` holds the selector thumbnails and `assets/preview/` the layers composed into the avatar. The folder names stay as they are.
