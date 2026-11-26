@@ -27,7 +27,7 @@ https://avatar.daniel.sticker.name/
 ### Prerequisites
 
 - A Svelte 5 project on SvelteKit 3. On SvelteKit 2, run `bun add runed@^0.37.1` before `jsrepo add`.
-- Add `alias: { $lib: 'src/lib' }` to the `sveltekit()` options in `vite.config.ts`.
+- On SvelteKit 3, add `alias: { $lib: 'src/lib' }` to the `sveltekit()` options in `vite.config.ts`.
 - Install `tailwind-variants`: `shadcn-svelte init` does it, or run `bun add -D tailwind-variants`.
 - Use [bun](https://bun.sh/), or swap in npm or pnpm in the commands below.
 
