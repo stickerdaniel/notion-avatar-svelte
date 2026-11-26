@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import type { Page } from '@playwright/test';
 
-type LayerAction = 'hold' | 'fail' | 'malformed' | 'html';
+type LayerAction = 'hold' | 'fail' | 'malformed' | 'html' | { title: string };
 
 type LayerRule = {
 	action: LayerAction;
@@ -65,6 +65,12 @@ export async function installFetchControl(page: Page): Promise<void> {
 			rule.served++;
 			if (rule.action === 'fail') return new Response(body, { status: 404 });
 			if (rule.action === 'malformed') return new Response('<g>no svg root</g>', { status: 200 });
+			if (typeof rule.action === 'object') {
+				return new Response(body.replace(marker, `<title>${rule.action.title}</title>`), {
+					status: 200,
+					headers: { 'Content-Type': 'image/svg+xml' }
+				});
+			}
 			if (rule.action === 'html') {
 				return new Response(`<!doctype html><html><body>${body}</body></html>`, {
 					status: 200,

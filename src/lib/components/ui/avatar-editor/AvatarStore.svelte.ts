@@ -75,7 +75,7 @@ export const AVATAR_COLOR_STYLES: Record<
 	}
 };
 
-const TAILWIND_CLASS_TO_HEX_MAP: Record<string, string> = {
+const BASE_CLASS_HEX: Record<string, string> = {
 	'bg-rose-400': '#FB7185',
 	'bg-pink-400': '#F472B6',
 	'bg-purple-400': '#C084FC',
@@ -132,21 +132,15 @@ export class AvatarStoreClass implements IAvatar {
 
 	readonly categories: Category[] = DEFAULT_CATEGORIES;
 
-	private _history: StateHistory<string> = null!;
+	private readonly _history: StateHistory<string>;
 
-	private _getCanUndo = () => this._history?.canUndo ?? false;
-	private _getCanRedo = () => this._history?.canRedo ?? false;
-
-	canUndo = $derived(this._getCanUndo());
-	canRedo = $derived(this._getCanRedo());
+	canUndo = $derived.by(() => this._history.canUndo);
+	canRedo = $derived.by(() => this._history.canRedo);
 
 	private _avatarLayers = $derived(this._generateLayersFromItems(this.config.items));
 	svgDataUrl = $state('');
 	private _renderGeneration = 0;
-	bgClass = $derived(
-		AVATAR_COLOR_STYLES[this.config.colorName as ColorName]?.base ||
-			AVATAR_COLOR_STYLES[COLORS[0]].base
-	);
+	bgClass = $derived(AVATAR_COLOR_STYLES[this.config.colorName].base);
 
 	constructor() {
 		this._fallbackConfigJSON = JSON.stringify(this._generateInitialRandomConfig());
@@ -309,7 +303,22 @@ export class AvatarStoreClass implements IAvatar {
 		this.configJSON = JSON.stringify(validConfig);
 	};
 
-	downloadAvatarWithoutOutline = async () => {
+	downloadAvatarWithoutOutline = () =>
+		this._downloadAvatar('no-outline', 'no-outline', generateSvgWithoutOutlineDataUrl);
+
+	downloadAvatarWithOutline = () =>
+		this._downloadAvatar('with-outline', 'with-outline', generateSvgWithOutlineDataUrl);
+
+	downloadAvatarWithBackground = () =>
+		this._downloadAvatar('with-bg', 'with-background', (layers) =>
+			generateSvgWithColoredBackgroundDataUrl(layers, BASE_CLASS_HEX[this.bgClass] ?? '#FFFFFF')
+		);
+
+	private async _downloadAvatar(
+		fileSuffix: string,
+		downloadType: string,
+		generate: (layers: string[]) => Promise<string>
+	): Promise<void> {
 		const layers = this._avatarLayers;
 		if (layers.length === 0) {
 			console.error('No avatar to download');
@@ -317,77 +326,13 @@ export class AvatarStoreClass implements IAvatar {
 		}
 
 		try {
-			const svgDataUrl = await generateSvgWithoutOutlineDataUrl(layers);
-			this._downloadSvg(
-				svgDataUrl,
-				`avatar-${this.config.username || 'unnamed'}-no-outline`,
-				'no-outline'
-			);
-		} catch (error) {
-			console.error('Failed to download avatar:', error);
-		}
-	};
-
-	downloadAvatarWithOutline = async () => {
-		const layers = this._avatarLayers;
-		if (layers.length === 0) {
-			console.error('No avatar to download');
-			return;
-		}
-
-		try {
-			const svgDataUrl = await generateSvgWithOutlineDataUrl(layers);
-			this._downloadSvg(
-				svgDataUrl,
-				`avatar-${this.config.username || 'unnamed'}-with-outline`,
-				'with-outline'
-			);
-		} catch (error) {
-			console.error('Failed to download avatar with outline:', error);
-		}
-	};
-
-	downloadAvatarWithBackground = async () => {
-		const layers = this._avatarLayers;
-		if (layers.length === 0) {
-			console.error('No avatar to download');
-			return;
-		}
-
-		try {
-			const colorName = this.config.colorName as ColorName;
-			const tailwindClass =
-				AVATAR_COLOR_STYLES[colorName]?.base || AVATAR_COLOR_STYLES[COLORS[0]].base;
-			const backgroundColor = TAILWIND_CLASS_TO_HEX_MAP[tailwindClass] || '#FFFFFF';
-
-			const svgDataUrl = await generateSvgWithColoredBackgroundDataUrl(layers, backgroundColor);
-			this._downloadSvg(
-				svgDataUrl,
-				`avatar-${this.config.username || 'unnamed'}-with-bg`,
-				'with-background'
-			);
-		} catch (error) {
-			console.error('Failed to download avatar with background:', error);
-		}
-	};
-
-	private _downloadSvg(svgDataUrl: string, filename: string, downloadType: string): void {
-		if (typeof window === 'undefined') return;
-
-		try {
-			const [, base64Data] = svgDataUrl.split(',');
-			const binaryString = atob(base64Data);
-			const bytes = new Uint8Array(binaryString.length);
-			for (let i = 0; i < binaryString.length; i++) {
-				bytes[i] = binaryString.charCodeAt(i);
-			}
-
-			const blob = new Blob([bytes], { type: 'image/svg+xml' });
-			const url = URL.createObjectURL(blob);
+			const svgDataUrl = await generate(layers);
+			const bytes = Uint8Array.from(atob(svgDataUrl.split(',')[1]), (char) => char.charCodeAt(0));
+			const url = URL.createObjectURL(new Blob([bytes], { type: 'image/svg+xml' }));
 
 			const a = document.createElement('a');
 			a.href = url;
-			a.download = `${filename}.svg`;
+			a.download = `avatar-${this.config.username || 'unnamed'}-${fileSuffix}.svg`;
 			a.style.display = 'none';
 			a.target = '_blank';
 
@@ -399,13 +344,11 @@ export class AvatarStoreClass implements IAvatar {
 			a.click();
 
 			setTimeout(() => {
-				if (document.body.contains(a)) {
-					document.body.removeChild(a);
-				}
+				a.remove();
 				URL.revokeObjectURL(url);
 			}, 1000);
 		} catch (error) {
-			console.error('Failed to download SVG:', error);
+			console.error('Failed to download avatar:', error);
 		}
 	}
 }
