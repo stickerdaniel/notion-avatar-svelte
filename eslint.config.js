@@ -12,7 +12,8 @@ const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
 const typescriptDirective = /^(@ts-(expect-error|ignore|nocheck|check)\b|\/\s*<reference\s)/;
 const lineDirective = /^eslint-disable(-next)?-line(\s|$)/;
-const blockDirective = /^(eslint|eslint-disable|eslint-enable|exported|globals?)(\s|$)/;
+const blockDirective =
+	/^(eslint|eslint-disable(-(next-)?line)?|eslint-enable|exported|globals?)(\s|$)/;
 
 export default defineConfig(
 	includeIgnoreFile(gitignorePath),
