@@ -56,4 +56,4 @@ jobs:
             echo "::notice::main is at $head; skipping the deploy of $GITHUB_SHA."
             exit 0
           fi
-          bunx wrangler pages deploy --branch main --commit-hash "$GITHUB_SHA"
+          bunx wrangler pages deploy build --project-name notion-avatar-svelte --branch main --commit-hash "$GITHUB_SHA"
