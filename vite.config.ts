@@ -5,6 +5,7 @@ import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 export default defineConfig({
+	resolve: { alias: [{ find: /^tailwind-variants$/, replacement: 'tailwind-variants/lite' }] },
 	plugins: [
 		tailwindcss(),
 		sveltekit({
