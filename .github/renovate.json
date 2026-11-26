@@ -37,7 +37,8 @@
 			"matchPackageNames": ["runed", "@lucide/svelte", "tailwind-merge", "bits-ui", "clsx"],
 			"rangeStrategy": "bump",
 			"automerge": false,
-			"groupName": "registry dependencies"
+			"groupName": "registry dependencies",
+			"groupSlug": "registry-dependencies"
 		}
 	]
 }
