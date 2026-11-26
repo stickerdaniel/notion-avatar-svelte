@@ -18,7 +18,7 @@ const uiDependencies = [
 export default defineConfig({
 	registry: {
 		name: '@stickerdaniel/notion-avatar-svelte',
-		version: '0.2.0',
+		version: '0.3.0',
 		description:
 			'Notion-style avatar editor for Svelte 5 with customizable features and download options.',
 		homepage: 'https://avatar.daniel.sticker.name',

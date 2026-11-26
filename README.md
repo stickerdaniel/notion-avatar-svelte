@@ -30,6 +30,8 @@ The easiest way to add the Notion Avatar Editor to your Svelte 5 project:
 
 - Svelte 5 project
 - A `$lib` alias pointing at `src/lib`. SvelteKit 3 no longer creates it, so add `alias: { $lib: 'src/lib' }` to the `sveltekit()` options in `vite.config.ts`
+- `tailwind-variants` 3 or 4. `shadcn-svelte init` installs it; in a project without it, run `bun add -D tailwind-variants`
+- SvelteKit 3. In a SvelteKit 2 project, run `bun add runed@^0.37.1` before `jsrepo add`
 - [bun](https://bun.sh/) (recommended, this guide uses [bun](https://bun.sh/) but you can use npm or pnpm if you prefer)
 
 ### Installation
@@ -44,6 +46,17 @@ bunx shadcn-svelte@latest init
 # Add the avatar editor component
 jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor
 ```
+
+### Upgrading from 0.2.0
+
+Run `jsrepo add @stickerdaniel/notion-avatar-svelte/avatar-editor --overwrite`. jsrepo keeps a package entry only when the same section of your `package.json` holds an exact version or a `^` range that satisfies the registry's range; otherwise it installs the registry's range. Version 0.3.0 changes these ranges:
+
+- The registry no longer installs `tailwind-variants` or `mode-watcher`. 0.2.0 asked for `tailwind-variants@^3.0.0` in `dependencies` and `mode-watcher@1.1.0` in `devDependencies`.
+- `bits-ui` (`^2.22.0`) and `clsx` (`^2.1.1`) are ranges in `devDependencies`; 0.2.0 pinned `2.19.5` and `2.1.1`.
+- `runed` accepts `^0.37.0 || ^0.38.0` in `dependencies`, so a SvelteKit 2 project with `runed@^0.37.1` there keeps 0.37.
+- The `cursor-rules` item is gone. A `notion-avatar-svelte.mdc` file that 0.2.0 added stays in your project.
+
+The editor also validates stored and imported configs in the new file `avatar-editor/config.ts`, loads avatar assets on demand, and draws a sharp outline on iOS.
 
 ### Usage
 
