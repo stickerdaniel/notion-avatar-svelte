@@ -12,7 +12,7 @@ export function layerMarkup(category: string, index: number): string {
 	);
 	const inner = readFileSync(file, 'utf8')
 		.match(/<svg[^>]*>([\s\S]*)<\/svg>/)?.[1]
-		.trim();
+		?.trim();
 	if (!inner) throw new Error(`${category} layer ${index} has no <svg> content`);
 	return normalizeMarkup(inner);
 }

@@ -1,15 +1,9 @@
 {
 	"extends": "$app/tsconfig",
 	"compilerOptions": {
-		"allowJs": true,
-		"checkJs": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"moduleResolution": "bundler",
+		"noUncheckedIndexedAccess": true,
 		"types": ["$app/types", "node"]
 	},
 	"include": ["src", "e2e", "*"],

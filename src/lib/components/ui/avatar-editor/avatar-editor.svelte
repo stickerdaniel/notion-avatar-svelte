@@ -25,8 +25,8 @@
 	const categories: Category[] = DEFAULT_CATEGORIES;
 	let activeTab = $state(categories[0]?.id ?? '');
 
-	function handleUsernameInput(event: Event) {
-		const newUsername = (event.currentTarget as HTMLInputElement).value;
+	function handleUsernameInput(event: Event & { currentTarget: HTMLInputElement }) {
+		const newUsername = event.currentTarget.value;
 		avatarStore.updateConfig((config: AvatarConfiguration) => {
 			config.username = newUsername;
 		});

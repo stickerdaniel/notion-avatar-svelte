@@ -34,7 +34,7 @@
 </script>
 
 <RadioGroupPrimitive.Root
-	bind:value={value as never}
+	bind:value
 	bind:ref
 	class={cn('flex items-center justify-center gap-1', className)}
 	{...restProps}

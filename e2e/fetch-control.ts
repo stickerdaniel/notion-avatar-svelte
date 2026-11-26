@@ -60,6 +60,7 @@ export async function installFetchControl(page: Page): Promise<void> {
 			if (!marker) return response;
 
 			const rule = rules[marker];
+			if (!rule) return response;
 			rule.urls.push(url);
 			if (rule.action === 'hold') await rule.released;
 			rule.served++;
@@ -108,7 +109,8 @@ export async function controlLayer(
 				if (!rule) throw new Error(`${marker} is not controlled`);
 				return { intercepted: rule.urls.length, served: rule.served };
 			}, marker),
-		release: () => page.evaluate((marker) => window.__fetchControl?.rules[marker].release(), marker)
+		release: () =>
+			page.evaluate((marker) => window.__fetchControl?.rules[marker]?.release(), marker)
 	};
 }
 

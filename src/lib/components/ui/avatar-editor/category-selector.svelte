@@ -20,9 +20,7 @@
 	} = $props();
 
 	untrack(() => {
-		if (!activeTab && categories.length > 0) {
-			activeTab = categories[0].id;
-		}
+		activeTab ||= categories[0]?.id ?? '';
 	});
 
 	function scrollTabs(direction: 'up' | 'down') {
@@ -35,7 +33,7 @@
 		const delta = direction === 'up' ? -1 : 1;
 		const newIndex = (currentIndex + delta + n) % n;
 
-		activeTab = categoryIds[newIndex];
+		activeTab = categoryIds[newIndex] ?? activeTab;
 	}
 </script>
 
@@ -95,7 +93,7 @@
 					class="flex flex-wrap justify-start gap-1 p-2"
 					aria-label={`${category.name} items`}
 				>
-					{#each Array(category.maxItems) as _, index (index)}
+					{#each { length: category.maxItems }, index (index)}
 						{@const imageSrc = getPartImagePath(category.id, index)}
 						{@const itemValue = String(index)}
 						<RadioToggleGroup.Item

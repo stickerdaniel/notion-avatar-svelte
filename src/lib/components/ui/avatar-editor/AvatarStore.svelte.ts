@@ -210,7 +210,7 @@ export class AvatarStoreClass implements IAvatar {
 			}
 			items[category.id] = selectedItemIndex;
 		}
-		const colorName = COLORS[Math.floor(Math.random() * COLORS.length)];
+		const colorName = COLORS[Math.floor(Math.random() * COLORS.length)] ?? COLORS[0];
 		return { items, colorName };
 	}
 
@@ -255,7 +255,7 @@ export class AvatarStoreClass implements IAvatar {
 		if (!items) return [];
 		return LAYER_ORDER.flatMap((categoryId) => {
 			const selectedIndex = items[categoryId];
-			if (selectedIndex === null || selectedIndex < 0) return [];
+			if (selectedIndex == null || selectedIndex < 0) return [];
 			const path = getPreviewImagePath(categoryId, selectedIndex);
 			return path ? [path] : [];
 		});
@@ -327,7 +327,8 @@ export class AvatarStoreClass implements IAvatar {
 
 		try {
 			const svgDataUrl = await generate(layers);
-			const bytes = Uint8Array.from(atob(svgDataUrl.split(',')[1]), (char) => char.charCodeAt(0));
+			const [, base64 = ''] = svgDataUrl.split(',');
+			const bytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0));
 			const url = URL.createObjectURL(new Blob([bytes], { type: 'image/svg+xml' }));
 
 			const a = document.createElement('a');
