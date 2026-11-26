@@ -9,8 +9,8 @@ Notion-style avatar editor, also published as the jsrepo registry `@stickerdanie
 - Shipped files import `$lib/...`, and consumers configure `$lib` themselves. The `$lib` alias in `vite.config.ts` stays despite its SvelteKit 3 deprecation; moving to `#lib` would break every consumer at once.
 - Shipped files call `tailwind-variants` only as `tv({ base, variants, defaultVariants })` and import only `VariantProps`, so they work with 3.x and 4.x. The registry lists it in `excludeDeps`; consumers get it from `shadcn-svelte init`.
 - The site resolves `tailwind-variants` to `tailwind-variants/lite`, which skips class merging inside `tv()`. Every `tv()` result in `src` therefore passes through `cn()`.
-- jsrepo leaves a consumer's package alone only when its range satisfies the published one, so `bits-ui`, `clsx` and `runed` keep ranges, not exact pins. `runed` accepts 0.37 for SvelteKit 2 projects.
-- Bump `registry.version` in `jsrepo.config.ts` before `bun run release:registry`. Version 0.3.0 is the latest published version.
+- jsrepo leaves a consumer's package alone only when its range satisfies the published one, so `bits-ui`, `clsx` and `runed` keep ranges, not exact pins.
+- Renovate opens registry-dependency PRs without automerge. Bump `registry.version` in `jsrepo.config.ts` in that PR and run `bun run release:registry` after merge. Version 0.4.0 is the latest published version.
 
 ## Docs
 
